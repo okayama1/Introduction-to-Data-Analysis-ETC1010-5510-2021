@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC1010 - 5510: Introduction to Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Patricia Menéndez" />
+    <script src="libs/header-attrs-2.10/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+    -->
+    <link rel="icon" href="images/favicon.ico"  type='image/x-icon'/>    
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-logo.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70 title-slide
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;
+
+# .monash-white.outline-text[ETC1010 - 5510: Introduction to Data Analysis]
+
+&lt;h2 class="monash-white outline-text" style="font-size: 30pt!important;"&gt;Week 2&lt;/h2&gt;
+
+&lt;br&gt;
+
+&lt;h2 style="font-weight:900!important;"&gt;Week of Tidy data&lt;/h2&gt;
+
+.bottom_abs.width100[
+
+Lecturer: *Patricia Menéndez*
+
+Department of Econometrics and Business Statistics
+
+
+
+
+&lt;br&gt;
+]
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+
+
+---
+# Questions/Comments/Suggestions/Complains
+
+&lt;img src="images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+ Photo: Rhythm Goyal for  Unsplash.
+---
+# Recap: Week 1
+&lt;br&gt;&lt;br&gt;
+- Intro to the unit
+- Assessment
+- R, Rstudio, Rstudio Cloud
+- First hands on experience with data analysis
+- Rmarkdown
+
+
+---
+
+# Week2: Outline
+&lt;br&gt;&lt;br&gt;
+- Tidy Data
+- Data wrangling
+- Different examples of data wrangling
+- Good coding practices
+
+
+
+---
+# Tidy Data
+&lt;img src="images/cleaning-data.jpg" width="533" style="display: block; margin: auto;" /&gt;
+.blockquote[
+You're ready to sit down with a newly-obtained dataset, excited about how it will open a world of insight and understanding, and then find you can't use it. You'll first have to spend a significant amount of time to restructure the data to even begin to produce a set of basic descriptive statistics or link it to other data you've been using.
+
+--John Spencer 
+([Measure Evaluation](https://www.measureevaluation.org/resources/newsroom/blogs/tidy-data-and-how-to-get-it))
+]
+
+---
+# Tidy Data
+
+&lt;img src="images/cleaning-data.jpg" width="533" style="display: block; margin: auto;" /&gt;
+
+
+.blockquote[
+"Tidy data" is a term meant to provide a framework for producing data that conform to standards that make it easier to use. Tidy data may still require some cleaning for analysis, but the job will be much easier.
+
+--John Spencer 
+([Measure Evaluation](https://www.measureevaluation.org/resources/newsroom/blogs/tidy-data-and-how-to-get-it))
+]
+
+
+---
+# Data wrangling using tidyverse
+&lt;br&gt;&lt;br&gt;
+
+[tidyverse info](https://www.tidyverse.org/packages/)
+
+&lt;br&gt;
+
+.content-box-neutral[
+- Allow us to filter data
+- Calculate summaries of the data
+- Create new variables
+- Change the way in which the data is organized
+- Much more!
+]
+
+---
+# The pipe operator: `%&gt;%`
+&lt;br&gt;&lt;br&gt;
+
+
+- The .green[pipe operator] help us .greenc[connect "commands"] in the tidyverse universe.
+- It is extremely useful
+- It provides an easy way to create tidy code
+
+.content-box-neutral[
+The symbol .purple[%&gt;%] is referred to as the .green["pipe operator"]:
+]
+
+
+---
+# The The pipe operator: `%&gt;%`
+&lt;br&gt;&lt;br&gt;
+
+- You can think of it .green[as an operator that allow us to connect operations:]
+
+
+```r
+data %&gt;%
+  select(age, height, hair_colour) %&gt;% 
+  filter(hair_colour == "ginger")
+
+```
+
+Use the .green[data] file , THEN (.purple[%&gt;% ]) .purple[select] the variables (columns), age, height, and hair_colour THEN (.purple[%&gt;% ])  .purple[filter] so we only retain rows which have hair_color equal to "ginger"
+
+- .purple[%&gt;% ] --&gt;  .green[It passes the output along to the next function]
+
+[More on pipes](https://r4ds.had.co.nz/pipes.html)
+
+---
+
+# Example: US graduate programs
+&lt;br&gt;&lt;br&gt;
+.green[Data from a study on US grad programs.] 
+
+- Originally came in an excel file containing rankings of many different programs. 
+- Contains information on four programs:
+  1. Astronomy
+  1. Economics
+  1. Entomology, and 
+  1. Psychology
+
+---
+
+# Example: US graduate programs
+
+
+```r
+library(tidyverse)
+grad &lt;- read_csv("data/graduate-programs.csv")
+grad
+## # A tibble: 412 × 16
+##    subject   Inst  AvNumPubs AvNumCits PctFacGrants PctCompletion MedianTimetoDeg…
+##    &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+##  1 economics ARIZ…      0.9       1.57         31.3          31.7             5.6 
+##  2 economics AUBU…      0.79      0.64         77.6          44.4             3.84
+##  3 economics BOST…      0.51      1.03         43.5          46.8             5   
+##  4 economics BOST…      0.49      2.66         36.9          34.2             5.5 
+##  5 economics BRAN…      0.3       3.03         36.8          48.7             5.29
+##  6 economics BROW…      0.84      2.31         27.1          54.6             6   
+##  7 economics CALI…      0.99      2.31         56.4          83.3             4   
+##  8 economics CARN…      0.43      1.67         35.2          45.6             5.05
+##  9 economics CITY…      0.35      1.06         38.1          27.9             5.2 
+## 10 economics CLAR…      0.47      0.7          24.7          37.7             5.17
+## # … with 402 more rows, and 9 more variables: PctMinorityFac &lt;dbl&gt;,
+## #   PctFemaleFac &lt;dbl&gt;, PctFemaleStud &lt;dbl&gt;, PctIntlStud &lt;dbl&gt;,
+## #   AvNumPhDs &lt;dbl&gt;, AvGREs &lt;dbl&gt;, TotFac &lt;dbl&gt;, PctAsstProf &lt;dbl&gt;,
+## #   NumStud &lt;dbl&gt;
+```
+
+---
+# Example: US graduate programs
+&lt;br&gt;&lt;br&gt;
+Good things about the format:
+
+.pull-left[
+
+```
+## # A tibble: 6 × 16
+##   subject   Inst  AvNumPubs AvNumCits PctFacGrants PctCompletion MedianTimetoDeg…
+##   &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+## 1 economics ARIZ…      0.9       1.57         31.3          31.7             5.6 
+## 2 economics AUBU…      0.79      0.64         77.6          44.4             3.84
+## 3 economics BOST…      0.51      1.03         43.5          46.8             5   
+## 4 economics BOST…      0.49      2.66         36.9          34.2             5.5 
+## 5 economics BRAN…      0.3       3.03         36.8          48.7             5.29
+## 6 economics BROW…      0.84      2.31         27.1          54.6             6   
+## # … with 9 more variables: PctMinorityFac &lt;dbl&gt;, PctFemaleFac &lt;dbl&gt;,
+## #   PctFemaleStud &lt;dbl&gt;, PctIntlStud &lt;dbl&gt;, AvNumPhDs &lt;dbl&gt;, AvGREs &lt;dbl&gt;,
+## #   TotFac &lt;dbl&gt;, PctAsstProf &lt;dbl&gt;, NumStud &lt;dbl&gt;
+```
+]
+.pull-right[
+
+.green[**Rows**] contain information about the institution
+
+.green[**Columns**] contain types of information, like average number of publications, average number of citations, % completion, 
+]
+
+---
+
+# Example: US graduate programs
+
+&lt;br&gt;&lt;br&gt;
+Easy to make summaries:
+
+&lt;br&gt;
+
+
+```r
+unique(grad$subject)
+## [1] "economics"  "entomology" "astronomy"  "psychology"
+```
+
+
+```r
+grad %&gt;% count(subject)
+## # A tibble: 4 × 2
+##   subject        n
+##   &lt;chr&gt;      &lt;int&gt;
+## 1 astronomy     32
+## 2 economics    117
+## 3 entomology    27
+## 4 psychology   236
+```
+
+
+
+
+
+---
+
+# Example: US graduate programs
+&lt;br&gt;&lt;br&gt;
+.green[Using the .green[dplyr] it is easy to filter data and calculate summary statistics:]
+&lt;br&gt;
+
+
+```r
+grad %&gt;%
+  filter(subject == "economics") %&gt;%
+  summarise(
+    mean = mean(NumStud), 
+    s = sd(NumStud)
+  )
+## # A tibble: 1 × 2
+##    mean     s
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1  60.7  39.4
+```
+
+The .green[dplyr] package is part of the .green[tidyverse] package.
+
+---
+
+# Example: US graduate programs
+&lt;br&gt;&lt;br&gt;
+The .green[package --&gt; ggplot2 which is part of the tidyverse] (we will learn more about ploting
+next week!)
+&lt;br&gt;&lt;br&gt;
+
+.pull-left[
+
+Easy to make a plot
+
+
+
+```r
+grad %&gt;%
+  filter(subject == "economics") %&gt;%
+  ggplot(aes(x = NumStud,
+             y = MedianTimetoDegree)) +
+  geom_point() + 
+  theme(aspect.ratio = 1)
+```
+]
+
+&lt;br&gt;
+.pull-right[
+&lt;img src="Workshop1-Week2_files/figure-html/gra-dplot-out-1.png" height="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+
+
+
+
+---
+# Terminology of data: Variable
+&lt;br&gt;&lt;br&gt;
+.content-box[
+- A quantity, quality, or property that you can measure. 
+- For the grad programs, these would be all the .green[column headers].
+]
+
+
+```
+## # A tibble: 412 × 16
+##    subject   Inst  AvNumPubs AvNumCits PctFacGrants PctCompletion MedianTimetoDeg…
+##    &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+##  1 economics ARIZ…      0.9       1.57         31.3          31.7             5.6 
+##  2 economics AUBU…      0.79      0.64         77.6          44.4             3.84
+##  3 economics BOST…      0.51      1.03         43.5          46.8             5   
+##  4 economics BOST…      0.49      2.66         36.9          34.2             5.5 
+##  5 economics BRAN…      0.3       3.03         36.8          48.7             5.29
+##  6 economics BROW…      0.84      2.31         27.1          54.6             6   
+##  7 economics CALI…      0.99      2.31         56.4          83.3             4   
+##  8 economics CARN…      0.43      1.67         35.2          45.6             5.05
+##  9 economics CITY…      0.35      1.06         38.1          27.9             5.2 
+## 10 economics CLAR…      0.47      0.7          24.7          37.7             5.17
+## # … with 402 more rows, and 9 more variables: PctMinorityFac &lt;dbl&gt;,
+## #   PctFemaleFac &lt;dbl&gt;, PctFemaleStud &lt;dbl&gt;, PctIntlStud &lt;dbl&gt;,
+## #   AvNumPhDs &lt;dbl&gt;, AvGREs &lt;dbl&gt;, TotFac &lt;dbl&gt;, PctAsstProf &lt;dbl&gt;,
+## #   NumStud &lt;dbl&gt;
+```
+
+---
+# Terminology of data: Observation
+&lt;br&gt;&lt;br&gt;
+.content-box[
+- A set of measurements made under similar conditions
+- Contains several values, each associated with a different variable.
+- For the grad programs, this is institution, and program, .green[uniquley define the observation].
+]
+
+
+```
+## # A tibble: 412 × 16
+##    subject   Inst  AvNumPubs AvNumCits PctFacGrants PctCompletion MedianTimetoDeg…
+##    &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+##  1 economics ARIZ…      0.9       1.57         31.3          31.7             5.6 
+##  2 economics AUBU…      0.79      0.64         77.6          44.4             3.84
+##  3 economics BOST…      0.51      1.03         43.5          46.8             5   
+##  4 economics BOST…      0.49      2.66         36.9          34.2             5.5 
+##  5 economics BRAN…      0.3       3.03         36.8          48.7             5.29
+##  6 economics BROW…      0.84      2.31         27.1          54.6             6   
+##  7 economics CALI…      0.99      2.31         56.4          83.3             4   
+##  8 economics CARN…      0.43      1.67         35.2          45.6             5.05
+##  9 economics CITY…      0.35      1.06         38.1          27.9             5.2 
+## 10 economics CLAR…      0.47      0.7          24.7          37.7             5.17
+## # … with 402 more rows, and 9 more variables: PctMinorityFac &lt;dbl&gt;,
+## #   PctFemaleFac &lt;dbl&gt;, PctFemaleStud &lt;dbl&gt;, PctIntlStud &lt;dbl&gt;,
+## #   AvNumPhDs &lt;dbl&gt;, AvGREs &lt;dbl&gt;, TotFac &lt;dbl&gt;, PctAsstProf &lt;dbl&gt;,
+## #   NumStud &lt;dbl&gt;
+```
+
+
+---
+# Terminology of data: Value
+&lt;br&gt;&lt;br&gt;
+
+.content-box[
+- Is the state of a variable when you measure it. 
+- The value of a variable typically changes from observation to observation.
+- For the grad programs, this is the value in .green[each cell.]
+]
+
+
+```
+## # A tibble: 412 × 16
+##    subject   Inst  AvNumPubs AvNumCits PctFacGrants PctCompletion MedianTimetoDeg…
+##    &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+##  1 economics ARIZ…      0.9       1.57         31.3          31.7             5.6 
+##  2 economics AUBU…      0.79      0.64         77.6          44.4             3.84
+##  3 economics BOST…      0.51      1.03         43.5          46.8             5   
+##  4 economics BOST…      0.49      2.66         36.9          34.2             5.5 
+##  5 economics BRAN…      0.3       3.03         36.8          48.7             5.29
+##  6 economics BROW…      0.84      2.31         27.1          54.6             6   
+##  7 economics CALI…      0.99      2.31         56.4          83.3             4   
+##  8 economics CARN…      0.43      1.67         35.2          45.6             5.05
+##  9 economics CITY…      0.35      1.06         38.1          27.9             5.2 
+## 10 economics CLAR…      0.47      0.7          24.7          37.7             5.17
+## # … with 402 more rows, and 9 more variables: PctMinorityFac &lt;dbl&gt;,
+## #   PctFemaleFac &lt;dbl&gt;, PctFemaleStud &lt;dbl&gt;, PctIntlStud &lt;dbl&gt;,
+## #   AvNumPhDs &lt;dbl&gt;, AvGREs &lt;dbl&gt;, TotFac &lt;dbl&gt;, PctAsstProf &lt;dbl&gt;,
+## #   NumStud &lt;dbl&gt;
+```
+
+
+---
+# Tidy tabular form
+&lt;br&gt;&lt;br&gt;
+.green[**Tabular data**] is a set of values, each associated with a variable and an observation. Tabular data is .green[**tidy**] iff (if and only if):
+&lt;br&gt;&lt;br&gt;
+.content-box[
+* Each variable in its own column, 
+* Each observation in its own row,
+* Each value is placed in its own `cell`.
+]
+
+
+---
+background-image: url(https://imgs.njtierney.com/tidy-data.png)
+background-size: contain
+background-position: 50% 50%
+class: center, bottom, black
+
+---
+
+# The grad program
+
+It is in .green[**tidy**] tabular form. 
+
+
+```
+## # A tibble: 412 × 16
+##    subject   Inst  AvNumPubs AvNumCits PctFacGrants PctCompletion MedianTimetoDeg…
+##    &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+##  1 economics ARIZ…      0.9       1.57         31.3          31.7             5.6 
+##  2 economics AUBU…      0.79      0.64         77.6          44.4             3.84
+##  3 economics BOST…      0.51      1.03         43.5          46.8             5   
+##  4 economics BOST…      0.49      2.66         36.9          34.2             5.5 
+##  5 economics BRAN…      0.3       3.03         36.8          48.7             5.29
+##  6 economics BROW…      0.84      2.31         27.1          54.6             6   
+##  7 economics CALI…      0.99      2.31         56.4          83.3             4   
+##  8 economics CARN…      0.43      1.67         35.2          45.6             5.05
+##  9 economics CITY…      0.35      1.06         38.1          27.9             5.2 
+## 10 economics CLAR…      0.47      0.7          24.7          37.7             5.17
+## # … with 402 more rows, and 9 more variables: PctMinorityFac &lt;dbl&gt;,
+## #   PctFemaleFac &lt;dbl&gt;, PctFemaleStud &lt;dbl&gt;, PctIntlStud &lt;dbl&gt;,
+## #   AvNumPhDs &lt;dbl&gt;, AvGREs &lt;dbl&gt;, TotFac &lt;dbl&gt;, PctAsstProf &lt;dbl&gt;,
+## #   NumStud &lt;dbl&gt;
+```
+
+
+---
+class: transition
+# Different examples of data
+&lt;br&gt;&lt;br&gt;
+For each of these data examples, **let's try together to identify the variables and the observations** 
+
+---
+
+# Your Turn: Genes experiment 🤔
+&lt;br&gt;&lt;br&gt;
+
+```
+## # A tibble: 3 × 12
+##   id     `WI-6.R1` `WI-6.R2` `WI-6.R4` `WM-6.R1` `WM-6.R2` `WI-12.R1` `WI-12.R2`
+##   &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Gene 1      2.18     2.20       4.20     2.63       5.06       4.54       5.53
+## 2 Gene 2      1.46     0.585      1.86     0.515      2.88       1.36       2.96
+## 3 Gene 3      2.03     0.870      3.28     0.533      4.63       2.18       5.56
+## # … with 4 more variables: WI-12.R4 &lt;dbl&gt;, WM-12.R1 &lt;dbl&gt;, WM-12.R2 &lt;dbl&gt;,
+## #   WM-12.R4 &lt;dbl&gt;
+```
+
+---
+# Melbourne weather 😨
+
+&lt;br&gt;&lt;br&gt;
+
+
+
+```
+## # A tibble: 1,593 × 12
+##    X1             X2 X3    X4       X5    X9   X13   X17   X21   X25   X29   X33
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 ASN00086282  1970 07    TMAX    141   124   113   123   148   149   139   153
+##  2 ASN00086282  1970 07    TMIN     80    63    36    57    69    47    84    78
+##  3 ASN00086282  1970 07    PRCP      3    30     0     0    36     3     0     0
+##  4 ASN00086282  1970 08    TMAX    145   128   150   122   109   112   116   142
+##  5 ASN00086282  1970 08    TMIN     50    61    75    67    41    51    48    -7
+##  6 ASN00086282  1970 08    PRCP      0    66     0    53    13     3     8     0
+##  7 ASN00086282  1970 09    TMAX    168   168   162   162   162   150   184   179
+##  8 ASN00086282  1970 09    TMIN     19    29    62    81    81    55    73    97
+##  9 ASN00086282  1970 09    PRCP      0     0     0     0     3     5     0    38
+## 10 ASN00086282  1970 10    TMAX    189   194   204   267   256   228   237   144
+## # … with 1,583 more rows
+```
+
+
+
+
+---
+class: transition
+# French fries
+&lt;br&gt;&lt;br&gt;
+
+.pull-left[
+- 10 week sensory experiment
+- 12 individuals assessed taste of french fries on several scales (how potato-y, buttery, grassy, rancid, paint-y do they taste?)
+- fried in one of 3 different oils, replicated twice. 
+]
+
+.pull-right[
+
+&lt;img src="images/french_fries.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
+
+
+---
+# French fries: Variables? Observations?
+&lt;br&gt;&lt;br&gt;
+
+```r
+french_fries &lt;- read_csv(here::here("slides/data/french_fries.csv"))
+french_fries
+## # A tibble: 696 × 9
+##     time treatment subject   rep potato buttery grassy rancid painty
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1         1       3     1    2.9     0      0      0      5.5
+##  2     1         1       3     2   14       0      0      1.1    0  
+##  3     1         1      10     1   11       6.4    0      0      0  
+##  4     1         1      10     2    9.9     5.9    2.9    2.2    0  
+##  5     1         1      15     1    1.2     0.1    0      1.1    5.1
+##  6     1         1      15     2    8.8     3      3.6    1.5    2.3
+##  7     1         1      16     1    9       2.6    0.4    0.1    0.2
+##  8     1         1      16     2    8.2     4.4    0.3    1.4    4  
+##  9     1         1      19     1    7       3.2    0      4.9    3.2
+## 10     1         1      19     2   13       0      3.1    4.3   10.3
+## # … with 686 more rows
+```
+
+---
+# Rude Recliners  data
+&lt;br&gt;&lt;br&gt;
+- data is collated from this story: [41% Of Fliers Think You're Rude If You Recline Your Seat](http://fivethirtyeight.com/datalab/airplane-etiquette-recline-seat/)
+
+- What are the variables?
+
+
+```r
+recliners &lt;- read_csv(here::here("slides/data/recliners.csv"))
+#recliners &lt;- read_csv("slides/data/recliners.csv")
+recliners
+## # A tibble: 3 × 6
+##   V1      `V2:Always` `V2:Usually` `V2:About half t… `V2:Once in a w… `V2:Never`
+##   &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;             &lt;dbl&gt;            &lt;dbl&gt;      &lt;dbl&gt;
+## 1 No, no…         124          145                82              116         35
+## 2 Yes, s…           9           27                35              129         81
+## 3 Yes, v…           3            3                NA               11         54
+```
+
+
+---
+
+# Messy vs tidy
+
+.pull-left[
+Messy data is messy in its own way. You can make unique solutions, but then another data set comes along, and you have to again make a unique solution. 
+&lt;img src="images/lego.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+Tidy data can be though of as legos. Once you have this form, you can put it together in so many different ways, to make different analyses.
+
+&lt;img src="images/lego.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Long and wide format
+
+&lt;img src="images/original-dfs-tidy.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+ Example: **.green[Wide] x = NSW, y = VIC, Z = QLD --&gt; .green[long] key = States**
+---
+# Data Tidying verbs
+&lt;br&gt;&lt;br&gt;
+- `pivot_longer`: Specify the **names_to** (.green[identifiers]) and the **values_to** (.green[measures]) to make longer form data.
+- `pivot_wider`: Variables .green[split out in columns]
+- `separate`: .green[Split one column into many]
+&lt;br&gt;
+.green[From the tidyr package -- &gt; part of the tidyverse package]
+
+---
+
+# `pivot_longer`
+&lt;br&gt;&lt;br&gt;
+```r
+pivot_longer(&lt;DATA&gt;,
+             &lt;COLS&gt;,
+             &lt;NAMES_TO&gt;
+             &lt;VALUES_TO&gt;)
+```
+
+- .green[**cols**] Columns to pivot into longer format. 
+- .green[**names_to**] is the name of the variable whose values for the column names.
+- .green[**values_to**] is the name of the variable whose values are spread over the cells.
+
+---
+# pivot_longer: example
+&lt;br&gt;&lt;br&gt;
+
+
+
+
+```r
+table4a %&gt;% 
+  pivot_longer(cols = c("1999", "2000"),
+               names_to = "year",
+               values_to = "cases")
+## # A tibble: 6 × 3
+##   country     year   cases
+##   &lt;chr&gt;       &lt;chr&gt;  &lt;int&gt;
+## 1 Afghanistan 1999     745
+## 2 Afghanistan 2000    2666
+## 3 Brazil      1999   37737
+## 4 Brazil      2000   80488
+## 5 China       1999  212258
+## 6 China       2000  213766
+```
+
+
+
+---
+# Tidy genes data
+
+.pull-left[
+
+```
+## # A tibble: 3 × 12
+##   id     `WI-6.R1` `WI-6.R2` `WI-6.R4` `WM-6.R1` `WM-6.R2` `WI-12.R1` `WI-12.R2`
+##   &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Gene 1      2.18     2.20       4.20     2.63       5.06       4.54       5.53
+## 2 Gene 2      1.46     0.585      1.86     0.515      2.88       1.36       2.96
+## 3 Gene 3      2.03     0.870      3.28     0.533      4.63       2.18       5.56
+## # … with 4 more variables: WI-12.R4 &lt;dbl&gt;, WM-12.R1 &lt;dbl&gt;, WM-12.R2 &lt;dbl&gt;,
+## #   WM-12.R4 &lt;dbl&gt;
+```
+]
+
+.pull-right[
+
+```r
+genes_long &lt;- genes %&gt;% 
+  pivot_longer(cols = -id,
+               names_to = "variable",
+               values_to = "expr")
+
+genes_long
+## # A tibble: 33 × 3
+##    id     variable  expr
+##    &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;
+##  1 Gene 1 WI-6.R1   2.18
+##  2 Gene 1 WI-6.R2   2.20
+##  3 Gene 1 WI-6.R4   4.20
+##  4 Gene 1 WM-6.R1   2.63
+##  5 Gene 1 WM-6.R2   5.06
+##  6 Gene 1 WI-12.R1  4.54
+##  7 Gene 1 WI-12.R2  5.53
+##  8 Gene 1 WI-12.R4  4.41
+##  9 Gene 1 WM-12.R1  3.85
+## 10 Gene 1 WM-12.R2  4.18
+## # … with 23 more rows
+```
+]
+---
+# Separate columns
+
+.pull-left[
+
+```
+## # A tibble: 33 × 3
+##    id     variable  expr
+##    &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;
+##  1 Gene 1 WI-6.R1   2.18
+##  2 Gene 1 WI-6.R2   2.20
+##  3 Gene 1 WI-6.R4   4.20
+##  4 Gene 1 WM-6.R1   2.63
+##  5 Gene 1 WM-6.R2   5.06
+##  6 Gene 1 WI-12.R1  4.54
+##  7 Gene 1 WI-12.R2  5.53
+##  8 Gene 1 WI-12.R4  4.41
+##  9 Gene 1 WM-12.R1  3.85
+## 10 Gene 1 WM-12.R2  4.18
+## # … with 23 more rows
+```
+]
+
+
+.pull-right[
+
+```r
+genes_long %&gt;%
+  separate(col = variable, 
+           into = c("trt",
+                    "leftover"),
+           "-")
+## # A tibble: 33 × 4
+##    id     trt   leftover  expr
+##    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;
+##  1 Gene 1 WI    6.R1      2.18
+##  2 Gene 1 WI    6.R2      2.20
+##  3 Gene 1 WI    6.R4      4.20
+##  4 Gene 1 WM    6.R1      2.63
+##  5 Gene 1 WM    6.R2      5.06
+##  6 Gene 1 WI    12.R1     4.54
+##  7 Gene 1 WI    12.R2     5.53
+##  8 Gene 1 WI    12.R4     4.41
+##  9 Gene 1 WM    12.R1     3.85
+## 10 Gene 1 WM    12.R2     4.18
+## # … with 23 more rows
+```
+]
+
+---
+# Separate columns
+
+
+
+```r
+genes_long_tidy &lt;- genes_long %&gt;%
+  separate(variable, c("trt", "leftover"), "-") %&gt;%
+  separate(leftover, c("time", "rep"), "\\.") 
+
+genes_long_tidy
+## # A tibble: 33 × 5
+##    id     trt   time  rep    expr
+##    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+##  1 Gene 1 WI    6     R1     2.18
+##  2 Gene 1 WI    6     R2     2.20
+##  3 Gene 1 WI    6     R4     4.20
+##  4 Gene 1 WM    6     R1     2.63
+##  5 Gene 1 WM    6     R2     5.06
+##  6 Gene 1 WI    12    R1     4.54
+##  7 Gene 1 WI    12    R2     5.53
+##  8 Gene 1 WI    12    R4     4.41
+##  9 Gene 1 WM    12    R1     3.85
+## 10 Gene 1 WM    12    R2     4.18
+## # … with 23 more rows
+```
+
+---
+class: transition
+# Now let's use `pivot_wider` to examine different aspects
+
+---
+# Examine treatments against each other
+&lt;br&gt;&lt;br&gt;
+.pull-left[
+
+
+```r
+head(genes_long_tidy )
+## # A tibble: 6 × 5
+##   id     trt   time  rep    expr
+##   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+## 1 Gene 1 WI    6     R1     2.18
+## 2 Gene 1 WI    6     R2     2.20
+## 3 Gene 1 WI    6     R4     4.20
+## 4 Gene 1 WM    6     R1     2.63
+## 5 Gene 1 WM    6     R2     5.06
+## 6 Gene 1 WI    12    R1     4.54
+```
+
+
+```r
+genes_long_tidy %&gt;%
+  pivot_wider(id_cols = c(id,
+                          rep,
+                          time),
+              names_from = trt, 
+              values_from = expr) 
+```
+]
+
+.pull-right[
+
+```
+## # A tibble: 18 × 5
+##    id     rep   time     WI     WM
+##    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Gene 1 R1    6     2.18   2.63 
+##  2 Gene 1 R2    6     2.20   5.06 
+##  3 Gene 1 R4    6     4.20  NA    
+##  4 Gene 1 R1    12    4.54   3.85 
+##  5 Gene 1 R2    12    5.53   4.18 
+##  6 Gene 1 R4    12    4.41   3.73 
+##  7 Gene 2 R1    6     1.46   0.515
+##  8 Gene 2 R2    6     0.585  2.88 
+##  9 Gene 2 R4    6     1.86  NA    
+## 10 Gene 2 R1    12    1.36   1.18 
+## 11 Gene 2 R2    12    2.96   1.19 
+## 12 Gene 2 R4    12    1.31   0.890
+## 13 Gene 3 R1    6     2.03   0.533
+## 14 Gene 3 R2    6     0.870  4.63 
+## 15 Gene 3 R4    6     3.28  NA    
+## 16 Gene 3 R1    12    2.18   2.54 
+## 17 Gene 3 R2    12    5.56   3.04 
+## 18 Gene 3 R4    12    2.54   1.35
+```
+Generally, some negative association within each gene, WM is low if WI is high. 
+
+]
+
+
+---
+# We can also add a plot!
+&lt;br&gt;&lt;br&gt;
+.pull-left[
+
+
+```r
+genes_long_tidy %&gt;%
+  pivot_wider(id_cols = c(id,
+                          trt,
+                          time),
+              names_from = rep, 
+              values_from = expr) %&gt;%
+  ggplot(aes(x=R1, 
+             y=R4,
+             colour=id)) + 
+  geom_point() + 
+  coord_equal()
+```
+]
+
+.pull-right[
+&lt;img src="Workshop1-Week2_files/figure-html/shoe-replicates-out-1.png" height="100%" style="display: block; margin: auto;" /&gt;
+
+Roughly, replicate 4 is like replicate 1, eg if one is low, the other is low. 
+
+That's a good thing, that the replicates are fairly similar.
+]
+
+
+
+
+
+
+---
+# Style guide
+&lt;br&gt;&lt;br&gt;
+&gt; "Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread." -- Hadley Wickham
+
+- Style guide for this course is based on the Tidyverse style guide: http://style.tidyverse.org/
+- There's more to it than what we'll cover today, we'll mention more as we introduce more functionality, and do a recap later in the semester
+
+---
+# Long lines
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+- Limit your code to 80-100 characters per line. This fits comfortably on a printed page with a reasonably sized font.
+- Take advantage of RStudio editor's auto formatting for indentation at line breaks.
+]
+
+
+---
+# File names and code chunk labels
+&lt;br&gt;&lt;br&gt;
+.content-box[
+- Do not use spaces in file names, use `-` or `_` to separate words
+- Use all lowercase letters
+]
+
+
+```r
+# Good
+ucb-admit.csv
+
+# Bad
+UCB Admit.csv
+```
+
+---
+# Object names
+&lt;br&gt;&lt;br&gt;
+
+.content-box[
+- Use `_` to separate words in object names
+- Use informative but short object names
+- Do not reuse object names within an analysis
+]
+
+
+```r
+# Good
+acs_employed
+
+# Bad
+acs.employed
+acs2
+acs_subset
+acs_subsetted_for_males
+```
+
+---
+# Spacing
+
+.content-box[
+- Put a space before and after all infix operators (=, +, -, &lt;-, etc.), and when naming arguments in function calls. 
+- Always put a space after a comma, and never before (just like in regular English).
+]
+
+
+```r
+# Good
+average &lt;- mean(feet / 12 + inches, na.rm = TRUE)
+
+# Bad
+average&lt;-mean(feet/12+inches,na.rm=TRUE)
+```
+
+---
+# ggplot recap
+
+&lt;br&gt;&lt;br&gt;
+- Always end a line with `+`
+- Always indent the next line
+
+
+```r
+ # Good
+ggplot(diamonds, mapping = aes(x = price)) +
+  geom_histogram()
+
+# Bad
+ggplot(diamonds,mapping=aes(x=price))+geom_histogram()
+```
+
+
+---
+# Assignment
+
+&lt;br&gt;&lt;br&gt;
+
+- Use `&lt;-` not `=`
+
+
+```r
+# Good
+x &lt;- 2
+
+# Bad
+x = 2
+```
+
+---
+# Quotes
+
+&lt;br&gt;&lt;br&gt;
+
+Use `"`, not `'`, for quoting text. The only exception is when the text already contains double quotes and no single quotes.
+
+
+```r
+ggplot(diamonds, mapping = aes(x = price)) +
+  geom_histogram() +
+  # Good
+  labs(title = "`Shine bright like a diamond`",
+  # Good
+       x = "Diamond prices",
+  # Bad
+       y = 'Frequency')
+```
+
+---
+background-image: url(images/allison-horst-dplyr-wrangling.png)
+background-size: contain
+background-position: 50% 50%
+class: center, bottom, white
+
+.black.large[
+Source: Artwork by @allison_horst
+]
+
+---
+# Useful functions for data wrangling
+
+&lt;br&gt;&lt;br&gt;
+.pull-left[
+- `filter()`
+- `select()`
+- `mutate()`
+- `arrange()`
+
+]
+
+.pull-right[
+- `group_by()`
+- `summarise()`
+- `count()`
+]
+
+---
+background-image: url(images/allison-horst-tidyverse-celestial.png)
+background-size: contain
+background-position: 50% 50%
+class: center, bottom, bg-black
+
+.left.white.large[
+Artwork by @allison_horst
+]
+
+---
+class: transition
+# R Packages
+
+
+```r
+avail_pkg &lt;- available.packages(contriburl = contrib.url("https://cran.rstudio.com"))
+dim(avail_pkg)
+## [1] 18082    17
+```
+
+As of 2021-08-31 there are 18082 R packages available
+
+
+---
+# Many R packages
+
+&lt;br&gt;&lt;br&gt;
+- A blessing &amp; a curse! 
+- So many packages available, it can make it hard to choose!
+- Many of the packages are designed to solve a specific problem
+- The tidyverse is designed to work with many other packages following a consistent philosophy
+- What this means is that you shouldn't notice it!
+
+&lt;br&gt;
+There can be conflicts between function names. 
+For example, there is a `filter` function in the `stats` package 
+that comes with the R distribution. 
+
+---
+
+# Name clashes
+&lt;br&gt;&lt;br&gt;
+This can cause confusion when
+you want to use the filter function in `dplyr` (part of tidyverse).
+To be sure the function you use is the one you want to use, you can
+prefix it with the package name `dplyr::filter()`.
+&lt;br&gt;
+
+
+```r
+library(tidyverse)
+```
+
+
+```r
+data &lt;- dplyr::select(variable)
+```
+.green[**::** --&gt;] Let R knows which is package that we are using (useful when dealing with functions with same names from different packages)]
+
+
+
+---
+class: transition
+
+# Let's learn dplyr with an example
+
+---
+background-image: url(images/french_fries.png)
+background-size: contain
+background-position: 50% 50%
+class: center, bottom, white
+
+
+---
+# Background on the data
+
+- This was an actual experiment in Food Sciences at Iowa State University. The goal was to find out if some cheaper oil options could be used to make hot chips: that people would not be able to distinguish the difference between chips fried in the new oils relative to those fried in the current market leader.
+
+- Twelve tasters were recruited to sample two chips from each batch, over a period of ten weeks. The same oil was kept for a period of 10 weeks! May be a bit gross by the end!
+
+- This data set was brought to R by Hadley Wickham, and was one of the problems that inspired the thinking about tidy data, and the evolution of the `tidyverse` tools. 
+
+
+---
+
+# Example: french fries
+
+&lt;br&gt;&lt;br&gt;
+.green[Experiment in Food Sciences at Iowa State University.]
+
+- .green[**Aim**]: find if cheaper oil could be used to make hot chips
+- .green[Question]: Can people distinguish between chips fried in the new oils relative to those current market leader oil?
+- 12 tasters recruited 
+- Each sampled two chips from each batch
+- Over a period of ten weeks.
+
+Same oil kept for a period of 10 weeks! 
+
+
+---
+# Example: french-fries - pivoting into long form
+
+
+```r
+french_fries &lt;- read_csv("data/french_fries.csv")
+french_fries
+```
+
+
+```
+## # A tibble: 6 × 9
+##    time treatment subject   rep potato buttery grassy rancid painty
+##   &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1     1         1       3     1    2.9     0      0      0      5.5
+## 2     1         1       3     2   14       0      0      1.1    0  
+## 3     1         1      10     1   11       6.4    0      0      0  
+## 4     1         1      10     2    9.9     5.9    2.9    2.2    0  
+## 5     1         1      15     1    1.2     0.1    0      1.1    5.1
+## 6     1         1      15     2    8.8     3      3.6    1.5    2.3
+```
+&lt;br&gt;
+This data set was brought to R by Hadley Wickham, and was one of the problems that inspired the thinking about tidy data and the plyr tools. 
+
+---
+# Example: french-fries - pivoting into long form
+
+
+```r
+fries_long &lt;- french_fries %&gt;% 
+  pivot_longer(cols = potato:painty,
+               names_to = "type", 
+               values_to = "rating") %&gt;%
+  mutate(type = as.factor(type))
+head(fries_long)
+## # A tibble: 6 × 6
+##    time treatment subject   rep type    rating
+##   &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;    &lt;dbl&gt;
+## 1     1         1       3     1 potato     2.9
+## 2     1         1       3     1 buttery    0  
+## 3     1         1       3     1 grassy     0  
+## 4     1         1       3     1 rancid     0  
+## 5     1         1       3     1 painty     5.5
+## 6     1         1       3     2 potato    14
+```
+We write .green["type"] and .green["rating"] in quotes 
+because we are creating the variables.
+---
+class: transition
+# `filter()`
+
+Choose observations (certain rows) from your data
+
+---
+# `filter()`: example
+.code[
+
+```r
+fries_long %&gt;%
+  filter(subject == 10)
+## # A tibble: 300 × 6
+##     time treatment subject   rep type    rating
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;    &lt;dbl&gt;
+##  1     1         1      10     1 potato    11  
+##  2     1         1      10     1 buttery    6.4
+##  3     1         1      10     1 grassy     0  
+##  4     1         1      10     1 rancid     0  
+##  5     1         1      10     1 painty     0  
+##  6     1         1      10     2 potato     9.9
+##  7     1         1      10     2 buttery    5.9
+##  8     1         1      10     2 grassy     2.9
+##  9     1         1      10     2 rancid     2.2
+## 10     1         1      10     2 painty     0  
+## # … with 290 more rows
+```
+]
+
+
+---
+# `filter()`: details
+&lt;br&gt;&lt;br&gt;
+Filtering requires comparison to find the subset of observations of interest.  What do you think the following mean?
+
+- `subject != 10` 
+- `x &gt; 10` 
+- `x &gt;= 10` 
+- `class %in% c("A", "B")` 
+- `!is.na(y)`
+
+
+
+---
+# `filter()`: details
+
+`subject != 10`
+
+Find rows corresponding to all subjects except subject 10
+
+ `x &gt; 10` 
+
+
+find all rows where variable `x` has values bigger than 10
+
+`x &gt;= 10` 
+
+
+ finds all rows variable `x` is greater than or equal to 10.
+
+`class %in% c("A", "B")`
+
+
+ finds all rows where variable `class` is either A or B
+
+`!is.na(y)` 
+
+
+finds all rows that *DO NOT* have a missing value for variable `y`
+
+
+
+---
+class: transition
+
+&lt;br&gt;&lt;br&gt;
+
+# The operator `%in%` is very useful to select different things at the same time!
+
+
+
+---
+# `select()`
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- Chooses which variables to keep in the data set. 
+- Useful when there are many variables but you only need some of them for an analysis. 
+]
+
+---
+# `select()` 
+
+&lt;br&gt;&lt;br&gt;
+
+We need to provide a comma separated list of variables, by .green[name].
+
+```r
+french_fries %&gt;% 
+  select(time, 
+         treatment, 
+         subject)
+## # A tibble: 696 × 3
+##     time treatment subject
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1     1         1       3
+##  2     1         1       3
+##  3     1         1      10
+##  4     1         1      10
+##  5     1         1      15
+##  6     1         1      15
+##  7     1         1      16
+##  8     1         1      16
+##  9     1         1      19
+## 10     1         1      19
+## # … with 686 more rows
+```
+
+---
+# `select()`: **drop** selected variables by prefixing with `-`
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+french_fries %&gt;% 
+  select(-time, 
+         -treatment, 
+         -subject)
+## # A tibble: 696 × 6
+##      rep potato buttery grassy rancid painty
+##    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1    2.9     0      0      0      5.5
+##  2     2   14       0      0      1.1    0  
+##  3     1   11       6.4    0      0      0  
+##  4     2    9.9     5.9    2.9    2.2    0  
+##  5     1    1.2     0.1    0      1.1    5.1
+##  6     2    8.8     3      3.6    1.5    2.3
+##  7     1    9       2.6    0.4    0.1    0.2
+##  8     2    8.2     4.4    0.3    1.4    4  
+##  9     1    7       3.2    0      4.9    3.2
+## 10     2   13       0      3.1    4.3   10.3
+## # … with 686 more rows
+```
+
+---
+# `select()`
+&lt;br&gt;&lt;br&gt;
+.left-code[
+Inside `select()` you can use text-matching of the names like:
+
+- `starts_with()`, 
+- `ends_with()`,
+- `contains()`, 
+- `matches()`, or 
+- `everything()`
+]
+
+
+.right-plot[
+
+```r
+french_fries %&gt;% 
+  select(contains("e"))
+## # A tibble: 696 × 5
+##     time treatment subject   rep buttery
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+##  1     1         1       3     1     0  
+##  2     1         1       3     2     0  
+##  3     1         1      10     1     6.4
+##  4     1         1      10     2     5.9
+##  5     1         1      15     1     0.1
+##  6     1         1      15     2     3  
+##  7     1         1      16     1     2.6
+##  8     1         1      16     2     4.4
+##  9     1         1      19     1     3.2
+## 10     1         1      19     2     0  
+## # … with 686 more rows
+```
+]
+
+---
+# `select()`: Using it
+
+.left-code[
+You can use the colon, `:`, to choose variables in order of the columns
+]
+
+
+.right-plot[
+
+```r
+french_fries %&gt;% 
+  select(time:subject)
+## # A tibble: 696 × 3
+##     time treatment subject
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1     1         1       3
+##  2     1         1       3
+##  3     1         1      10
+##  4     1         1      10
+##  5     1         1      15
+##  6     1         1      15
+##  7     1         1      16
+##  8     1         1      16
+##  9     1         1      19
+## 10     1         1      19
+## # … with 686 more rows
+```
+]
+
+---
+class: transition
+# Back to the french fries data
+
+- `select()` time, treatment and rep
+- `select()` subject through to rating
+- drop subject
+
+
+
+```r
+fries_long %&gt;% select(time,
+                      treatment,
+                      rep)
+
+```
+
+
+```r
+fries_long %&gt;%
+  select(subject:rating)
+```
+
+
+
+```r
+fries_long %&gt;%
+  select(-subject)
+```
+
+---
+background-image: url(images/allison-horst-dplyr-mutate.png)
+background-size: contain
+background-position: 50% 50%
+class: center, bottom, white
+
+.purple.large.right[
+Artwork by @allison_horst
+]
+
+---
+# `mutate()`: create a new variable; keep existing ones
+
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+french_fries 
+## # A tibble: 696 × 9
+##     time treatment subject   rep potato buttery grassy rancid painty
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1         1       3     1    2.9     0      0      0      5.5
+##  2     1         1       3     2   14       0      0      1.1    0  
+##  3     1         1      10     1   11       6.4    0      0      0  
+##  4     1         1      10     2    9.9     5.9    2.9    2.2    0  
+##  5     1         1      15     1    1.2     0.1    0      1.1    5.1
+##  6     1         1      15     2    8.8     3      3.6    1.5    2.3
+##  7     1         1      16     1    9       2.6    0.4    0.1    0.2
+##  8     1         1      16     2    8.2     4.4    0.3    1.4    4  
+##  9     1         1      19     1    7       3.2    0      4.9    3.2
+## 10     1         1      19     2   13       0      3.1    4.3   10.3
+## # … with 686 more rows
+```
+
+---
+# `mutate()`: create a new variable; keep existing ones
+
+&lt;br&gt;&lt;br&gt;
+
+```r
+french_fries %&gt;% 
+* mutate(rainty = rancid + painty)
+## # A tibble: 696 × 10
+##     time treatment subject   rep potato buttery grassy rancid painty rainty
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1         1       3     1    2.9     0      0      0      5.5    5.5
+##  2     1         1       3     2   14       0      0      1.1    0      1.1
+##  3     1         1      10     1   11       6.4    0      0      0      0  
+##  4     1         1      10     2    9.9     5.9    2.9    2.2    0      2.2
+##  5     1         1      15     1    1.2     0.1    0      1.1    5.1    6.2
+##  6     1         1      15     2    8.8     3      3.6    1.5    2.3    3.8
+##  7     1         1      16     1    9       2.6    0.4    0.1    0.2    0.3
+##  8     1         1      16     2    8.2     4.4    0.3    1.4    4      5.4
+##  9     1         1      19     1    7       3.2    0      4.9    3.2    8.1
+## 10     1         1      19     2   13       0      3.1    4.3   10.3   14.6
+## # … with 686 more rows
+```
+
+---
+class: transition
+&lt;br&gt;&lt;br&gt;
+# French fries
+
+Compute a new variable called `lrating` by taking a log of the rating
+
+
+```r
+fries_long %&gt;%
+  mutate(lrating=log10(rating)) %&gt;%
+  head()
+## # A tibble: 6 × 7
+##    time treatment subject   rep type    rating  lrating
+##   &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1     1         1       3     1 potato     2.9    0.462
+## 2     1         1       3     1 buttery    0   -Inf    
+## 3     1         1       3     1 grassy     0   -Inf    
+## 4     1         1       3     1 rancid     0   -Inf    
+## 5     1         1       3     1 painty     5.5    0.740
+## 6     1         1       3     2 potato    14      1.15
+```
+
+---
+# `summarise()`: boil data down to one row observation 
+&lt;br&gt;&lt;br&gt;
+
+
+
+```r
+head(fries_long)
+## # A tibble: 6 × 6
+##    time treatment subject   rep type    rating
+##   &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;    &lt;dbl&gt;
+## 1     1         1       3     1 potato     2.9
+## 2     1         1       3     1 buttery    0  
+## 3     1         1       3     1 grassy     0  
+## 4     1         1       3     1 rancid     0  
+## 5     1         1       3     1 painty     5.5
+## 6     1         1       3     2 potato    14
+```
+
+---
+# `summarise()`: boil data down to one row observation 
+
+&lt;br&gt;&lt;br&gt;
+
+```r
+fries_long %&gt;% 
+  summarise(rating = mean(rating, na.rm = TRUE))
+## # A tibble: 1 × 1
+##   rating
+##    &lt;dbl&gt;
+## 1   3.16
+```
+
+---
+class: transition
+# What if we want a summary for each `type`?
+
+use `group_by()`
+
+---
+# Using `summarise()` + `group_by()`
+
+Produce summaries for every group:
+
+
+```r
+fries_long %&gt;% 
+  group_by(type) %&gt;%
+  summarise(rating = mean(rating, na.rm=TRUE))
+## # A tibble: 5 × 2
+##   type    rating
+##   &lt;fct&gt;    &lt;dbl&gt;
+## 1 buttery  1.82 
+## 2 grassy   0.664
+## 3 painty   2.52 
+## 4 potato   6.95 
+## 5 rancid   3.85
+```
+
+---
+class: transition
+# Let's practice
+
+- Compute the average rating by subject
+
+
+```r
+fries_long %&gt;% 
+  group_by(subject) %&gt;%
+  summarise(rating = mean(rating, na.rm=TRUE))
+## # A tibble: 12 × 2
+##    subject rating
+##      &lt;dbl&gt;  &lt;dbl&gt;
+##  1       3   2.46
+##  2      10   4.24
+##  3      15   2.16
+##  4      16   3.00
+##  5      19   4.54
+##  6      31   4.00
+##  7      51   4.39
+##  8      52   2.72
+##  9      63   3.48
+## 10      78   1.94
+## 11      79   1.94
+## 12      86   2.94
+```
+
+
+---
+# Another example
+
+.pull-left[
+- Compute the average rancid rating per week
+]
+
+
+```r
+fries_long %&gt;% 
+  filter(type == "rancid") %&gt;%
+  group_by(time) %&gt;%
+  summarise(rating = mean(rating, na.rm=TRUE))
+## # A tibble: 10 × 2
+##     time rating
+##    &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1   2.36
+##  2     2   2.85
+##  3     3   3.72
+##  4     4   3.60
+##  5     5   3.53
+##  6     6   4.08
+##  7     7   3.89
+##  8     8   4.27
+##  9     9   4.67
+## 10    10   6.07
+```
+
+---
+# `arrange()`: orders data by a given variable. 
+
+--
+
+Useful for display of results (but there are other uses!)
+
+
+```r
+fries_long %&gt;% 
+  group_by(type) %&gt;%
+  summarise(rating = mean(rating, na.rm=TRUE)) 
+## # A tibble: 5 × 2
+##   type    rating
+##   &lt;fct&gt;    &lt;dbl&gt;
+## 1 buttery  1.82 
+## 2 grassy   0.664
+## 3 painty   2.52 
+## 4 potato   6.95 
+## 5 rancid   3.85
+```
+
+---
+# `arrange()`
+
+
+```r
+fries_long %&gt;% 
+  group_by(type) %&gt;%
+  summarise(rating = mean(rating, na.rm=TRUE)) %&gt;%
+  arrange(rating)
+## # A tibble: 5 × 2
+##   type    rating
+##   &lt;fct&gt;    &lt;dbl&gt;
+## 1 grassy   0.664
+## 2 buttery  1.82 
+## 3 painty   2.52 
+## 4 rancid   3.85 
+## 5 potato   6.95
+```
+
+---
+class: transition
+# Your turn: french-fries.Rmd - arrange
+
+- Arrange the average rating by type in decreasing order
+
+
+```r
+fries_long %&gt;% 
+  group_by(type) %&gt;%
+  summarise(rating = mean(rating, na.rm=TRUE)) %&gt;%
+  arrange(desc(rating))
+## # A tibble: 5 × 2
+##   type    rating
+##   &lt;fct&gt;    &lt;dbl&gt;
+## 1 potato   6.95 
+## 2 rancid   3.85 
+## 3 painty   2.52 
+## 4 buttery  1.82 
+## 5 grassy   0.664
+```
+
+---
+# `arrange()` answers
+
+- Arrange the average subject rating in order lowest to highest.
+
+
+```r
+fries_long %&gt;% 
+  group_by(subject) %&gt;%
+  summarise(rating = mean(rating, na.rm=TRUE)) %&gt;%
+  arrange(rating)
+## # A tibble: 12 × 2
+##    subject rating
+##      &lt;dbl&gt;  &lt;dbl&gt;
+##  1      78   1.94
+##  2      79   1.94
+##  3      15   2.16
+##  4       3   2.46
+##  5      52   2.72
+##  6      86   2.94
+##  7      16   3.00
+##  8      63   3.48
+##  9      31   4.00
+## 10      10   4.24
+## 11      51   4.39
+## 12      19   4.54
+```
+]
+
+
+---
+# `count()` 
+
+The number of elements in groups of a given column
+
+
+```r
+fries_long %&gt;% 
+  count(type, sort = TRUE)
+## # A tibble: 5 × 2
+##   type        n
+##   &lt;fct&gt;   &lt;int&gt;
+## 1 buttery   696
+## 2 grassy    696
+## 3 painty    696
+## 4 potato    696
+## 5 rancid    696
+```
+
+
+---
+class: transition
+# French Fries: Putting it together to problem solve
+
+---
+# French Fries: Are ratings similar?
+
+.pull-left[
+
+```r
+fries_long %&gt;% 
+  group_by(type) %&gt;%
+  summarise(
+    m = mean(rating, 
+             na.rm = TRUE), 
+    sd = sd(rating, 
+            na.rm = TRUE)) %&gt;%
+  arrange(-m)
+## # A tibble: 5 × 3
+##   type        m    sd
+##   &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1 potato  6.95   3.58
+## 2 rancid  3.85   3.78
+## 3 painty  2.52   3.39
+## 4 buttery 1.82   2.41
+## 5 grassy  0.664  1.32
+```
+]
+
+--
+
+.pull-right[
+
+The scales of the ratings are quite different. Mostly the chips are rated highly on potato's, but low on grassy. 
+
+]
+
+---
+# French Fries: Are ratings similar?
+
+
+```r
+ggplot(fries_long,
+       aes(x = type, 
+           y = rating)) +
+  geom_boxplot()
+```
+
+&lt;img src="Workshop1-Week2_files/figure-html/plot-fries-type-rating -1.png" style="display: block; margin: auto;" /&gt;
+.green[Box plot or boxplot] is a five summary data visualization that provides information about the distribution of the data. .green[25th quantile, Median, 75th quantile]
+
+
+---
+# French Fries: Are reps like each other?
+&lt;br&gt;&lt;br&gt;
+
+```r
+fries_spread &lt;- fries_long %&gt;% 
+  pivot_wider(names_from = rep, 
+              values_from = rating)
+  
+fries_spread
+## # A tibble: 1,740 × 6
+##     time treatment subject type      `1`   `2`
+##    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt;
+##  1     1         1       3 potato    2.9  14  
+##  2     1         1       3 buttery   0     0  
+##  3     1         1       3 grassy    0     0  
+##  4     1         1       3 rancid    0     1.1
+##  5     1         1       3 painty    5.5   0  
+##  6     1         1      10 potato   11     9.9
+##  7     1         1      10 buttery   6.4   5.9
+##  8     1         1      10 grassy    0     2.9
+##  9     1         1      10 rancid    0     2.2
+## 10     1         1      10 painty    0     0  
+## # … with 1,730 more rows
+```
+
+---
+# French Fries: Are reps like each other?
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+summarise(fries_spread,
+          r = cor(`1`, `2`, use = "complete.obs"))
+## # A tibble: 1 × 1
+##       r
+##   &lt;dbl&gt;
+## 1 0.668
+```
+.green[Correlation] is measure of similarity (you will learn more about it in other units!)
+Correlation takes values between -1 and 1.
+---
+# French Fries
+
+
+```r
+  ggplot(fries_spread,
+         aes(x = `1`, 
+             y = `2`)) + 
+  geom_point() + 
+  labs(title = "Data is poor quality: the replicates do not look like each other!")
+```
+
+&lt;img src="Workshop1-Week2_files/figure-html/fries-spread-plot-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# French Fries: Replicates by rating type
+&lt;br&gt;&lt;br&gt;
+
+```r
+fries_spread %&gt;%
+  group_by(type) %&gt;%
+  summarise(r = cor(x = `1`, 
+                    y = `2`, 
+                    use = "complete.obs"))
+## # A tibble: 5 × 2
+##   type        r
+##   &lt;fct&gt;   &lt;dbl&gt;
+## 1 buttery 0.650
+## 2 grassy  0.239
+## 3 painty  0.479
+## 4 potato  0.616
+## 5 rancid  0.391
+```
+.green[Correlation] is measure of similarity (you will learn more about it in other units!)
+
+---
+
+# French Fries: Replicates by rating type
+
+
+```r
+ggplot(fries_spread, aes(x=`1`, y=`2`)) + 
+  geom_point() +
+  facet_wrap(~type, ncol = 5)
+```
+
+&lt;img src="Workshop1-Week2_files/figure-html/plot-fries-facet-type-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+Potato and buttery have better replication than the other scales,
+but there is still a lot of variation from rep 1 to 2.
+
+
+
+
+---
+  
+
+&lt;img src="images/horst_tidy.jpg" width="50%" style="display: block; margin: auto;" /&gt;
+
+Source: A drawing made by Alison Horst [@allison_horst](https://twitter.com/allison_horst?lang=en) 
+
+---
+# First assignment
+
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- I will release the first assignment on Moodle this Friday
+- You will have two weeks to work on it
+- All the details will be posted on Moodle
+- We will talk about it next week on Monday!
+]
+
+---
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;&lt;br&gt;
+
+
+
+.bottom_abs.width100[
+
+Lecturer: Patricia Menéndez
+
+Department of Econometrics and Business Statistics&lt;br&gt;
+
+
+
+
+
+]
+
+&lt;br /&gt;
+This work is licensed under a &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License&lt;/a&gt;.
+
+&lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;&lt;img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /&gt;&lt;/a&gt;
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;margin-left:3px;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

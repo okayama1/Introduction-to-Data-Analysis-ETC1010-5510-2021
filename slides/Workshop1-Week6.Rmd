@@ -1,0 +1,1274 @@
+---
+title: "ETC1010 - 5510: Introduction to Data Analysis"
+week: "Week 6"
+subtitle: "Web Scraping, Projects and Intro to Functions"
+author: "Patricia Menéndez"
+pdflink: ""
+bgimg: "images/daniel-olah-pCcGpVsOHoo-unsplash.jpg"
+output:
+  xaringan::moon_reader:
+    css:
+      - ninjutsu 
+      - "assets/animate.css"
+      - "assets/monash-logo.css"
+      - "assets/monash-brand.css"
+      - "assets/monash-fonts.css"
+      - "assets/styles.css" # small improvements
+      - "assets/custom.css" # add your own CSS here!
+    self_contained: false 
+    seal: false 
+    chakra: 'libs/remark-latest.min.js'
+    lib_dir: libs
+    includes:
+      in_header: "assets/custom.html"
+    mathjax: "assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    nature:
+      highlightStyle: github 
+      highlightLanguage: r 
+      highlightLines: true
+      highlightSpans: false 
+      countIncrementalSlides: false
+      slideNumberFormat: '%current%/%total%'
+      navigation:
+        scroll: false 
+        touch: true
+        click: false
+      ratio: '16:9'
+---
+
+```{r titleslide, child="components/titleslide.Rmd"}
+```
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(polite)
+library(rvest)
+opts_chunk$set(echo = TRUE,   
+               message = FALSE,
+               warning = FALSE,
+               collapse = TRUE,
+               fig.height = 4,
+               fig.width = 8,
+               fig.align = "center",
+               cache = FALSE)
+
+as_table <- function(...) knitr::kable(..., format='html', digits = 3)
+```
+
+
+
+---
+# Questions/Comments/Suggestions
+
+```{r out.width = '80%', echo = FALSE}
+include_graphics("images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg")
+```
+ Photo: Rhythm Goyal for  Unsplash.
+---
+# Recap: Week 5
+<br><br>
+-  What even are missing values?
+
+- How to start looking at missing data?
+
+- How to start exploring missing data?
+
+- How to impute (fill in) Missing values?
+
+- Different file formats
+    - Audio / binary
+
+
+
+
+
+
+---
+
+# Week 6: Outline
+<br><br>
+- Web scraping
+- Intro to using functions
+- File paths and Rstudio projects (please read)
+- Organizing your own folders (please read)
+
+
+---
+# Mid-semester assessment
+<br><br>
+.content-box-neutral[
+- Moodle quiz with 15 question --> Under Assessments in Moodle
+- Rstudio Cloud project open for you just in case you need to use it
+- Two versions: ETC1010 and ETC5510
+- 45 minutes to complete it once you open it
+- Task will be open 24hrs: Wed, 14 April 1pm to Thursday, 15 1pm
+]
+
+Solutions for assignment 1 release today in Moodle (Assessments)
+---
+# Project?
+<br><br>
+- **Groups will be release at the end of your tutorial this week**
+- **By the end of Week 8** you must select your data sets
+- And you should have the questions  that you want to answer in your project ready.
+- Note: Data from Kaggle is **not** valid, you must choose a data from a known and trust worthy source. 
+- You cannot use data that you have used in other units
+
+---
+# In Moodle April 30, 5pm (10%)
+<br><br>
+Each team member will need to submit the same document containing:
+
+.content-box-neutral[
+- The team's name
+
+- One page describing the project data (providing url of where the data is going to be extracted from)
+
+- The tentative questions that the team aims at answering in the project.
+
+- **Report team members that do not contribute**
+]
+
+---
+# Scraping the web: what? why?
+<br><br>
+- Increasing amount of data is available on the web.
+- These data are provided in an unstructured format: you can always copy&paste, but it's
+time-consuming and prone to errors.
+- Web scraping is the process of extracting this information automatically and transform it into
+a structured dataset.
+
+---
+# Scraping the web: what? why?
+
+<br><br>
+.content-box-neutral[
+1. Screen scraping: extract data from source code of website, with html parser (easy) or regular expression matching (less easy).
+2. Web APIs (application programming interface): website offers a set of structured http  requests that return JSON or XML files.
+]
+
+ Why R? It includes all tools necessary to do web scraping, familiarity, direct analysis of data... But python, perl, java are also efficient tools.
+
+---
+class: transition
+# Web Scraping with `rvest` and `polite`
+
+---
+# Hypertext Markup Language (HTML)
+<br><br>
+Most of the data on the web is still largely available as HTML - while it is structured (hierarchical / tree based) it often is not available in a form useful for analysis (flat / tidy).
+
+<br>
+```html
+<html>
+  <head>
+    <title>This is a title</title>
+  </head>
+  <body>
+    <p align="center">Hello world!</p>
+  </body>
+</html>
+```
+
+---
+# What if we want to extract parts of this text out?
+<br><br>
+```html
+<html>
+  <head>
+    <title>This is a title</title>
+  </head>
+  <body>
+    <p align="center">Hello world!</p>
+  </body>
+</html>
+```
+
+
+- `read_html()`: read HTML in (like `read_csv` and co!)
+
+- `html_nodes()`: select specified nodes from the HTML document using CSS selectors.
+
+- [CSS selectors](https://www.w3schools.com/cssref/css_selectors.asp)
+
+---
+# Let's read it in with `read_html`
+<br>
+```{r read-html}
+example <- read_html("data/example.html")
+# example <- read_html(here::here("slides/data/example.html"))
+example
+```
+
+- We have two parts - head and body - which makes sense:
+
+```html
+<html>
+  <head>
+    <title>This is a title</title>
+  </head>
+  <body>
+    <p align="center">Hello world!</p>
+  </body>
+</html>
+```
+
+
+
+---
+# Now let's get the title
+
+```{r read-html-title}
+example %>%
+  html_nodes("title")
+```
+
+## Webpage example:
+<br>
+```html
+<html>
+  <head>
+    <title>This is a title</title>
+  </head>
+  <body>
+    <p align="center">Hello world!</p>
+  </body>
+</html>
+```
+
+
+---
+# Now let's get the paragraph text
+
+```{r read-html-para}
+example %>%
+  html_nodes("p")
+```
+
+
+```html
+<html>
+  <head>
+    <title>This is a title</title>
+  </head>
+  <body>
+    <p align="center">Hello world!</p>
+  </body>
+</html>
+```
+
+
+---
+# Functions to read and select parts of html files
+<br><br>
+
+- `read_html` - read in a html file
+- `html_nodes` - select the parts of the html file we want to look at
+    - This requires knowing about the website structure
+    - But it turns out website are much...much more complicated than out little example file
+
+---
+class: transition
+# rvest + polite (R packages)
+<br><br>
+Simplify processing and manipulating HTML data
+
+- `bow()` - check if the data can be scraped appropriately
+- `scrape()` - scrape website data (with nice defaults)
+- `html_nodes()` - select specified nodes from the HTML document using CSS selectors.
+- `html_table()` - parse an HTML table into a data frame.
+- `html_text()` - extract tag pairs' content.
+
+---
+# SelectorGadget: css selectors
+<br><br>
+- We can use  a tool called .purple[selector gadget] to **help** identify the html elements of interest in a website.
+- It does this .green[by constructing a css selector] which can be used to .green[subset the html document].
+
+---
+# SelectorGadget: css selectors
+<br><br>
+.small[
+Selector          |  Example         |     Description
+------------      |------------------|      ------------------------------------------------
+element           |  `p`             |      Select all &lt;p&gt; elements
+element element   |  `div p`         |      Select all &lt;p&gt; elements inside a &lt;div&gt; element
+element>element   |  `div > p`       |      Select all &lt;p&gt; elements with &lt;div&gt; as a parent
+.class            |  `.title`        |      Select all elements with class="title"
+\#id              |  `.name`         |      Select all elements with id="name"
+[attribute]       |  `[class]`       |      Select all elements with a class attribute
+[attribute=value] |  `[class=title]` |      Select all elements with class="title"
+]
+
+---
+# SelectorGadget
+<br><br>
+- SelectorGadget: Open source tool that eases CSS selector generation and discovery
+- Install the [Chrome Extension](https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb)
+.content-box-neutral[.small[
+- A box will open in the bottom right of the website. Click on a page element
+that you would like your selector to match (it will turn green). SelectorGadget
+will then generate a minimal CSS selector for that element, and will highlight
+(yellow) everything that is
+matched by the selector.
+- Now click on a highlighted element to remove it from the selector (red), or
+click on an unhighlighted element to add it to the selector. Through this process
+of selection and rejection, SelectorGadget helps you come up with the appropriate
+CSS selector for your needs.
+]]
+
+
+---
+# Top 250 movies on IMDB
+<br>
+Take a look at the source code, look for the tag `table` tag:
+<br>
+http://www.imdb.com/chart/top
+
+
+```{r show-imdb-top-img, echo = FALSE, out.width = "80%"}
+include_graphics("images/imdb_top_250.png")
+```
+
+
+---
+# First check to make sure you're allowed!
+<br><br>
+```{r show-robots-text, warning=FALSE}
+# install.packages("polite")
+library(polite)
+bow("http://www.imdb.com")
+```
+
+
+```{r show-paths-allowed, warning=FALSE}
+bow("http://www.google.com")
+```
+
+
+
+---
+class: transition
+# Demo
+<br><br>
+Let's go to http://www.imdb.com/chart/top
+
+---
+# Bow and scrape
+<br><br>
+```{r imdb-bow-scrape}
+imdb_session <- bow("http://www.imdb.com/chart/top")
+
+imdb_session
+
+imdb_data <- scrape(imdb_session)
+
+imdb_data
+```
+
+
+---
+# Select and format pieces: titles - `html_nodes()`
+<br><br>
+```{r rvest-titles-nodes, message=FALSE}
+library(rvest)
+imdb_data %>%
+  html_nodes(".titleColumn a") %>%
+  head()
+```
+
+
+---
+# Select and format pieces: titles - `html_text() `
+<br><br>
+```{r rvest-titles-text, message=FALSE}
+imdb_data %>%
+  html_nodes(".titleColumn a") %>%
+  html_text() %>%
+  head()
+```
+
+---
+# Select and format pieces: save it
+<br><br>
+```{r rvest-titles-text-save, message=FALSE}
+titles <- imdb_data %>%
+  html_nodes(".titleColumn a") %>%
+  html_text() %>%
+  head()
+```
+
+---
+# Select and format pieces: years - nodes
+<br><br>
+```{r rvest-year-nodes, message=FALSE}
+imdb_data %>%
+  html_nodes(".secondaryInfo") %>%
+  head()
+```
+
+---
+# Select and format pieces: years - text
+<br><br>
+```{r rvest-years-text, message=FALSE}
+imdb_data %>%
+  html_nodes(".secondaryInfo") %>%
+  html_text() %>%
+  head()
+```
+
+---
+# Select and format pieces: years - remove-brackets
+<br><br>
+```{r rvest-years-str-years, message=FALSE}
+imdb_data %>%
+  html_nodes(".secondaryInfo") %>%
+  html_text() %>%
+  str_remove("\\(") %>% # remove (
+  str_remove("\\)") %>% # remove )
+  as.numeric() %>%
+  head()
+
+```
+
+---
+# Select and format pieces: years - `parse_number()`
+<br><br>
+```{r rvest-years-str-yearsparse, message=FALSE}
+imdb_data %>%
+  html_nodes(".secondaryInfo") %>%
+  html_text() %>%
+  parse_number() %>%
+  head()
+
+```
+
+---
+# Select and format pieces: years - remove-brackets
+<br><br>
+```{r rvest-years-str-remove, message=FALSE}
+years <- imdb_data %>%
+  html_nodes(".secondaryInfo") %>%
+  html_text() %>%
+  str_remove("\\(") %>% # remove (
+  str_remove("\\)") %>% # remove )
+  as.numeric() %>%
+  head()
+
+```
+
+---
+# Select and format pieces: scores - nodes
+<br><br>
+```{r rvest-scores-nodes, message=FALSE}
+imdb_data %>%
+  html_nodes(".imdbRating strong") %>%
+  head()
+
+```
+---
+# Select and format pieces: scores - text
+<br><br>
+```{r rvest-scores-nodes-text, message=FALSE}
+imdb_data %>%
+  html_nodes(".imdbRating strong") %>%
+  html_text() %>%
+  head()
+
+```
+---
+# Select and format pieces: scores - as-numeric
+<br><br>
+```{r rvest-scores-nodes-as-numeric, message=FALSE}
+imdb_data %>%
+  html_nodes(".imdbRating strong") %>%
+  html_text() %>%
+  as.numeric() %>%
+  head()
+
+```
+
+---
+# Select and format pieces: scores - save
+<br><br>
+```{r rvest-scores-nodes-save, message=FALSE}
+scores <- imdb_data %>%
+  html_nodes(".imdbRating strong") %>%
+  html_text() %>%
+  as.numeric() %>%
+  head()
+
+```
+
+---
+# Select and format pieces: put it all together
+<br><br>
+```{r rvest-all-together, message=FALSE}
+imdb_top_250 <- tibble(title = titles,
+                       year = years,
+                       score = scores)
+
+head(imdb_top_250)
+```
+
+
+---
+
+```{r print-top-table, echo=FALSE, results='asis'}
+imdb_top_250 %>% head(9) %>% rbind(rep("...", 3)) %>% kable(format = "html")
+```
+
+---
+# Aside: Yet another approach - pull the table with `html_table()`
+<br>
+- requires notation we haven't used yet (e.g., what is `[[]]`)
+- requires substantial text cleaning
+- If there is time we can cover this at the end of class
+
+```{r extract-table}
+imdb_table <- html_table(imdb_data)
+
+glimpse(imdb_table[[1]])
+```
+
+---
+# Clean up / enhance
+
+<br><br>
+May or may not be a lot of work depending on how messy the data are
+
+- See if you like what you got:
+
+```{r glimpse-imdb}
+glimpse(imdb_top_250)
+```
+
+---
+# Clean up / enhance
+<br><br>
+- Add a variable for rank
+
+```{r add-rank}
+imdb_top_250 %>%
+  mutate(
+    rank = 1:nrow(imdb_top_250)
+  )
+```
+
+---
+
+```{r show-table-again, echo=FALSE, results='asis'}
+imdb_top_250 %>%
+  mutate(
+    rank = 1:nrow(imdb_top_250)
+  ) %>% head(9) %>% rbind(rep("...", 3)) %>% kable(format = "html")
+```
+
+
+
+---
+# Other common formats: JSON
+<br><br>
+
+- JavaScript Object Notation (JSON).
+- A language-independent data format, and supplants extensible markup language (XML).
+- Data are sometimes stored as JSON, which requires special unpacking
+
+---
+# Unpacking JSON: Example JSON from [jsonlite](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html)
+
+.pull-left[
+```{r json-example}
+library(jsonlite)
+json_mario <- '[
+  {
+    "Name": "Mario",
+    "Age": 32,
+    "Occupation": "Plumber"
+  },
+  {
+    "Name": "Peach",
+    "Age": 21,
+    "Occupation": "Princess"
+  },
+  {},
+  {
+    "Name": "Bowser",
+    "Occupation": "Koopa"
+  }
+]'
+```
+]
+
+.pull-right[
+```{r example-convert-JSON}
+mydf <- fromJSON(json_mario)
+mydf
+```
+
+]
+
+---
+# Potential challenges with web scraping
+<br><br>
+.content-box-neutral[
+- Unreliable formatting at the source
+- Data broken into many pages
+- Data arriving in multiple excel file formats
+- We will come back to this after we learn about functions in today's class!
+]
+
+> Compare the display of information at [gumtree melbourne](https://www.gumtree.com.au/s-monash/l3001600) to the list on the IMDB top 250 list. What challenges can you foresee in scraping a list of the available apartments?
+]
+
+
+---
+# Further exploring
+<br><br>
+People write R packages to access online data! Check out:
+
+- [cricinfo by Sayani Gupta and Rob Hyndman](https://docs.ropensci.org/cricketdata/)
+- [rwalkr by Earo Wang](https://github.com/earowang/rwalkr)
+- [fitzRoy for AFL data](https://github.com/jimmyday12/fitzRoy/)
+- [Top 40 lists of R packages by Joe Rickert](https://rviews.rstudio.com/2019/07/24/june-2019-top-40-r-packages/) - they usually include a "data" section.
+
+
+
+
+---
+class: transition
+
+# Motivating Functions
+
+---
+# Functions
+<br><br>
+```{r}
+sumation <- function(data){
+  
+  result = sum(data)
+  result
+}
+
+sumation(data = c(1,2)) 
+sumation(data = c(1,2,3)) 
+```
+<br>
+
+[An intro to functions](https://r4ds.had.co.nz/functions.html)
+
+
+---
+#  Why functions?
+
+- .green[Automate common tasks] in a power powerful and general way than copy-and-pasting:
+.content-box-neutral[
+    - You can give a function an evocative name that makes your code easier to understand.
+    - As requirements change, you only need to update code in one place, instead of many.
+    - You eliminate the chance of making incidental mistakes when you copy and paste (i.e. updating a variable name in one place, but not in another).
+]
+
+
+- Down the line: .green[Improve your reach as a data scientist by writing functions (and packages!) that others can use!]
+
+
+---
+# Remember web scraping?
+
+```{r show-st-poster, echo = FALSE, out.width = "40%"}
+include_graphics("https://m.media-amazon.com/images/M/MV5BZGExYjQzNTQtNGNhMi00YmY1LTlhY2MtMTRjODg3MjU4YTAyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg")
+```
+
+---
+# Setup: Tv series
+
+<br><br>
+```{r mbow-scrape-all}
+library(tidyverse)
+library(rvest)
+library(polite)
+
+st <- bow("http://www.imdb.com/title/tt4574334/") %>% scrape()
+
+twd <- bow("http://www.imdb.com/title/tt1520211/") %>% scrape()
+
+got <- bow("http://www.imdb.com/title/tt0944947/") %>% scrape()
+```
+
+---
+# How many episodes in Stranger Things?
+<br><br>
+```{r st-episode-count}
+st_episode <- 
+  bow("https://www.imdb.com/title/tt4574334/") %>%
+  scrape() %>%
+  html_nodes(".np_right_arrow .bp_sub_heading") %>%
+  html_text() %>%
+  str_remove(" episodes") %>%
+  as.numeric()
+
+st_episode
+```
+
+---
+# How many episodes in Stranger Things? And Mindhunter? 
+
+```{r mh-scrape}
+st_episode <- bow("https://www.imdb.com/title/tt4574334/") %>%
+  scrape() %>%
+  html_nodes(".np_right_arrow .bp_sub_heading") %>%
+  html_text() %>%
+  str_remove(" episodes") %>%
+  as.numeric()
+st_episode
+
+mh_episodes <- bow("https://www.imdb.com/title/tt4574334/") %>%
+  scrape() %>%
+  html_nodes(".np_right_arrow .bp_sub_heading") %>%
+  html_text() %>%
+  str_remove(" episodes") %>%
+  as.numeric()
+mh_episodes
+```
+
+
+
+---
+# When should you write a function?
+<br><br>
+.content-box-neutral[
+- Whenever you’ve copied and pasted a block of code more than twice.
+
+- When you want to clearly express some set of actions
+
+- When you want to do modular coding.
+
+- There are many other reasons as well!
+]
+---
+# Do you see any problems in the code below?
+
+```{r scrape-problems, eval=FALSE}
+st_episode <- st %>%
+  html_nodes(".np_right_arrow .bp_sub_heading") %>%
+  html_text() %>%
+  str_replace(" episodes", "") %>%
+  as.numeric()
+
+got_episode <- got %>%
+  html_nodes(".np_right_arrow .bp_sub_heading") %>%
+  html_text() %>%
+  str_replace(" episodes", "") %>%
+  as.numeric()
+
+twd_episode <- got %>%
+  html_nodes(".np_right_arrow .bp_sub_heading") %>%
+  html_text() %>%
+  str_replace(" episodes", "") %>%
+  as.numeric()
+```
+
+---
+# Inputs
+
+<br><br>
+How many inputs does the following code have?
+
+<br>
+
+```{r example-scrape, eval=FALSE}
+st_episode <- st %>%
+  html_nodes(".np_right_arrow .bp_sub_heading") %>%
+  html_text() %>%
+  str_replace(" episodes", "") %>%
+  as.numeric()
+```
+
+
+---
+# Let's turn this code into a function
+<br>
+
+- Pick a short but informative **name**, preferably a verb.
+- List inputs, or **arguments**, to the function inside `function`. If we had more the call would look like `function(x, y, z)`.
+- Place the **code** you have developed in body of the function, a `{` block that immediately follows `function(...)`.
+
+```{r first-scrape-episode-fun}
+scrape_episode <- function(x){
+  x %>%
+    html_nodes(".np_right_arrow .bp_sub_heading") %>%
+    html_text() %>%
+    str_replace(" episodes", "") %>%
+    as.numeric()
+}
+```
+
+---
+# Turn your code into a function
+<br><br>
+```{r first-scrape-episode-fun-print}
+scrape_episode <- function(x){
+  x %>%
+    html_nodes(".np_right_arrow .bp_sub_heading") %>%
+    html_text() %>%
+    str_replace(" episodes", "") %>%
+    as.numeric()
+}
+```
+
+```{r scrape-episode-st-show}
+scrape_episode(st)
+```
+
+---
+# Check your function
+<br><br>
+- Number of episodes in The Walking Dead
+
+```{r scrape-epi-twd}
+scrape_episode(twd)
+```
+
+
+- Number of episodes in Game of Thrones
+
+```{r scrape-epi-got}
+scrape_episode(got)
+```
+
+---
+# Naming functions (it's hard)
+
+> "There are only two hard things in Computer Science: cache invalidation and naming things." - Phil Karlton
+
+- Names should be short but clearly evoke what the function does
+
+- Names should be verbs, not nouns
+
+- Multi-word names should be separated by underscores (`snake_case` as opposed to `camelCase`)
+
+- A family of functions should be named similarly (`scrape_title`, `scrape_episode`, `scrape_genre`, etc.)
+
+- Avoid overwriting existing (especially widely used) functions (e.g., `ggplot`)
+
+---
+# Scraping show info
+
+```{r scrape-show-info-fun}
+scrape_show_info <- function(x){
+
+  title <- x %>%
+    html_node("#title-overview-widget h1") %>%
+    html_text() %>%
+    str_trim()
+
+  runtime <- x %>%
+    html_node("time") %>%
+    html_text() %>%
+    str_replace("\\n", "") %>%
+    str_trim()
+  
+  genres <- x %>%
+    html_nodes(".txt-block~ .canwrap a") %>%
+    html_text() %>%
+    str_trim() %>%
+    paste(collapse = ", ")
+  
+  tibble(title = title, runtime = runtime, genres = genres)
+}
+```
+
+---
+# Scraping show info
+
+```{r scrape-all-show-info}
+scrape_show_info(st)
+scrape_show_info(twd)
+```
+
+---
+# How to update this function to use page URL as argument?
+
+```{r scrape-show-info-examle, eval=FALSE}
+scrape_show_info <- function(x){
+
+  title <- x %>% html_node("#title-overview-widget h1") %>%
+    html_text() %>%
+    str_trim()
+
+  runtime <- x %>% html_node("time") %>%
+    html_text() %>%
+    str_replace("\\n", "") %>%
+    str_trim()
+  
+  genres <- x %>% html_nodes(".txt-block~ .canwrap a") %>%
+    html_text() %>%
+    str_trim() %>%
+    paste(collapse = ", ")
+  
+  tibble(title = title, runtime = runtime, genres = genres)
+}
+```
+
+---
+# How to update this function to use page URL as argument?
+
+```{r scrape-show-info-add-bow}
+scrape_show_info <- function(x){
+  
+y <- bow(x) %>% scrape()
+
+  title <- y %>% html_node("#title-overview-widget h1") %>%
+    html_text() %>%
+    str_trim()
+
+  runtime <- y %>% html_node("time") %>%
+    html_text() %>%
+    str_replace("\\n", "") %>%
+    str_trim()
+
+  genres <- y %>% html_nodes(".txt-block~ .canwrap a") %>%
+    html_text() %>%
+    str_trim() %>%
+    paste(collapse = ", ")
+  
+  tibble(title = title, runtime = runtime, genres = genres)
+}
+```
+
+---
+# Let's check
+
+<br><br>
+```{r set-urls}
+st_url <- "http://www.imdb.com/title/tt4574334/"
+twd_url <- "http://www.imdb.com/title/tt1520211/"
+```
+
+```{r use-urls-scrape}
+scrape_show_info(st_url)
+scrape_show_info(twd_url)
+```
+
+---
+class: transition
+
+# Automation
+
+---
+# Automation
+
+<br><br>
+- You now have a function that will scrape the relevant info on shows given its URL. 
+- Where can we get a list of URLs of top 100 most popular TV shows on IMDB? 
+
+
+---
+# Automation
+
+```{r get-urls}
+urls <- bow("http://www.imdb.com/chart/tvmeter") %>%
+  scrape() %>%
+  html_nodes(".titleColumn a") %>%
+  html_attr("href") %>%
+  paste("http://www.imdb.com", ., sep = "") %>%
+  head()
+
+```
+
+```{r print-urls, echo=FALSE}
+urls
+```
+
+---
+# Automation: Go to each page, scrape show info 
+
+- Programatically direct R to each page on the `urls` list and run  `scrape_show_info`
+
+```{r scrape-each}
+scrape_show_info(urls[1])
+scrape_show_info(urls[2])
+scrape_show_info(urls[3])
+```
+
+---
+# Go to each page, scrape show info 
+
+In other words, we want to **map** the `scrape_show_info` function to each element of `show_urls`:
+
+```{r map-scrape, eval = FALSE}
+top_100_shows <- map_df(urls, scrape_show_info)
+```
+
+- This will hit the `urls` one after another, and grab the info.
+
+
+---
+class: transition
+
+# File Paths and project organization
+Please read on your own time
+
+---
+# File Paths and project organization
+<br><br>
+
+.content-box-soft[
+- It's important when you start working on your own machine that you understand _file storage hygiene_. 
+- It helps prevent unexpected problems and makes you more productive 
+- You'll spend less time fighting against strange file paths. 
+- Not sure what a file path is? We will explain that as well!
+]
+
+
+---
+# What  is a file path?
+  <br><br>
+- This all might be a bit confusing if you don't know what a file path is.
+- A file path is: "the machine-readable directions to where files on your computer live." 
+- So, this file path:
+
+```
+/Users/starwars/rmd4sci-materials/demo-gapminder.Rmd
+```
+
+**.green[Describes the location of the file]** "demo-gapminder.Rmd". 
+
+
+---
+# What is a file path ?
+<br><br>
+We could visualize this path:
+
+```
+/Users/starwars/rmd4sci-materials/demo-gapminder.Rmd
+```
+
+as:
+
+```
+users
+  └── starwars
+        └──  rmd4sci-materials
+               └── demo-gapminder.Rmd
+```
+
+---
+# What is a file path?
+<br><br>
+- To read in the `gapminder.csv` file, you might need to write code like this:
+
+```{r, eval = FALSE}
+gapminder <- read_csv("/Users/starwars/Desktop/rmd4sci-materials/data/gapminder.csv")
+
+```
+<br><br>
+**This is a problem, because this is not portable code!**
+
+---
+# A Mantra: Start a new project \- start an RStudio project
+<br><br>
+- This section is heavily influenced by
+[Jenny Bryan's great blog post on project based workflows.](https://www.tidyverse.org/articles/2017/12/workflow-vs-script/)
+- Sometimes this is the first line of an R Script or R markdown file.
+
+```r
+setwd("c:/really/long/file/path/to/this/directory)
+```
+- What do you think the `setwd` code does?
+
+---
+# What does `setwd()` do?
+<br><br>
+- .green["set my working directory to this specific working directory".]
+
+- It means that you can read in data and other things like this:
+
+```r
+data <- read_csv("data/mydata.csv")
+```
+
+- Instead of
+
+```r
+data <- read_csv("c:/really/long/file/path/to/this/directory/data/mydata.csv")
+```
+
+---
+# Using `setwd()`
+<br>
+
+.content-box-soft[
+- This has the effect of **making the file paths work in your file**
+- This is a problem because, among other things, using `setwd()`:
+  -  Has 0% chance of working on someone else's machine (**this includes you in >6 months**)
+  - Your file is not self-contained and portable. (Think: _"What if this folder moved to /Downloads, or onto another machine?"_)
+- To get this to work, you need to hand edit the file path to your machine. 
+- This is painful. And when you do this all the time, it gets old, fast.
+]
+If you have an RStudio project file inside the `rmd4sci-materials` folder, you can instead write the following:
+
+```r
+gapminder <- read_csv("data/gapminder.csv")
+```
+
+
+
+---
+# What is the alternative to setwd()?
+<br><br>
+
+.content-box-soft[
+- .green[**This file path situation is a real pain!**] 
+- The solution to it:
+]
+
+.content-box-neutral[
+**I highly recommend when you start on a new idea, new research project, paper. 
+Anything that is new. It should start its life as an **rstudio project**.** 
+]
+
+
+---
+# Rstudio projects
+<br><br>
+An rstudio project helps keep related work together in the same place. Amongst other things, they:
+<br>
+.content-box-soft[
+* Keep all your files together
+* Set the working directory to the project directory
+* Starts a new session of R
+* Restore previously edited files into the editor tabs
+* Restore other rstudio settings
+* Allow for multiple R projects open at the same time.
+]
+
+---
+# Rstudio projects
+<br><br>
+This helps keep you sane, because:
+<br>
+.content-box-soft[
+* Your projects are each independent. 
+* You can work on different projects at the same time. 
+* Objects and functions you create and run from project idea won't impact one another.  
+* You can refer to your data and other projects in a consistent way.
+]
+<br>
+And finally, the big one
+
+.green[**RStudio projects help resolve file path problems**, 
+because they automatically set the working directory to the location of the rstudio project.]
+
+---
+# The "here" package
+<br><br>
+
+.content-box-soft[
+- RStudio projects help resolve file path problems
+- In some cases you might have many folders in your r project. 
+To help navigate them appropriately, you can use the `here` package to provide the full path directory, in a compact way.
+]
+
+```r
+here::here("data")
+```
+
+returns
+
+```
+[1] "/Users/starwars/Desktop/rmd4sci-materials/data"
+```
+
+---
+# The `here` package
+
+
+```r
+here::here("data", "gapminder.csv")
+```
+
+returns
+
+```
+[1] "/Users/starwars/Desktop/rmd4sci-materials/data/gapminder.csv"
+```
+
+You can read the above `here` code as:
+
+> In the folder `data`, there is a file called `gapminder.csv`, can you please give me the full path to that file? 
+
+---
+# The `here` package
+<br><br>
+
+This is really handy for a few reasons:
+
+.content-box-neutral[
+1. It makes things _completely_ portable
+2. Rmarkdown documents have a special way of looking for files, this helps eliminate file path pain.
+3. If you decide to not use RStudio projects, you have code that will work on _any machine_
+]
+
+---
+class: transition
+# Remember
+<br><br>
+> If the first line of your R script is 
+
+```
+setwd("C:\Users\jenny\path\that\only\I\have")
+```
+> I will come into your office and SET YOUR COMPUTER ON FIRE 🔥.
+
+ Jenny Bryan
+
+---
+# Aside: How to create an RStudio project
+<br><br>
+- Go to [section 5.12 of rmarkdown for scientists](https://rmd4sci.njtierney.com/workflow.html#aside-creating-an-rstudio-project)
+
+
+---
+class: transition 
+# Example of file structure organization
+
+
+---
+# File structures for class
+
+Simple structure
+
+```
+/Users/starwars/etc1010/
+```
+
+```
+users
+  └── starwars
+      └──  etc1010
+            └── etc5510.Rproj
+            └── lecture_1.html
+            └── lecture_1.pdf
+            └── ida-exercise-1.Rmd
+            └── data
+                └── data.csv
+```
+
+---
+class: transition
+
+# Remember
+
+## The more organize you are with your files,
+## the easier your life will be!
+
+It's just important to have a system
+
+---
+
+```{r endslide, child="components/endslide.Rmd"}
+```

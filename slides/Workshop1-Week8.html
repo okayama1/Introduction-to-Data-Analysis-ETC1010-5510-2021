@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC10 - 5510: Introduction to Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Patricia Menéndez" />
+    <script src="libs/header-attrs-2.10/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+    -->
+    <link rel="icon" href="images/favicon.ico"  type='image/x-icon'/>    
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-logo.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70 title-slide
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;
+
+# .monash-white.outline-text[ETC10 - 5510: Introduction to Data Analysis]
+
+&lt;h2 class="monash-white outline-text" style="font-size: 30pt!important;"&gt;Week 8&lt;/h2&gt;
+
+&lt;br&gt;
+
+&lt;h2 style="font-weight:900!important;"&gt;Text Analysis&lt;/h2&gt;
+
+.bottom_abs.width100[
+
+Lecturer: *Patricia Menéndez*
+
+Department of Econometrics and Business Statistics
+
+
+
+
+&lt;br&gt;
+]
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+  
+---
+# Questions/Comments/Suggestions
+
+&lt;img src="images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+ Photo: Rhythm Goyal for  Unsplash.
+---
+# Recap: Week 7
+
+&lt;br&gt;&lt;br&gt;
+- Modelling
+- Linear Models
+- Correlation
+- Linear Models and Correlation
+- Model Selection
+- Model Goodness of Fit
+
+
+---
+
+# Week 8: Outline
+&lt;br&gt;&lt;br&gt;
+
+- The analysis of text data, why?
+- Analysis of text data steps
+- R packages for text analysis
+- Tidy text
+- Extracting common words, stop words etc
+- Sentiment of the text
+
+
+---
+# Announcements
+&lt;br&gt;&lt;br&gt;
+- We will talk about assignment 2 next week (due at the end of Week 10)
+- Group project upcoming milestones
+- Any issues with the group project please let us know
+- Project rubric and dates available in Moodle
+
+---
+# Why text analysis?
+
+&lt;br&gt;
+Example: 
+&lt;br&gt;
+
+.content-box-neutral[
+- Predict Melbourne house prices from realtor descriptions
+- Determine the extent of public discontent with train stoppages in Melbourne
+- The differences between Darwin's first edition of the Origin of the Species and the 6th edition
+- What is the text sentiment?
+]
+
+---
+# Typical Process
+
+&lt;br&gt;&lt;br&gt;
+
+.content-box[
+1. Read in text
+2. Pre-processing: remove punctuation signs, remove numbers, stop words, stem words
+3. Tokenise: words, sentences, ngrams, chapters
+4. Summarise
+5. Model
+]
+
+---
+# Packages
+
+&lt;br&gt;&lt;br&gt;
+In addition to `tidyverse` we will be using three other packages today
+
+
+```r
+library(tidytext)
+library(gutenbergr)
+```
+
+---
+# Tidytext
+
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+Using tidy data principles can make many text mining tasks easier, more effective, 
+and consistent with tools already in wide use.
+]
+&lt;br&gt; 
+- Learn more at https://www.tidytextmining.com/, by Julia Silge and David Robinson.
+
+---
+# What is tidy text?
+&lt;br&gt;
+
+Dialogue from Game of Thrones:
+&lt;br&gt;
+
+
+```r
+
+text &lt;- c("What is it that you want, exactly?",
+          "Peace. Prosperity",
+          "A land where the powerful do not prey on the powerless",
+          "Where the castles are made of gingerbread",
+          "and the moats are filled with blackberry wine",
+          "The powerful have always preyed on the powerless",
+          "that’s how they became powerful in the first place",
+         "Perhaps ",
+          "And perhaps we’ve grown so used to horror",
+         "we assume there’s no other way")
+```
+
+
+---
+# What is tidy text?
+&lt;br&gt;
+
+
+```r
+text
+##  [1] "What is it that you want, exactly?"                    
+##  [2] "Peace. Prosperity"                                     
+##  [3] "A land where the powerful do not prey on the powerless"
+##  [4] "Where the castles are made of gingerbread"             
+##  [5] "and the moats are filled with blackberry wine"         
+##  [6] "The powerful have always preyed on the powerless"      
+##  [7] "that’s how they became powerful in the first place"    
+##  [8] "Perhaps "                                              
+##  [9] "And perhaps we’ve grown so used to horror"             
+## [10] "we assume there’s no other way"
+```
+
+
+
+
+
+
+---
+# What is tidy text?
+
+
+```r
+text_df &lt;- tibble(line = seq_along(text), text = text)
+
+text_df
+## # A tibble: 10 × 2
+##     line text                                                    
+##    &lt;int&gt; &lt;chr&gt;                                                   
+##  1     1 "What is it that you want, exactly?"                    
+##  2     2 "Peace. Prosperity"                                     
+##  3     3 "A land where the powerful do not prey on the powerless"
+##  4     4 "Where the castles are made of gingerbread"             
+##  5     5 "and the moats are filled with blackberry wine"         
+##  6     6 "The powerful have always preyed on the powerless"      
+##  7     7 "that’s how they became powerful in the first place"    
+##  8     8 "Perhaps "                                              
+##  9     9 "And perhaps we’ve grown so used to horror"             
+## 10    10 "we assume there’s no other way"
+```
+Data frame --&gt; tibble where each observation is one of the senteces in the text.
+---
+# What is tidy text?
+
+
+```r
+text_df %&gt;%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "words" # default option
+  ) %&gt;%
+  head()
+## # A tibble: 6 × 2
+##    line word 
+##   &lt;int&gt; &lt;chr&gt;
+## 1     1 what 
+## 2     1 is   
+## 3     1 it   
+## 4     1 that 
+## 5     1 you  
+## 6     1 want
+```
+.purple[unnest_tokens] --&gt; split a column into **tokens** using tokenizers package.
+---
+# What is unnesting?
+
+
+```r
+text_df %&gt;%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "characters"
+  ) %&gt;%
+  head()
+## # A tibble: 6 × 2
+##    line word 
+##   &lt;int&gt; &lt;chr&gt;
+## 1     1 w    
+## 2     1 h    
+## 3     1 a    
+## 4     1 t    
+## 5     1 i    
+## 6     1 s
+```
+Here the **token** --&gt; refers to the characters
+---
+# What is unnesting - ngrams length 2
+
+
+```r
+text_df %&gt;%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "ngrams",
+    n = 2
+  ) %&gt;%
+  head()
+## # A tibble: 6 × 2
+##    line word        
+##   &lt;int&gt; &lt;chr&gt;       
+## 1     1 what is     
+## 2     1 is it       
+## 3     1 it that     
+## 4     1 that you    
+## 5     1 you want    
+## 6     1 want exactly
+```
+.purple[ngrams] --&gt; groups of words define by n
+---
+# What is unnesting - ngrams length 3
+
+
+```r
+text_df %&gt;%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "ngrams",
+    n = 3
+  )
+## # A tibble: 50 × 2
+##     line word              
+##    &lt;int&gt; &lt;chr&gt;             
+##  1     1 what is it        
+##  2     1 is it that        
+##  3     1 it that you       
+##  4     1 that you want     
+##  5     1 you want exactly  
+##  6     2 &lt;NA&gt;              
+##  7     3 a land where      
+##  8     3 land where the    
+##  9     3 where the powerful
+## 10     3 the powerful do   
+## # … with 40 more rows
+```
+
+---
+class: transition
+
+# Analyzing user reviews for Animal Crossing: New Horizons
+
+---
+# About the data
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+ User and critic reviews for the game [Animal Crossing](https://www.nintendo.com/games/detail/animal-crossing-new-horizons-switch/) scraped from Metacritc
+]
+
+&lt;br&gt;
+
+- This data comes from a [#TidyTuesday challenge](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-05-05/readme.md). 
+
+
+
+---
+# What do the user reviews look like?
+&lt;br&gt;&lt;br&gt;
+
+```r
+acnh_user_reviews &lt;- read_tsv(here::here("slides/data/acnh_user_reviews.tsv"))
+glimpse(acnh_user_reviews)
+## Rows: 2,999
+## Columns: 4
+## $ grade     &lt;dbl&gt; 4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ user_name &lt;chr&gt; "mds27272", "lolo2178", "Roachant", "Houndf", "ProfessorFox"…
+## $ text      &lt;chr&gt; "My gf started playing before me. No option to create my own…
+## $ date      &lt;date&gt; 2020-03-20, 2020-03-20, 2020-03-20, 2020-03-20, 2020-03-20,…
+```
+
+
+---
+# Let's look at the grade distribution
+&lt;br&gt;&lt;br&gt;
+
+&lt;img src="Workshop1-Week8_files/figure-html/review-grades-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Read a few of the positive reviews
+&lt;br&gt;&lt;br&gt;
+
+.left_code[
+
+```r
+set.seed(1999)
+acnh_user_reviews %&gt;% 
+  filter(grade &gt; 8) %&gt;% 
+  sample_n(3) %&gt;% 
+  pull(text)
+```
+]
+
+.pull_right[
+
+```
+## [1] "The game is absolutely fantastic and everything we have been waiting for for seven long years. The ability to truly customize your island and all of the quality of life upgrade make this game so very worth the money. It’s a slow relaxing game that any fan of past Animal Crossing games would love."                                                  
+## [2] "I've never played an Animal Crossing before and I can't stop playing it now! Amazing! there are lots of things to do! The characters are all charming, you can visit other islands, customize everything...It's a infinit game. People who are giving 0 problably never played the game. And a 0 ?? come on guys, not everybody will like it but a 0?"      
+## [3] "This review contains spoilers, click expand to view.                                                                                            Ich liebe alles an diesem Spiel. Auch das neue Craften ist so eine gute idee gewesen. Die Musik ist auch wie in allen Vorgängern schön und beruhigend. Es fühlt sich einfach an ein perfektes Spiel… Expand"
+```
+]
+
+&lt;br&gt;
+- .purple[sample_n()] --&gt; allows you to select rows
+- .purple[pull()] --&gt; is similar to $. It's mostly useful because it looks a little nicer in pipes, it also works with remote data frames, and it can optionally name the output.
+---
+# And some negative reviews
+&lt;br&gt;&lt;br&gt;
+.left_code[
+
+```r
+set.seed(2099)
+acnh_user_reviews %&gt;% 
+  filter(grade == 0) %&gt;% 
+  sample_n(3) %&gt;% 
+  pull(text)
+```
+]
+
+.pull_right[
+
+```
+## [1] "It's just a typical mobile grind-game with time-wall. And poor interface. Worst game of the year."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+## [2] "One island per console, very family friendly. How unbelievably greedy by Nintendo."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+## [3] "Separate islands for each profile should be a given. I'm not buying another switch just to have my own island. I'm also not going to play on my kid's island because it's not my island. This limitation should be in bold print and all caps on the cover of this game so people know what they're walking into. Nintendo will do nothing to address this and as a lifelong Nintendo player it's crazySeparate islands for each profile should be a given. I'm not buying another switch just to have my own island. I'm also not going to play on my kid's island because it's not my island. This limitation should be in bold print and all caps on the cover of this game so people know what they're walking into. Nintendo will do nothing to address this and as a lifelong Nintendo player it's crazy frustrating. Never looked at Metacritic in my life, but heard this is where to go to vent.… Expand"
+```
+]
+
+---
+# Looks like the scraping is messed up a bit
+&lt;br&gt;&lt;br&gt;
+
+Long reviews are compressed from the scraping procedure...
+&lt;br&gt;
+
+```r
+acnh_user_reviews_parsed &lt;- acnh_user_reviews %&gt;% 
+  mutate(text = str_remove(text, "Expand$"))
+```
+&lt;br&gt;
+We will remove these characters from the text..
+
+---
+# Tidy up the reviews!
+
+
+```r
+user_reviews_words &lt;- acnh_user_reviews_parsed %&gt;%
+  unnest_tokens(output = word, input = text)
+
+user_reviews_words
+## # A tibble: 362,729 × 4
+##    grade user_name date       word   
+##    &lt;dbl&gt; &lt;chr&gt;     &lt;date&gt;     &lt;chr&gt;  
+##  1     4 mds27272  2020-03-20 my     
+##  2     4 mds27272  2020-03-20 gf     
+##  3     4 mds27272  2020-03-20 started
+##  4     4 mds27272  2020-03-20 playing
+##  5     4 mds27272  2020-03-20 before 
+##  6     4 mds27272  2020-03-20 me     
+##  7     4 mds27272  2020-03-20 no     
+##  8     4 mds27272  2020-03-20 option 
+##  9     4 mds27272  2020-03-20 to     
+## 10     4 mds27272  2020-03-20 create 
+## # … with 362,719 more rows
+```
+
+---
+# Distribution of words per review?
+
+
+```r
+user_reviews_words %&gt;% 
+  count(user_name) %&gt;% 
+  ggplot(aes(x = n)) +
+  geom_histogram()
+```
+
+&lt;img src="Workshop1-Week8_files/figure-html/word-histogram-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# What are the most common words?
+&lt;br&gt;
+
+```r
+user_reviews_words %&gt;%
+  count(word, sort = TRUE)
+## # A tibble: 13,454 × 2
+##    word      n
+##    &lt;chr&gt; &lt;int&gt;
+##  1 the   17739
+##  2 to    11857
+##  3 game   8769
+##  4 and    8740
+##  5 a      8330
+##  6 i      7211
+##  7 is     6858
+##  8 this   5777
+##  9 of     5383
+## 10 it     4711
+## # … with 13,444 more rows
+```
+
+---
+# Stop words
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- In computing, .green[stop words] are words which are filtered out before or after processing of natural language data (text).
+- They usually refer to the .green[most common words in a language], but there is not a single list of stop words used by all natural language processing tools.
+]
+---
+# English stop words
+&lt;br&gt;
+
+```r
+get_stopwords()
+## # A tibble: 175 × 2
+##    word      lexicon 
+##    &lt;chr&gt;     &lt;chr&gt;   
+##  1 i         snowball
+##  2 me        snowball
+##  3 my        snowball
+##  4 myself    snowball
+##  5 we        snowball
+##  6 our       snowball
+##  7 ours      snowball
+##  8 ourselves snowball
+##  9 you       snowball
+## 10 your      snowball
+## # … with 165 more rows
+```
+
+---
+# Spanish stop words
+&lt;br&gt;
+
+```r
+get_stopwords(language = "es")
+## # A tibble: 308 × 2
+##    word  lexicon 
+##    &lt;chr&gt; &lt;chr&gt;   
+##  1 de    snowball
+##  2 la    snowball
+##  3 que   snowball
+##  4 el    snowball
+##  5 en    snowball
+##  6 y     snowball
+##  7 a     snowball
+##  8 los   snowball
+##  9 del   snowball
+## 10 se    snowball
+## # … with 298 more rows
+```
+
+---
+# Various lexicons
+
+See `?get_stopwords` for more info.
+
+
+```r
+get_stopwords(source = "smart")
+## # A tibble: 571 × 2
+##    word        lexicon
+##    &lt;chr&gt;       &lt;chr&gt;  
+##  1 a           smart  
+##  2 a's         smart  
+##  3 able        smart  
+##  4 about       smart  
+##  5 above       smart  
+##  6 according   smart  
+##  7 accordingly smart  
+##  8 across      smart  
+##  9 actually    smart  
+## 10 after       smart  
+## # … with 561 more rows
+```
+
+---
+# What are the most common words?
+
+
+```r
+user_reviews_words %&gt;%
+  count(word, sort = TRUE)
+## # A tibble: 13,454 × 2
+##    word      n
+##    &lt;chr&gt; &lt;int&gt;
+##  1 the   17739
+##  2 to    11857
+##  3 game   8769
+##  4 and    8740
+##  5 a      8330
+##  6 i      7211
+##  7 is     6858
+##  8 this   5777
+##  9 of     5383
+## 10 it     4711
+## # … with 13,444 more rows
+```
+
+---
+# What are the most common words?
+
+
+```r
+stopwords_smart &lt;- get_stopwords(source = "smart")
+
+user_reviews_words %&gt;%
+  anti_join(stopwords_smart) 
+## # A tibble: 145,444 × 4
+##    grade user_name date       word   
+##    &lt;dbl&gt; &lt;chr&gt;     &lt;date&gt;     &lt;chr&gt;  
+##  1     4 mds27272  2020-03-20 gf     
+##  2     4 mds27272  2020-03-20 started
+##  3     4 mds27272  2020-03-20 playing
+##  4     4 mds27272  2020-03-20 option 
+##  5     4 mds27272  2020-03-20 create 
+##  6     4 mds27272  2020-03-20 island 
+##  7     4 mds27272  2020-03-20 guys   
+##  8     4 mds27272  2020-03-20 2nd    
+##  9     4 mds27272  2020-03-20 player 
+## 10     4 mds27272  2020-03-20 start  
+## # … with 145,434 more rows
+```
+
+---
+# Aside: the anti-join 
+
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+- A type of filtering join, will return all rows on the left when there
+are .bold[no] matches on the right
+- Only keeps columns on the left 
+]
+
+---
+# As a picture
+
+&lt;img src="gifs/anti-join.gif" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# What are the most common words?
+&lt;br&gt;
+
+```r
+user_reviews_words %&gt;%
+  anti_join(stopwords_smart) %&gt;%
+  count(word, sort = TRUE) 
+## # A tibble: 12,938 × 2
+##    word         n
+##    &lt;chr&gt;    &lt;int&gt;
+##  1 game      8769
+##  2 island    3974
+##  3 switch    2214
+##  4 play      2176
+##  5 player    1844
+##  6 nintendo  1694
+##  7 console   1489
+##  8 crossing  1371
+##  9 animal    1369
+## 10 people    1045
+## # … with 12,928 more rows
+```
+
+---
+# What are the most common words?
+&lt;br&gt;&lt;br&gt;
+
+```r
+user_reviews_words %&gt;%
+  anti_join(stopwords_smart) %&gt;%
+  count(word) %&gt;%
+  arrange(-n) %&gt;%
+  top_n(20) %&gt;%
+  ggplot(aes(fct_reorder(word, n), n)) +
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Frequency of words in user reviews",
+       subtitle = "",
+       y = "",
+       x = "")
+```
+
+---
+&lt;br&gt;
+&lt;img src="Workshop1-Week8_files/figure-html/gg-common-words-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Sentiment analysis
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- One way to analyze the .bold[sentiment of a text] is to consider the text as a combination of its individual words 
+
+- and the .bold[sentiment content of the whole text as the sum of the sentiment content of the individual words]
+]
+
+---
+# Sentiment lexicons
+&lt;br&gt;
+.pull-left[
+
+```r
+get_sentiments("afinn")
+## # A tibble: 2,477 × 2
+##    word       value
+##    &lt;chr&gt;      &lt;dbl&gt;
+##  1 abandon       -2
+##  2 abandoned     -2
+##  3 abandons      -2
+##  4 abducted      -2
+##  5 abduction     -2
+##  6 abductions    -2
+##  7 abhor         -3
+##  8 abhorred      -3
+##  9 abhorrent     -3
+## 10 abhors        -3
+## # … with 2,467 more rows
+```
+]
+
+
+.pull-right[
+
+```r
+get_sentiments("bing")
+## # A tibble: 6,786 × 2
+##    word        sentiment
+##    &lt;chr&gt;       &lt;chr&gt;    
+##  1 2-faces     negative 
+##  2 abnormal    negative 
+##  3 abolish     negative 
+##  4 abominable  negative 
+##  5 abominably  negative 
+##  6 abominate   negative 
+##  7 abomination negative 
+##  8 abort       negative 
+##  9 aborted     negative 
+## 10 aborts      negative 
+## # … with 6,776 more rows
+```
+]
+
+---
+# Sentiment lexicons
+&lt;br&gt;
+.pull-left[
+
+```r
+get_sentiments(lexicon = "bing")
+## # A tibble: 6,786 × 2
+##    word        sentiment
+##    &lt;chr&gt;       &lt;chr&gt;    
+##  1 2-faces     negative 
+##  2 abnormal    negative 
+##  3 abolish     negative 
+##  4 abominable  negative 
+##  5 abominably  negative 
+##  6 abominate   negative 
+##  7 abomination negative 
+##  8 abort       negative 
+##  9 aborted     negative 
+## 10 aborts      negative 
+## # … with 6,776 more rows
+```
+]
+
+.pull-right[
+
+```r
+get_sentiments(lexicon = "loughran")
+## # A tibble: 4,150 × 2
+##    word         sentiment
+##    &lt;chr&gt;        &lt;chr&gt;    
+##  1 abandon      negative 
+##  2 abandoned    negative 
+##  3 abandoning   negative 
+##  4 abandonment  negative 
+##  5 abandonments negative 
+##  6 abandons     negative 
+##  7 abdicated    negative 
+##  8 abdicates    negative 
+##  9 abdicating   negative 
+## 10 abdication   negative 
+## # … with 4,140 more rows
+```
+]
+
+---
+# Sentiments in the reviews
+
+
+```r
+sentiments_bing &lt;- get_sentiments("bing")
+
+user_reviews_words %&gt;%
+  inner_join(sentiments_bing) %&gt;%
+  count(sentiment, word, sort = TRUE) %&gt;%
+  head(4)
+## # A tibble: 4 × 3
+##   sentiment word         n
+##   &lt;chr&gt;     &lt;chr&gt;    &lt;int&gt;
+## 1 positive  like      1357
+## 2 positive  fun        760
+## 3 positive  great      661
+## 4 positive  progress   556
+```
+&lt;br&gt;
+.small[.purple[inner_join()
+return all rows from x where there are matching values in y, and all columns from x and y. If there are multiple matches between x and y, all combination of the matches are returned.]]
+
+---
+# Visualising sentiments
+&lt;br&gt;
+
+&lt;img src="Workshop1-Week8_files/figure-html/gg-sentiment-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualising sentiments
+&lt;br&gt;
+
+```r
+user_reviews_words %&gt;%
+  inner_join(sentiments_bing) %&gt;%
+  count(sentiment, word, sort = TRUE) %&gt;%
+  arrange(desc(n)) %&gt;%
+  group_by(sentiment) %&gt;%
+  top_n(10) %&gt;%
+  ungroup() %&gt;%
+  ggplot(aes(fct_reorder(word, n), n, fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~sentiment, scales = "free") +
+  theme_minimal() +
+  labs(
+    title = "Sentiments in user reviews",
+    x = ""
+  )
+```
+
+
+---
+
+# Common words over grades 
+&lt;br&gt;
+
+```r
+user_reviews_words %&gt;%
+  anti_join(stopwords_smart) %&gt;%
+  count(grade, word, sort = TRUE) 
+## # A tibble: 29,010 × 3
+##    grade word         n
+##    &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1     0 game      2989
+##  2     0 island    1783
+##  3    10 game      1685
+##  4     0 switch    1058
+##  5     0 play      1027
+##  6     0 player     921
+##  7     0 nintendo   902
+##  8     1 game       898
+##  9     9 game       802
+## 10     0 console    738
+## # … with 29,000 more rows
+```
+
+---
+# Common review words by grade - With stop words:
+&lt;br&gt;
+
+```r
+user_reviews_words %&gt;%
+  count(grade, word, sort = TRUE)
+## # A tibble: 33,237 × 3
+##    grade word      n
+##    &lt;dbl&gt; &lt;chr&gt; &lt;int&gt;
+##  1     0 the    5865
+##  2     0 to     4421
+##  3     0 game   2989
+##  4    10 the    2896
+##  5     0 and    2767
+##  6     0 a      2663
+##  7     0 i      2656
+##  8     0 is     2304
+##  9     0 this   2171
+## 10     9 the    1913
+## # … with 33,227 more rows
+```
+
+---
+
+# What is a document about?
+&lt;br&gt;&lt;br&gt;
+.content-box[
+How do we measure the importance of a word to a document in a collection of documents?
+]
+&lt;br&gt;
+For example a novel in a collection of novels or a review in a set of reviews...
+
+&lt;br&gt;
+We combine the following statistics:
+&lt;br&gt;
+.content-box-neutral[
+- .green[Term frequency]
+- .green[Inverse document frequency]
+]
+
+---
+
+# Term frequency
+&lt;br&gt;&lt;br&gt;
+The **raw frequency** of a .green[word] `\(w\)` in a .green[document] `\(d\)`. It is a function of the word and the document. 
+
+&lt;br&gt;
+.content-box-neutral[
+$$tf(w, d) = \frac{\text{count of w in d}}{\text{total count in d}} $$
+]
+&lt;br&gt;
+The term .green[frequency for each word] is the number of times that word occurs
+divided by the total number of words in the document.
+---
+# Term frequency
+&lt;br&gt;
+For our reviews .green[a document is a single user's review.]
+
+&lt;br&gt;
+
+```r
+document &lt;- user_reviews_words %&gt;% 
+    anti_join(stopwords_smart) %&gt;% 
+    filter(user_name == "Discoduckasaur")
+document %&gt;%
+  head()
+## # A tibble: 6 × 4
+##   grade user_name      date       word      
+##   &lt;dbl&gt; &lt;chr&gt;          &lt;date&gt;     &lt;chr&gt;     
+## 1     4 Discoduckasaur 2020-04-23 start     
+## 2     4 Discoduckasaur 2020-04-23 game      
+## 3     4 Discoduckasaur 2020-04-23 incredibly
+## 4     4 Discoduckasaur 2020-04-23 fun       
+## 5     4 Discoduckasaur 2020-04-23 base      
+## 6     4 Discoduckasaur 2020-04-23 asinine
+```
+
+
+---
+# Term frequency
+&lt;br&gt;
+The term .green[frequency for each word] is the number of times that word occurs
+divided by the total number of words in the document.
+&lt;br&gt;
+
+
+```r
+tbl_tf &lt;- document %&gt;% 
+  count(word, sort = TRUE) %&gt;% 
+  mutate(tf = n / sum(n))
+tbl_tf %&gt;% 
+  arrange(desc(tf)) %&gt;%
+  head()
+## # A tibble: 6 × 3
+##   word         n     tf
+##   &lt;chr&gt;    &lt;int&gt;  &lt;dbl&gt;
+## 1 game        15 0.0403
+## 2 time        14 0.0376
+## 3 it’s         7 0.0188
+## 4 nintendo     6 0.0161
+## 5 i’m          5 0.0134
+## 6 bad          4 0.0108
+```
+[More about that here](https://en.wikipedia.org/wiki/Tf%E2%80%93idf)
+---
+
+# Inverse-document frequency
+&lt;br&gt;
+The .green[inverse document frequency] tells how common or rare a word is **across a collection of documents**. It is a function of a .green[word] `\(w\)`, and the collection of .green[documents] `\(\mathcal{D}\)`.
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+`$$idf(w, \mathcal{D}) = \log{\left(\frac{\text{size of } \mathcal{D}}{\text{number of documents that contain } w}\right)}$$`]
+&lt;br&gt;
+
+If size of  `\(\mathcal{D} = \text{number of documents that contain w}\)` then --&gt;  `\(log(1) = 0\)` 
+
+[More about that here](https://en.wikipedia.org/wiki/Tf%E2%80%93idf)
+
+---
+
+# Inverse document frequency
+
+For the reviews data set, our collection is all the reviews. You could
+compute this in a somewhat roundabout as follows:
+
+
+```r
+tbl_idf &lt;- user_reviews_words %&gt;% 
+    anti_join(stopwords_smart) %&gt;%
+    mutate(collection_size = n_distinct(user_name)) %&gt;% 
+    group_by(collection_size, word) %&gt;% 
+    summarise(times_word_used = n_distinct(user_name)) %&gt;% 
+    mutate(freq = collection_size / times_word_used,
+           idf = log(freq)) 
+arrange(tbl_idf, idf)
+## # A tibble: 12,938 × 5
+## # Groups:   collection_size [1]
+##    collection_size word     times_word_used  freq   idf
+##              &lt;int&gt; &lt;chr&gt;              &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1            2999 game                2354  1.27 0.242
+##  2            2999 island              1671  1.79 0.585
+##  3            2999 switch              1123  2.67 0.982
+##  4            2999 play                1049  2.86 1.05 
+##  5            2999 nintendo             984  3.05 1.11 
+##  6            2999 console              788  3.81 1.34 
+##  7            2999 player               745  4.03 1.39 
+##  8            2999 animal               734  4.09 1.41 
+##  9            2999 crossing             721  4.16 1.43 
+## 10            2999 people               576  5.21 1.65 
+## # … with 12,928 more rows
+```
+
+---
+# All together term frequency, inverse document frequency
+&lt;br&gt;
+Multiply .green[tf] and .green[idf] together. This is a function of a word `\(w\)`, a document `\(d\)`,
+and the collection of documents `\(\mathcal{D}\)`:
+&lt;br&gt;
+
+.content-box-neutral[
+$$ tf\_idf(w, d, \mathcal{D}) = tf(w,d) \times idf(w, \mathcal{D})$$]
+
+&lt;br&gt;
+- High value of `\(tf\_idf\)` --&gt; that word has a high frequency within a document
+but is quite rare over all documents.
+- Likewise if a word occurs in a lot
+of documents idf will be close to zero, so `\(tf\_idf\)` will be small.
+
+---
+# Putting it together, tf-idf 
+&lt;br&gt;
+We illustrate the example for a single user review:
+&lt;br&gt;
+
+```r
+tbl_tf %&gt;% 
+    left_join(tbl_idf) %&gt;% 
+    select(word, tf, idf) %&gt;% 
+    mutate(tf_idf = tf * idf) %&gt;% 
+    arrange(desc(tf_idf)) %&gt;%
+  head()
+## # A tibble: 6 × 4
+##   word         tf   idf tf_idf
+##   &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 turnips 0.0108   6.62 0.0712
+## 2 time    0.0376   1.78 0.0669
+## 3 zone    0.00806  7.31 0.0590
+## 4 it’s    0.0188   2.81 0.0528
+## 5 i’m     0.0134   3.64 0.0489
+## 6 you’ll  0.00806  5.70 0.0460
+```
+---
+# Calculating tf-idf: Perhaps not that exciting...
+&lt;br&gt;
+Instead of rolling our own, we can use `tidytext`
+&lt;br&gt;
+
+```r
+user_reviews_counts &lt;- user_reviews_words %&gt;%
+      anti_join(stopwords_smart) %&gt;% 
+      count(user_name, word, sort = TRUE) %&gt;% 
+      bind_tf_idf(term = word, document = user_name, n = n)
+
+head(user_reviews_counts,4)
+## # A tibble: 4 × 6
+##   user_name    word        n    tf   idf tf_idf
+##   &lt;chr&gt;        &lt;chr&gt;   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Melondrea    island     49 0.5   0.585 0.292 
+## 2 Melondrea    console    48 0.490 1.34  0.655 
+## 3 ScissorSheep game       29 0.254 0.242 0.0616
+## 4 ScissorSheep bombing    28 0.246 3.62  0.890
+```
+
+---
+
+# What words were important to (a sample of) users that had positive reviews?
+&lt;br&gt;
+&lt;img src="Workshop1-Week8_files/figure-html/gg-tf-idf-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Practice in your own time
+
+&lt;br&gt;
+Text Mining with R has an example comparing historical physics textbooks: 
+&lt;br&gt;
+.content-box-neutral[
+*Discourse on Floating Bodies* by Galileo Galilei, *Treatise on Light* by Christiaan Huygens, *Experiments with Alternate Currents of High Potential and High Frequency* by Nikola Tesla, and *Relativity: The Special and General Theory* by Albert Einstein. All are available on the Gutenberg project. 
+]
+
+&lt;br&gt;
+Work your way through the [comparison of physics books](https://www.tidytextmining.com/tfidf.html#a-corpus-of-physics-texts). It is section 3.4.
+
+---
+# Resources: Thanks
+&lt;br&gt;&lt;br&gt;
+- [Dr. Mine Çetinkaya-Rundel](https://rstudio-education.github.io/datascience-box/course-materials/slides/u5-d01-text-analysis/u5-d01-text-analysis.html#1)
+- Dr. Julia Silge: https://github.com/juliasilge/tidytext-tutorial and
+https://juliasilge.com/blog/animal-crossing/ 
+- Dr. Julia Silge and Dr. David Robinson: https://www.tidytextmining.com/
+
+
+
+
+
+
+---
+class: transition
+# Sentiment analysis
+
+&lt;br&gt;&lt;br&gt;
+Sentiment analysis tags words or phrases with an emotion, and summarises these, often as the positive or negative state, over a body of text. 
+
+---
+# Sentiment analysis: examples
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+- Examining effect of emotional state in twitter posts
+- Determining public reactions to government policy, or new product releases
+- Trying to make money in the stock market by modeling social media posts on listed companies
+- Evaluating product reviews on Amazon, restaurants on zomato, or travel options on TripAdvisor
+]
+
+---
+# Lexicons
+&lt;br&gt;&lt;br&gt;
+The `tidytext` package has a lexicon of sentiments, based on four major sources:
+
+&lt;br&gt;
+- [AFINN](http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6010), 
+
+- [bing](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html),
+
+- [Loughran](https://sraf.nd.edu/textual-analysis/resources/#LM%20Sentiment%20Word%20Lists),
+
+- [nrc](http://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)
+
+---
+# Emotion
+&lt;br&gt;&lt;br&gt;
+What emotion do these words elicit in you?
+
+&lt;br&gt;
+- summer
+- hot chips
+- hug
+- lose
+- stolen
+- smile
+
+---
+# Different sources of sentiment
+&lt;br&gt;
+.content-box-neutral[
+- The `nrc` lexicon categorizes words in a binary fashion ("yes"/"no") into categories of positive, negative, anger, anticipation, disgust, fear, joy, sadness, surprise, and trust. 
+]
+.content-box-neutral[
+- The `bing` lexicon categorizes words in a binary fashion into positive and negative categories. 
+]
+
+.content-box-neutral[
+- The `AFINN` lexicon assigns words with a score that runs between -5 and 5, with negative scores indicating negative sentiment and positive scores indicating positive sentiment.]
+
+---
+
+# Different sources of sentiment
+&lt;br&gt;&lt;br&gt;
+
+```r
+get_sentiments("afinn")
+## # A tibble: 2,477 × 2
+##    word       value
+##    &lt;chr&gt;      &lt;dbl&gt;
+##  1 abandon       -2
+##  2 abandoned     -2
+##  3 abandons      -2
+##  4 abducted      -2
+##  5 abduction     -2
+##  6 abductions    -2
+##  7 abhor         -3
+##  8 abhorred      -3
+##  9 abhorrent     -3
+## 10 abhors        -3
+## # … with 2,467 more rows
+```
+
+---
+# Sentiment analysis
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+- Once you have a bag of words, you need to join the sentiments dictionary to the words data. 
+- Particularly the lexicon `nrc` has multiple tags per word, so you may need to use an "inner_join". 
+- `inner_join()` returns all rows from x where there are matching values in y, and all columns from x and y. 
+- If there are multiple matches between x and y, all combination of the matches are returned.
+]
+
+---
+# Exploring sentiment in Jane Austen
+&lt;br&gt;&lt;br&gt;
+
+`janeaustenr` package contains the full texts, ready for analysis for for Jane Austen's 6 completed novels: 
+
+&lt;br&gt;
+1. "Sense and Sensibility"
+2. "Pride and Prejudice"
+3. "Mansfield Park"
+4. "Emma"
+5. "Northanger Abbey"
+6. "Persuasion"
+
+
+---
+# Exploring sentiment in Jane Austen
+&lt;br&gt;&lt;br&gt;
+
+```r
+library(janeaustenr)
+library(stringr)
+
+tidy_books &lt;- austen_books() %&gt;%
+  group_by(book) %&gt;%
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, 
+                                     regex("^chapter [\\divxlc]", 
+                                           ignore_case = TRUE)))) %&gt;%
+  ungroup() %&gt;%
+  unnest_tokens(word, text)
+```
+
+---
+
+# Exploring sentiment in Jane Austen
+&lt;br&gt;&lt;br&gt;
+
+```r
+tidy_books
+## # A tibble: 725,055 × 4
+##    book                linenumber chapter word       
+##    &lt;fct&gt;                    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;      
+##  1 Sense &amp; Sensibility          1       0 sense      
+##  2 Sense &amp; Sensibility          1       0 and        
+##  3 Sense &amp; Sensibility          1       0 sensibility
+##  4 Sense &amp; Sensibility          3       0 by         
+##  5 Sense &amp; Sensibility          3       0 jane       
+##  6 Sense &amp; Sensibility          3       0 austen     
+##  7 Sense &amp; Sensibility          5       0 1811       
+##  8 Sense &amp; Sensibility         10       1 chapter    
+##  9 Sense &amp; Sensibility         10       1 1          
+## 10 Sense &amp; Sensibility         13       1 the        
+## # … with 725,045 more rows
+```
+
+---
+# Count joyful words in "Emma"
+&lt;br&gt;
+
+```r
+nrc_joy &lt;- get_sentiments("nrc") %&gt;% 
+  filter(sentiment == "joy")
+
+tidy_books %&gt;%
+  filter(book == "Emma") %&gt;%
+  inner_join(nrc_joy) %&gt;%
+  count(word, sort = TRUE) %&gt;%
+  head()
+## # A tibble: 6 × 2
+##   word       n
+##   &lt;chr&gt;  &lt;int&gt;
+## 1 good     359
+## 2 friend   166
+## 3 hope     143
+## 4 happy    125
+## 5 love     117
+## 6 deal      92
+```
+
+---
+# Count joyful words in "Emma"
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+.green["Good"] is the most common joyful word, followed by .green["young"], .green["friend"], .green["hope"]... 
+]
+---
+# Comparing lexicons
+&lt;br&gt;
+.pull-left[
+- All of the lexicons have a measure of positive or negative. 
+- We can tag the words in Emma by each lexicon, and see if they agree. 
+]
+
+.pull-right[
+
+```r
+nrc_pn &lt;- get_sentiments("nrc") %&gt;% 
+  filter(sentiment %in% c("positive", 
+                          "negative"))
+
+emma_nrc &lt;- tidy_books %&gt;%
+  filter(book == "Emma") %&gt;%
+  inner_join(nrc_pn)
+
+emma_bing &lt;- tidy_books %&gt;%
+  filter(book == "Emma") %&gt;%
+  inner_join(get_sentiments("bing")) 
+
+emma_afinn &lt;- tidy_books %&gt;%
+  filter(book == "Emma") %&gt;%
+  inner_join(get_sentiments("afinn"))
+```
+]
+
+---
+# Comparing lexicons
+&lt;br&gt;
+
+```r
+emma_nrc
+## # A tibble: 13,700 × 5
+##    book  linenumber chapter word       sentiment
+##    &lt;fct&gt;      &lt;int&gt;   &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;    
+##  1 Emma          15       1 clever     positive 
+##  2 Emma          16       1 happy      positive 
+##  3 Emma          16       1 blessings  positive 
+##  4 Emma          17       1 existence  positive 
+##  5 Emma          18       1 distress   negative 
+##  6 Emma          21       1 marriage   positive 
+##  7 Emma          22       1 mistress   negative 
+##  8 Emma          22       1 mother     negative 
+##  9 Emma          22       1 mother     positive 
+## 10 Emma          23       1 indistinct negative 
+## # … with 13,690 more rows
+```
+
+---
+# Comparing lexicons
+&lt;br&gt;
+
+```r
+emma_afinn
+## # A tibble: 10,901 × 5
+##    book  linenumber chapter word         value
+##    &lt;fct&gt;      &lt;int&gt;   &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
+##  1 Emma          15       1 clever           2
+##  2 Emma          15       1 rich             2
+##  3 Emma          15       1 comfortable      2
+##  4 Emma          16       1 happy            3
+##  5 Emma          16       1 best             3
+##  6 Emma          18       1 distress        -2
+##  7 Emma          20       1 affectionate     3
+##  8 Emma          22       1 died            -3
+##  9 Emma          24       1 excellent        3
+## 10 Emma          25       1 fallen          -2
+## # … with 10,891 more rows
+```
+
+
+---
+# Comparing lexicons
+&lt;br&gt;
+
+
+```r
+emma_nrc %&gt;% count(sentiment) %&gt;% mutate(n / sum(n))
+## # A tibble: 2 × 3
+##   sentiment     n `n/sum(n)`
+##   &lt;chr&gt;     &lt;int&gt;      &lt;dbl&gt;
+## 1 negative   4438      0.324
+## 2 positive   9262      0.676
+
+emma_bing %&gt;% count(sentiment) %&gt;% mutate(n / sum(n))
+## # A tibble: 2 × 3
+##   sentiment     n `n/sum(n)`
+##   &lt;chr&gt;     &lt;int&gt;      &lt;dbl&gt;
+## 1 negative   4809      0.402
+## 2 positive   7157      0.598
+```
+
+---
+# Comparing lexicons
+&lt;br&gt;&lt;br&gt;
+
+```r
+emma_afinn %&gt;% 
+  mutate(sentiment = ifelse(value &gt; 0, 
+                            "positive", 
+                            "negative")) %&gt;% 
+  count(sentiment) %&gt;% 
+  mutate(n / sum(n))
+## # A tibble: 2 × 3
+##   sentiment     n `n/sum(n)`
+##   &lt;chr&gt;     &lt;int&gt;      &lt;dbl&gt;
+## 1 negative   4429      0.406
+## 2 positive   6472      0.594
+```
+
+
+
+---
+# Tutorials this week --&gt;  The Simpsons
+&lt;br&gt;&lt;br&gt;
+Data from the popular animated TV series, The Simpsons, has been made available on [kaggle](https://www.kaggle.com/wcukierski/the-simpsons-by-the-data/data). 
+
+- `simpsons_script_lines.csv`: Contains the text spoken during each episode (including details about which character said it and where)
+- `simpsons_characters.csv`: Contains character names and a character id
+
+---
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;&lt;br&gt;
+
+
+
+.bottom_abs.width100[
+
+Lecturer: Patricia Menéndez
+
+Department of Econometrics and Business Statistics&lt;br&gt;
+
+
+
+
+
+]
+
+&lt;br /&gt;
+This work is licensed under a &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License&lt;/a&gt;.
+
+&lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;&lt;img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /&gt;&lt;/a&gt;
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;margin-left:3px;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

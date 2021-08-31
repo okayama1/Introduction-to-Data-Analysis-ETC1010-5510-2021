@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC1010 - 5510: Introduction to Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Patricia Menéndez" />
+    <script src="libs/header-attrs-2.10/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+    -->
+    <link rel="icon" href="images/favicon.ico"  type='image/x-icon'/>    
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-logo.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70 title-slide
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;
+
+# .monash-white.outline-text[ETC1010 - 5510: Introduction to Data Analysis]
+
+&lt;h2 class="monash-white outline-text" style="font-size: 30pt!important;"&gt;Week 10&lt;/h2&gt;
+
+&lt;br&gt;
+
+&lt;h2 style="font-weight:900!important;"&gt;Network analysis and Regression Trees&lt;/h2&gt;
+
+.bottom_abs.width100[
+
+Lecturer: *Patricia Menéndez*
+
+Department of Econometrics and Business Statistics
+
+
+
+
+&lt;br&gt;
+]
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+
+
+  
+  
+
+  
+  
+---
+# Questions/Comments/Suggestions
+
+&lt;img src="images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+ Photo: Rhythm Goyal for  Unsplash.
+
+
+
+
+---
+# Recap: Week 9
+
+&lt;br&gt;&lt;br&gt;
+
+- Extracting data from messy excel files
+- Graphical models
+- Networks
+- Visualizing networks
+
+
+
+
+
+
+---
+
+# Week 10: Outline
+&lt;br&gt;&lt;br&gt;
+
+- A bit more on Networks 
+- Decision trees
+- How is it computed?
+- Decision trees goodness of fit
+- Comparison with linear models
+
+---
+# Network topology via adjacency matrix
+
+Previous association matrices were black and white: 
+
+&lt;img src="images/network_data.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Weighted adjacency matrix
+&lt;br&gt;&lt;br&gt;
+- When the adjacency matrix described the weight of the edges
+- Example: Correlation (last week)
+- Another example: the number of times that these people called each other in the last week:
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Meg &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Tay &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Yat &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Zili &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Jess &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Meg &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Tay &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Yat &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Zili &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Jess &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+# Using weighted adjacency matrix for plotting network
+
+We would need to turn this into an edge data set:
+
+.pull-left[ 
+
+```r
+d_edges &lt;- d %&gt;% 
+  as_tibble() %&gt;%
+  mutate(from = rownames(d)) %&gt;%
+* gather(to, count, -from)
+d_edges
+```
+
+Another way to do the same!
+
+```r
+d_edges &lt;- d %&gt;% 
+  as_tibble() %&gt;%
+  mutate(from = rownames(d)) %&gt;%
+* pivot_longer(-from,
+*              names_to = "to"
+*              values ="count")
+d_edges
+```
+
+]
+
+.pull-right[
+
+```r
+d_edges &lt;- d %&gt;% 
+  as_tibble() %&gt;%
+  mutate(from = rownames(d)) %&gt;%
+  gather(to, count, -from)
+d_edges
+## # A tibble: 25 × 3
+##    from  to    count
+##    &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+##  1 Meg   Meg       0
+##  2 Tay   Meg       5
+##  3 Yat   Meg       4
+##  4 Zili  Meg       1
+##  5 Jess  Meg       1
+##  6 Meg   Tay       5
+##  7 Tay   Tay       0
+##  8 Yat   Tay       4
+##  9 Zili  Tay       2
+## 10 Jess  Tay       1
+## # … with 15 more rows
+```
+
+] 
+
+---
+
+# Weighted adjacency matrix
+
+- We need to decide what corresponds to a "connection".
+- Let's say they need to have called each other at least 4 times, to be considered connected.
+
+
+
+```r
+d_edges_filter &lt;- d_edges %&gt;% filter(count &gt; 3)
+```
+
+--
+
+
+```r
+d_edges_filter
+## # A tibble: 8 × 3
+##   from  to    count
+##   &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+## 1 Tay   Meg       5
+## 2 Yat   Meg       4
+## 3 Meg   Tay       5
+## 4 Yat   Tay       4
+## 5 Meg   Yat       4
+## 6 Tay   Yat       4
+## 7 Jess  Zili      6
+## 8 Zili  Jess      6
+```
+
+---
+# Weighted adjacency matrix: Make the network diagram.
+
+
+```r
+library(geomnet)
+set.seed(2020-10-09)
+ggplot(data = d_edges_filter, 
+       aes(
+         from_id = from, 
+         to_id = to)) +
+  geom_net(
+    layout.alg = "kamadakawai",
+    size = 2, 
+    labelon = TRUE, 
+    vjust = -0.6, 
+    ecolour = "grey60",
+    directed = TRUE, 
+    fontsize = 3, 
+    ealpha = 0.5
+    ) +
+    theme_net() 
+```
+
+
+---
+# Weighted adjacency matrix: Make the network diagram.
+
+&lt;img src="Workshop1-Week10_files/figure-html/geom-net-cals-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Using packages igraph and ggraph
+&lt;br&gt;
+
+```r
+set.seed(201)
+d_edges_filter %&gt;%
+graph_from_data_frame() %&gt;%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = count , edge_width = count), edge_color = "cyan4") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = TRUE,
+                 point.padding = unit(2, "lines")) +
+  theme_void()
+```
+
+
+---
+# Network
+&lt;img src="Workshop1-Week10_files/figure-html/network2-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Graphical models based on correlations
+&lt;br&gt;
+
+
+```r
+set.seed(120)
+variables_df &lt;- data.frame(matrix(rnorm(100), ncol = 10))
+names(variables_df) &lt;- paste("Gene", c(1:10), sep = "")
+rownames(variables_df) &lt;- paste("Gene", c(1:10), sep = "")
+
+head(variables_df, n = 4)
+##            Gene1      Gene2        Gene3     Gene4      Gene5      Gene6
+## Gene1 -0.2743504  0.3802012  1.947538172 1.4026276  0.3158778 -1.3311663
+## Gene2 -0.3999054  0.4607782 -0.301534920 0.9376980  0.2759197 -0.3588873
+## Gene3 -0.8559399  0.4988628 -0.003295508 1.0522825 -0.2925860  0.4925876
+## Gene4  2.0752192 -1.3502186 -0.341834759 0.5427325 -0.4354334  0.2302326
+##            Gene7      Gene8      Gene9     Gene10
+## Gene1 -0.7304128 -1.7634608 -1.1419030  0.4502526
+## Gene2  0.9038304 -1.1454251 -0.1173894  0.4075073
+## Gene3 -2.2553127 -0.1193627 -0.5797151  0.1646894
+## Gene4  1.5821360 -2.3949925 -0.3741623 -1.2542692
+```
+
+---
+# Computing correlations
+&lt;br&gt;
+
+```r
+Correlation_matrix&lt;- cor(variables_df)
+diag(Correlation_matrix) = 0
+Correlation_matrix &lt;- abs(Correlation_matrix)
+head(Correlation_matrix)
+##           Gene1       Gene2     Gene3       Gene4      Gene5     Gene6
+## Gene1 0.0000000 0.786485505 0.1379868 0.295942461 0.30323831 0.2173260
+## Gene2 0.7864855 0.000000000 0.2785584 0.004339776 0.08420537 0.1839404
+## Gene3 0.1379868 0.278558381 0.0000000 0.577131647 0.14406806 0.1206982
+## Gene4 0.2959425 0.004339776 0.5771316 0.000000000 0.35787846 0.2881800
+## Gene5 0.3032383 0.084205370 0.1440681 0.357878464 0.00000000 0.1915197
+## Gene6 0.2173260 0.183940449 0.1206982 0.288179991 0.19151968 0.0000000
+##           Gene7      Gene8     Gene9     Gene10
+## Gene1 0.4544113 0.03651266 0.2300693 0.12772564
+## Gene2 0.7204252 0.05589942 0.3734348 0.27262894
+## Gene3 0.4087962 0.44822980 0.1773757 0.03065360
+## Gene4 0.3850956 0.06761484 0.5599131 0.29751832
+## Gene5 0.1970751 0.33773196 0.1147956 0.19697082
+## Gene6 0.4610549 0.11351532 0.3980246 0.06855555
+```
+
+&lt;br&gt;
+
+Let's have a look at the network given by  these correlations
+
+---
+# Formating correlation matrix into an edge data frame
+
+
+```r
+d_edges_cor &lt;- Correlation_matrix %&gt;% 
+  as_tibble() %&gt;%
+  mutate(from = rownames(Correlation_matrix)) %&gt;%
+  gather(to, count, -from)
+head(d_edges_cor)
+## # A tibble: 6 × 3
+##   from  to    count
+##   &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+## 1 Gene1 Gene1 0    
+## 2 Gene2 Gene1 0.786
+## 3 Gene3 Gene1 0.138
+## 4 Gene4 Gene1 0.296
+## 5 Gene5 Gene1 0.303
+## 6 Gene6 Gene1 0.217
+```
+
+
+---
+# Correlation network using igraph
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+---
+# Correlation network using igraphcode
+&lt;br&gt;&lt;br&gt;
+
+```r
+set.seed(201)
+d_edges_cor %&gt;%
+  
+graph_from_data_frame() %&gt;%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = count , edge_width = count), edge_color = "cyan4") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = TRUE,
+                 point.padding = unit(0.15, "lines")) +
+  theme_void()
+
+```
+
+---
+# Lot's of software to create networks
+
+Very interesting link with networks build with
+different R packages:
+
+[Here](https://mran.microsoft.com/snapshot/2017-12-11/web/packages/ggCompNet/vignettes/examples-from-paper.html)
+[igraph](https://igraph.org/r/doc/)
+
+
+
+---
+class: transition
+
+# Tree-based methods
+&lt;br&gt;
+- Regression trees
+- Classification trees
+
+
+
+---
+# Tree-based methods
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+.green[Regression trees]: Are computational methods that allow us 
+to understand the relationship between different 
+explanatory variables (x's) and a response variable.
+]
+.content-box-neutral[
+.green[Classification trees]: Are computation methods that allow us
+to find groups in a data set
+]
+
+
+---
+# Regression trees are more flexible
+
+Regression trees are based on splits from the data and do
+not have the underlying assumption of linearity between
+predictors and response variables.
+
+&lt;img src="Workshop1-Week10_files/figure-html/simulated-data-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Simulation to produce data and figure in previous slide
+&lt;br&gt;&lt;br&gt;
+
+```r
+set.seed(1234)
+x &lt;- sort(runif(100) - 0.5)
+df &lt;- data.frame(x,
+                 y = 10 * c(x[1:50] ^ 2,
+                            x[51:75] * 2,
+                            -x[76:100] ^ 2) + rnorm(100) * 0.5)
+
+ggplot(df, aes(x = x, y = y)) +
+  geom_point()
+```
+
+
+---
+# Let's predict Y using a linear model
+
+
+```r
+df_lm &lt;- lm(y ~ x, df)
+```
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/lm-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Assessing model fit
+&lt;br&gt;&lt;br&gt;
+- Look at residuals
+- If the residuals look good then considered goodness of fit measures
+- Look at mean square error (measures the average of the squares of the errors)
+
+
+---
+# Looking at the residuals: this is bad!
+
+&lt;img src="Workshop1-Week10_files/figure-html/resid-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+Do they residuals look good?
+
+---
+# Looking at the Mean square error (MSE)
+Measures --&gt;  the average squared difference between the estimated values, `\(\hat{y}\)`, and the actual/observed value `\(y\)`. 
+$$
+MSE(y) = \frac{\sum_{i = 1}^{i = N} (y_i - \hat{y}_i)^2}{N}
+$$
+In R code --&gt; create a function to calculate MSE
+
+.pull-left[
+
+```r
+mod = lm(y ~x, data = df)
+
+# Function:
+
+msq_err &lt;- function(y_obs, y_pred){
+  mean((y_obs - y_pred)^2)
+  
+}
+```
+]
+
+.pull-right[
+
+```r
+augment(mod) %&gt;%
+    summarise(mse = msq_err(y_obs = y,
+                            y_pred = .fitted)
+              )
+## # A tibble: 1 × 1
+##     mse
+##   &lt;dbl&gt;
+## 1  3.22
+```
+]
+
+
+---
+# Tree based methods for regression and classification
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+"Computation methods that involve stratifying or segmenting the predictor space into a number of simple regions. In order to make a prediction for a given observation, we typically use the mean or the mode of the training observations-  in the region to which it belongs. Since the set of splitting rules used to segment the predictor space can be summarized in a tree, these types of approaches are known as decision tree methods." Book: An introduction to Statistical learning. 
+]
+
+---
+# Regression trees intuition
+&lt;br&gt;
+&lt;img src="images/intuition.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# How does the fit from a regression tree look like?
+
+
+```r
+library(rpart)
+# df_lm &lt;- lm(y~x, data=df) - similar to lm! But rpart.
+df_rp &lt;- rpart(y~x, data=df)
+```
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+   # Split index value
+---
+# Code to produce figure in previous slide
+&lt;br&gt;
+
+
+```r
+ 
+splt &lt;- as_tibble(df_rp$splits) %&gt;% 
+  rowid_to_column(var = "order") %&gt;%  # Store split order
+  select(index, order)                # index represent splitting value,
+
+
+df_rp_aug &lt;- augment(df_rp)
+ggplot(df_rp_aug,
+       aes(x = x,
+           y = y)) + 
+  geom_point() +
+  geom_line(aes(y = .fitted), colour = "salmon", size = 2)
+```
+
+
+---
+# Residuals
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+Look much better! 
+
+
+---
+# How about the MSE?
+&lt;br&gt;
+
+```r
+library(broomstick)
+
+df_rp %&gt;%
+  augment() %&gt;%
+  summarise(mse = msq_err(y, .fitted))
+## # A tibble: 1 × 1
+##     mse
+##   &lt;dbl&gt;
+## 1 0.452
+```
+
+
+---
+# Comparing regression and regression trees residuals
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-14-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# What the output of a linear model looks like?
+&lt;br&gt;&lt;br&gt;
+
+```
+## 
+## Call:
+## lm(formula = y ~ x, data = df)
+## 
+## Coefficients:
+## (Intercept)            x  
+##      0.8806      -2.2165
+```
+
+---
+# What the output of a rpart looks like?
+
+
+```
+## n= 100 
+## 
+## node), split, n, deviance, yval
+##       * denotes terminal node
+## 
+##  1) root 100 359.245100  0.8081071  
+##    2) x&gt;=0.2775916 24  16.840100 -1.4822830  
+##      4) x&gt;=0.3817438 12   3.832238 -2.0814410 *
+##      5) x&lt; 0.3817438 12   4.392090 -0.8831252 *
+##    3) x&lt; 0.2775916 76 176.745400  1.5313880  
+##      6) x&lt; 0.1426085 61  41.562800  0.9365995  
+##       12) x&gt;=-0.3999242 50  24.519860  0.7035330  
+##         24) x&lt; 0.05905847 41  11.729940  0.4807175  
+##           48) x&gt;=-0.1455513 25   5.653876  0.2281914 *
+##           49) x&lt; -0.1455513 16   1.990829  0.8752895 *
+##         25) x&gt;=0.05905847 9   1.481498  1.7185820 *
+##       13) x&lt; -0.3999242 11   1.981477  1.9959930 *
+##      7) x&gt;=0.1426085 15  25.842970  3.9501960 *
+```
+
+---
+# Predictions from linear model vs regression tree
+
+&lt;img src="Workshop1-Week10_files/figure-html/show-preds-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Difference between linear regression and decision trees
+
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+- .green[A linear model] --&gt;  What is line that best fit the data to minimize "some error"?
+- .green[A decision tree model] --&gt; How can I best break the data into segments, to minimize "some error"? 
+]
+
+---
+# A linear model: draws the line of best fit
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-15-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# A regression tree: segments the data to reduce some error
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-16-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Regression trees
+
+.content-box-neutral[
+- Regression trees recursively partition the data, and use the average response value of each partition as the model estimate
+- It is a computationally intense technique that examines all possible partitions, and choosing the BEST partition by optimizing some criteria
+]
+- For regression, with a quantitative response variable, the criteria is called ANOVA:
+
+`$$SS_T-(SS_L+SS_R)$$`
+where `\(SS_T = \sum (y_i-\bar{y})^2\)`, and `\(SS_L, SS_R\)` are the equivalent values for the two subsets (right and left) created by partitioning.
+
+---
+# Break down: What is `\(SS_T = \sum (y_i-\bar{y})^2\)` ?
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-17-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Break down: What is `\(SS_T = \sum (y_i-\bar{y})^2\)` ?
+
+&lt;img src="Workshop1-Week10_files/figure-html/what-is-error-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# `\(SS_L\)` `\(SS_R\)`? Choose a point, compare the left and right
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/ssl-ssr-1-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# `\(SS_L\)` `\(SS_R\)`? Choose a point, compare the left and right
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/ssl-ssr-2-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# `\(SS_L\)` `\(SS_R\)`? Choose a point, compare the left and right
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/ssl-ssr-3-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# `\(SS_L\)` `\(SS_R\)`? Choose a point, compare the left and right
+
+&lt;img src="Workshop1-Week10_files/figure-html/ssl-ssr-4-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# `\(SS_L\)` `\(SS_R\)`? Choose a point, compare the left and right
+
+&lt;img src="Workshop1-Week10_files/figure-html/fun-ssl-ssr-5-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Across all values of x?
+
+
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-19-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# And if we repeated this again
+
+This is how the data is split:
+
+&lt;img src="Workshop1-Week10_files/figure-html/show-split-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# We can represent these splits in a tree format:
+
+
+```r
+library(rpart.plot)
+rpart.plot(df_rp)
+```
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Understanding rpart
+
+
+```r
+df_rp
+## n= 100 
+## 
+## node), split, n, deviance, yval
+##       * denotes terminal node
+## 
+##  1) root 100 359.245100  0.8081071  
+##    2) x&gt;=0.2775916 24  16.840100 -1.4822830  
+##      4) x&gt;=0.3817438 12   3.832238 -2.0814410 *
+##      5) x&lt; 0.3817438 12   4.392090 -0.8831252 *
+##    3) x&lt; 0.2775916 76 176.745400  1.5313880  
+##      6) x&lt; 0.1426085 61  41.562800  0.9365995  
+##       12) x&gt;=-0.3999242 50  24.519860  0.7035330  
+##         24) x&lt; 0.05905847 41  11.729940  0.4807175  
+##           48) x&gt;=-0.1455513 25   5.653876  0.2281914 *
+##           49) x&lt; -0.1455513 16   1.990829  0.8752895 *
+##         25) x&gt;=0.05905847 9   1.481498  1.7185820 *
+##       13) x&lt; -0.3999242 11   1.981477  1.9959930 *
+##      7) x&gt;=0.1426085 15  25.842970  3.9501960 *
+```
+
+
+
+---
+# This is how the model looks:
+
+&lt;img src="Workshop1-Week10_files/figure-html/model-pred-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Stopping rules
+
+- Its an algorithm. **Why did it stop at 7 terminal nodes?**
+
+.content-box-neutral[
+- Stopping rules are needed, else the algorithm will keep fitting until every observation is in its own group.
+- Control parameters set stopping points:
+   + minsplit: minimum number of points in a node that the algorithm is allowed to split
+   + minbucket: minimum number of points in a terminal node
+- We can also look at the change in value of `\(SS_T-(SS_L+SS_R)\)` at each split, and if the change is too *small*, stop.
+]
+
+---
+# You can change the options to fit a different model
+
+An re-fit, the model will change. Here we reduce the `minbucket` parameter. 
+
+
+```r
+df_rp_m10 &lt;- rpart(y~x, data=df, 
+*                       control = rpart.control(minsplit = 2))
+```
+&lt;br&gt;
+
+- minsplit--&gt; the minimum number of observations that must exist in a node in order for a split to be attempted.
+- For all the options type on the R console --&gt; **?rpart.control**
+
+
+---
+# This yields a (slightly) more complex model.
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# What's computed?
+
+
+
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Residuals
+
+
+```r
+ggplot(df_rp_aug, aes(x=x, y= .resid)) + 
+  geom_point() +
+  ylab("residuals") +
+  scale_x_continuous(breaks=seq(-0.5, 0.5, 0.1))
+```
+
+&lt;img src="Workshop1-Week10_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Goodness of fit - Root Mean Square Error
+
+
+```r
+gof &lt;- printcp(df_rp, digits=3)
+## 
+## Regression tree:
+## rpart(formula = y ~ x, data = df)
+## 
+## Variables actually used in tree construction:
+## [1] x
+## 
+## Root node error: 359/100 = 3.59
+## 
+## n= 100 
+## 
+##       CP nsplit rel error xerror   xstd
+## 1 0.4611      0     1.000  1.008 0.1426
+## 2 0.3044      1     0.539  0.580 0.0891
+## 3 0.0419      2     0.235  0.301 0.0643
+## 4 0.0315      3     0.193  0.248 0.0621
+## 5 0.0240      4     0.161  0.246 0.0623
+## 6 0.0114      5     0.137  0.218 0.0617
+## 7 0.0100      6     0.126  0.216 0.0616
+```
+
+---
+# Goodness of fit?
+&lt;br&gt;
+
+After 6 splits we have:
+
+&lt;br&gt;
+
+The relative error is `\(1-R^2\)`. For this example, after 6 splits it is 0.1257497. So `\(R^2=\)` 0.8742503. 
+
+&lt;br&gt;
+
+
+```r
+1-sum(df_rp_aug$e^2)/sum((df$y-mean(df$y))^2)
+```
+
+---
+# Strengths
+&lt;br&gt;
+  - There are no parametric assumptions underlying partitioning methods.
+  - Can handle data of unusual shapes and sizes.
+  - Can identify unusual groups of data.
+  - Provides a tree based graphic that is fun to interpret.
+  - Has an efficient heuristic of handling missing values. 
+  - The method could be influenced by outliers, but it would be isolating the effect to one partition.
+  
+---
+# Weaknesses
+
+&lt;br&gt;
+
+  - Computational time.
+  - Can require tuning parameters to get good model fit.
+  - It is computational model not a parametric model.
+  - That means that there is not a nice formula for the model as a result, or inference about populations available
+
+---
+# Next lecture: Classification trees
+&lt;br&gt;&lt;br&gt;
+
+When the **response is categorical** (character/factor), the model is called a classification tree. 
+
+- The criteria for making the splits also changes. 
+- There are a number of split criteria commonly used. If we consider a binary response ($y=0, 1$), and `\(p\)` is the 
+proportion of observations in class `\(1\)`.
+
+- Gini: `\(2p(1-p)\)`
+- Entropy: `\(-p(\log_e p)-(1-p)\log_e(1-p)\)`
+
+
+
+
+---
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;&lt;br&gt;
+
+
+
+.bottom_abs.width100[
+
+Lecturer: Patricia Menéndez
+
+Department of Econometrics and Business Statistics&lt;br&gt;
+
+
+
+
+
+]
+
+&lt;br /&gt;
+This work is licensed under a &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License&lt;/a&gt;.
+
+&lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;&lt;img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /&gt;&lt;/a&gt;
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;margin-left:3px;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

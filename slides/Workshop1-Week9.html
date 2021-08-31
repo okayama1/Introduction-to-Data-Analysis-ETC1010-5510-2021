@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC5510: Introduction to Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Patricia Menéndez" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+    -->
+    <link rel="icon" href="images/favicon.ico"  type='image/x-icon'/>
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-logo.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70 title-slide
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;
+
+# .monash-white.outline-text[ETC5510: Introduction to Data Analysis]
+
+&lt;h2 class="monash-white outline-text" style="font-size: 30pt!important;"&gt;Week 9&lt;/h2&gt;
+
+&lt;br&gt;
+
+&lt;h2 style="font-weight:900!important;"&gt;Graphical Models and Network Representation&lt;/h2&gt;
+
+.bottom_abs.width100[
+
+Lecturer: *Patricia Menéndez*
+
+Department of Econometrics and Business Statistics
+
+
+
+
+&lt;br&gt;
+]
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+
+
+  
+---
+# Questions/Comments/Suggestions
+
+&lt;img src="images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+ Photo: Rhythm Goyal for  Unsplash.
+---
+# Recap: Week 8
+
+&lt;br&gt;&lt;br&gt;
+- The analysis of text data, why?
+- Analysis of text data steps
+- R packages for text analysis
+- Tidy text
+- Extracting common words, stop words etc
+- Sentiment of the text
+
+
+---
+
+# Week 9: Outline
+&lt;br&gt;&lt;br&gt;
+
+- Extracting data from messy excel files
+- Graphical models
+- Networks
+- Visualizing networks
+- Remarks about assignment 2
+- Presentations of group projects in Week 12.
+- Notice about in-class final semester assessment in Week 12
+
+
+
+
+---
+# Announcements
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+ Group project milestone 2: Monday 10 May, 1pm.
+ ]
+ - Folder with original data and folder with clean data --&gt; google drive link (if larger than 500MB)
+ - Page describing your data and the data cleaning that you have done
+ - Rmd with the cleaning done to the data
+
+.content-box-neutral[
+Assignment 2: Release tonight and due on Monday May 17, 11am. ]
+ - Late submissions will not be accepted.
+ 
+ 
+---
+# Assignment 2
+
+&lt;br&gt;&lt;br&gt;
+- You will first complete the assignment on your own
+- Then all the team members start working together for the group submission
+- You will need to submit your individual assignment and the group assignment
+
+---
+# R packages
+
+&lt;br&gt;&lt;br&gt;
+
+- library(readxl)
+- library(haven)
+
+---
+# Example data file: BOCSAR
+
+&lt;img src="images/bocsar.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+https://www.bocsar.nsw.gov.au/Pages/bocsar_datasets/Local-area.aspx
+
+
+---
+# Example data file
+
+&lt;img src="images/excell.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+https://www.bocsar.nsw.gov.au/Pages/bocsar_datasets/Local-area.aspx
+
+
+---
+# List of sheets in an excel file
+
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+ excel_sheets("data/NewSouthWales.xlsx")
+## [1] "Summary of offences" "Premises Type"       "Victims"            
+## [4] "Offenders"           "Indigenous status "  "Alcohol Related"    
+## [7] "Month"               "Time"
+```
+
+
+
+---
+# Read different excel sheets
+
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1)
+## # A tibble: 84 x 15
+##    `NSW Recorded C… ...2  `2019` `Definitions an… ...5  ...6  ...7  ...8  ...9 
+##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  2 Number of recor… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  3 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  4 New South Wales  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  5 &lt;NA&gt;             &lt;NA&gt;  Jan-D… &lt;NA&gt;             Jan-… &lt;NA&gt;  Jan-… &lt;NA&gt;  Jan-…
+##  6 Offence group    Offe… Numbe… Rate per 100,00… Numb… Rate… Numb… Rate… Numb…
+##  7 17 major offenc… Murd… 74     0.9716000000000… 70    0.90… 53    0.67… 72   
+##  8 &lt;NA&gt;             Dome… 29113  382.25259999999… 29148 376.… 28470 361.… 29710
+##  9 &lt;NA&gt;             Non-… 30858  405.1644         31772 410.… 32227 409.… 31911
+## 10 &lt;NA&gt;             Sexu… 4982   65.413499999999… 5249  67.8… 5994  76.1… 5846 
+## # … with 74 more rows, and 6 more variables: ...10 &lt;chr&gt;, ...11 &lt;chr&gt;,
+## #   ...12 &lt;chr&gt;, ...13 &lt;chr&gt;, ...14 &lt;chr&gt;, ...15 &lt;chr&gt;
+```
+
+
+---
+# Read specific cells from an excel file
+
+&lt;img src="images/selection.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1, range = "E30:F35")
+## # A tibble: 5 x 2
+##   `111` `1.4354`
+##   &lt;dbl&gt;    &lt;dbl&gt;
+## 1 30632   396.  
+## 2  1262    16.3 
+## 3  8490   110.  
+## 4   520     6.72
+## 5 29649   383.
+```
+
+
+
+
+
+---
+# Read specific cells from an excel file 
+
+&lt;img src="images/selection_dim.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1, col_names = FALSE,
+range = anchored("B37", dim = c(4,2)))
+## # A tibble: 4 x 2
+##   ...1                                   ...2
+##   &lt;chr&gt;                                 &lt;dbl&gt;
+## 1 Possession and/or use of cocaine       1254
+## 2 Possession and/or use of narcotics      857
+## 3 Possession and/or use of cannabis     19442
+## 4 Possession and/or use of amphetamines  6931
+```
+
+---
+# Read specific cells from an excel file 
+
+&lt;img src="images/selection_dim2.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1, 
+range = cell_limits(c(7,1), c(14,4) ))
+## # A tibble: 7 x 4
+##   `Offence group`  `Offence type`           `Number of incid… `Rate per 100,000…
+##   &lt;chr&gt;            &lt;chr&gt;                                &lt;dbl&gt;              &lt;dbl&gt;
+## 1 17 major offenc… Murder^                                 74              0.972
+## 2 &lt;NA&gt;             Domestic violence relat…             29113            382.   
+## 3 &lt;NA&gt;             Non-domestic violence r…             30858            405.   
+## 4 &lt;NA&gt;             Sexual assault                        4982             65.4  
+## 5 &lt;NA&gt;             Indecent assault, act o…              6885             90.4  
+## 6 &lt;NA&gt;             Robbery without a weapon              1568             20.6  
+## 7 &lt;NA&gt;             Robbery with a firearm                 178              2.34
+```
+
+---
+# Read specific cells from an excel file 
+
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1, 
+range = cell_limits(c(1,1), c(NA, NA) ))
+## # A tibble: 84 x 15
+##    `NSW Recorded C… ...2  `2019` `Definitions an… ...5  ...6  ...7  ...8  ...9 
+##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  2 Number of recor… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  3 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  4 New South Wales  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  5 &lt;NA&gt;             &lt;NA&gt;  Jan-D… &lt;NA&gt;             Jan-… &lt;NA&gt;  Jan-… &lt;NA&gt;  Jan-…
+##  6 Offence group    Offe… Numbe… Rate per 100,00… Numb… Rate… Numb… Rate… Numb…
+##  7 17 major offenc… Murd… 74     0.9716000000000… 70    0.90… 53    0.67… 72   
+##  8 &lt;NA&gt;             Dome… 29113  382.25259999999… 29148 376.… 28470 361.… 29710
+##  9 &lt;NA&gt;             Non-… 30858  405.1644         31772 410.… 32227 409.… 31911
+## 10 &lt;NA&gt;             Sexu… 4982   65.413499999999… 5249  67.8… 5994  76.1… 5846 
+## # … with 74 more rows, and 6 more variables: ...10 &lt;chr&gt;, ...11 &lt;chr&gt;,
+## #   ...12 &lt;chr&gt;, ...13 &lt;chr&gt;, ...14 &lt;chr&gt;, ...15 &lt;chr&gt;
+```
+When we use NA we assume that the entire rows or columns are being selected.
+
+---
+# Read specific cells from an excel file 
+
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1,  
+range = cell_limits(c(1, NA), c(NA, 2) ))
+## # A tibble: 84 x 2
+##    `NSW Recorded Crime Statistics 2015 - 2019`           ...2                   
+##    &lt;chr&gt;                                                 &lt;chr&gt;                  
+##  1 &lt;NA&gt;                                                  &lt;NA&gt;                   
+##  2 Number of recorded incidents and rate per 100,000 po… &lt;NA&gt;                   
+##  3 &lt;NA&gt;                                                  &lt;NA&gt;                   
+##  4 New South Wales                                       &lt;NA&gt;                   
+##  5 &lt;NA&gt;                                                  &lt;NA&gt;                   
+##  6 Offence group                                         Offence type           
+##  7 17 major offences                                     Murder^                
+##  8 &lt;NA&gt;                                                  Domestic violence rela…
+##  9 &lt;NA&gt;                                                  Non-domestic violence …
+## 10 &lt;NA&gt;                                                  Sexual assault         
+## # … with 74 more rows
+```
+.green[Starting in the cell located row 1 select all the rows in that column and 
+select all the rows in column 2.]
+
+
+---
+# Read specific cells from an excel file 
+
+&lt;br&gt;
+
+.green[Reading column 2] 
+&lt;br&gt;
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1, 
+range = cell_cols(2))
+## # A tibble: 62 x 1
+##    `Offence type`                                              
+##    &lt;chr&gt;                                                       
+##  1 Murder^                                                     
+##  2 Domestic violence related assault                           
+##  3 Non-domestic violence related assault                       
+##  4 Sexual assault                                              
+##  5 Indecent assault, act of indecency and other sexual offences
+##  6 Robbery without a weapon                                    
+##  7 Robbery with a firearm                                      
+##  8 Robbery with a weapon not a firearm                         
+##  9 Break and enter dwelling                                    
+## 10 Break and enter non-dwelling                                
+## # … with 52 more rows
+```
+
+---
+# Read specific cells from an excel file 
+
+&lt;br&gt;&lt;br&gt;
+
+.green[Reading rows 1 to 4.]
+
+
+```r
+read_excel("data/NewSouthWales.xlsx", sheet = 1, 
+range = cell_rows(1:4))
+## # A tibble: 3 x 4
+##   `NSW Recorded Crime Statistics 2015 - 2019` ...2  `2019` `Definitions and exp…
+##   &lt;chr&gt;                                       &lt;lgl&gt; &lt;lgl&gt;  &lt;lgl&gt;                
+## 1 &lt;NA&gt;                                        NA    NA     NA                   
+## 2 Number of recorded incidents and rate per … NA    NA     NA                   
+## 3 &lt;NA&gt;                                        NA    NA     NA
+```
+---
+# Summary
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+- .purple[anchored()] --&gt;  Select a range of cells
+- .purple[cell_limits()] --&gt; Select a range of cells
+- .purple[cell_cols()] --&gt; Select columns  
+- .purple[cell_rows()] --&gt; Select  rows
+]
+
+
+---
+# Reading different formats
+
+&lt;br&gt;&lt;br&gt;
+Using the Readr package:
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- SAS --&gt; .purple[read_sas]("name.sas7bdat")
+- SPSS --&gt; .purple[read_spss]("name.sav")
+- STATA  --&gt; .purple[read_stata]("name.dta")
+]
+
+
+---
+class: transition
+
+# Graphical Models
+
+&lt;img src="images/gene.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+Menéndez, P., Kourmpetis, Y. A., ter Braak, C. J., &amp; van Eeuwijk, F. A. (2010). Gene regulatory networks from multifactorial perturbations using Graphical Lasso: application to the DREAM4 challenge. PloS one, 5(12), e14147.
+
+
+---
+# Graphical Models 
+
+&lt;img src="images/proteins.png" width="50%" style="display: block; margin: auto;" /&gt;
+"Three-dimensional structures of proteins that regulate their functions can be modelled using complex network based approaches for understanding the structure-function relationship."
+&lt;br&gt;
+Kandhari, N., &amp; Sinha, S. (2017). Complex network analysis of thermostable mutants of Bacillus subtilis Lipase A. Applied Network Science, 2(1), 18.
+
+
+---
+# Graphical model
+
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+A **graphical model** represents the probabilistic relationships among a set of variables.
+]
+
+&lt;br&gt;
+- Graphical models allow us to .green[understand "high-order" relationships between variables representing a complex system].
+- .green[Graphical models are represented by a network]: each .green[node/vertex (vertices) of the graph represents a variable] and .green[each edge represents the dependency between the variables that are connected by an edge].
+
+---
+# How does a graphical model representation look like?
+
+
+&lt;img src="Workshop1-Week9_files/figure-html/make-call-graph3-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+The graph represents the .green[network topology] that is how the different
+variables in the system connect to each other. Typically relationships represent
+dependencies.
+
+---
+# Network topology --&gt; Adjacency matrix
+
+&lt;br&gt;&lt;br&gt;
+The network topology (network connections)
+is given by the so called .green[adjacency matrix].
+
+&lt;br&gt;
+.pull-left[
+
+```
+##       Gene1 Gene2 Gene3 Gene4 Gene5
+## Gene1     0     1     1     0     0
+## Gene2     1     0     1     1     0
+## Gene3     1     1     0     0     1
+## Gene4     0     1     0     0     0
+## Gene5     0     0     1     0     0
+```
+]
+.pull-right[
+&lt;img src="Workshop1-Week9_files/figure-html/make-call-graph2-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Directed and undirected graphs
+
+&lt;br&gt;&lt;br&gt;
+.pull-left[
+# Undirected graph
+
+&lt;img src="Workshop1-Week9_files/figure-html/make-call-graph5-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+
+# Directed graph
+&lt;img src="Workshop1-Week9_files/figure-html/unnamed-chunk-15-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+A directed graph represents the connection and direction of the relationship between variables,  while undirected graphs
+represent the connections not the directions (in many cases we will not have information on that).
+
+
+---
+# Nodes and edges
+
+&lt;br&gt;&lt;br&gt;
+
+- The .green[edges] in a network representing a graphical model
+describe whether there is a .green[relationship between different variables].
+
+- The relationship between variables (or nodes) in a graphical model
+can be established by studying conditional probabilities (and also much more complicated models) or more simply
+using correlation thresholds between variables.
+
+
+
+---
+# Knowing/not knowing the network topology
+
+&lt;br&gt;&lt;br&gt;
+
+Typically we might encounter two problems:
+
+&lt;br&gt;
+- Estimation of the network topology
+- If we know the network topology under
+the strength of the relationship between the 
+variables (i.e the value of the edges)
+
+---
+# Graphical models based on correlations
+&lt;br&gt;
+If we don't know the topology of the network,
+we can use correlations to find out the network
+describing the relationship between the variables.
+More complex methods are typically used!
+
+
+```r
+set.seed(120)
+variables_df &lt;- data.frame(Gene1 = rnorm(100),
+                           Gene2 = rnorm(100),
+                           Gene3 = rnorm(100))
+head(variables_df)
+##        Gene1      Gene2      Gene3
+## 1 -0.2743504  0.7113053  0.8742076
+## 2 -0.3999054  0.6524477 -1.3237310
+## 3 -0.8559399  0.1392010 -0.5989704
+## 4  2.0752192  0.1824808  1.4235813
+## 5  1.0483213 -0.1336414  1.6054362
+## 6  0.2259635 -0.4529435  0.2037925
+```
+
+---
+# Computing correlations
+
+```r
+Correlation_matrix&lt;- cor(variables_df)
+Correlation_matrix
+##             Gene1       Gene2       Gene3
+## Gene1  1.00000000 -0.07463622 -0.01019694
+## Gene2 -0.07463622  1.00000000  0.10744725
+## Gene3 -0.01019694  0.10744725  1.00000000
+```
+We can create an adjacency matrix:
+
+
+```r
+adjacency_matrix &lt;- ifelse(Correlation_matrix &lt;= 0.06, 0, 1)
+adjacency_matrix
+##       Gene1 Gene2 Gene3
+## Gene1     1     0     0
+## Gene2     0     1     1
+## Gene3     0     1     1
+```
+&lt;br&gt;
+
+How does the graph looks like?
+
+---
+# Sometimes we know the network topology
+&lt;br&gt;&lt;br&gt;
+**A description of phone calls** and we want
+to represent the connections via a network/graph.
+In this case, we know the direction of the connections between
+the nodes.
+
+## Relationship between group phone calls.
+&lt;br&gt;
+- Johnny --&gt; Liz
+- Liz --&gt; Anna
+- Johnny -- &gt; Dan
+- Dan --&gt; Liz
+- Dan --&gt; Lucy
+
+---
+# Network visualization
+&lt;br&gt;
+Example of directed network:
+&lt;br&gt;
+&lt;img src="Workshop1-Week9_files/figure-html/make-call-graph-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: transition
+
+# Corresponding adjacency matrix
+
+&lt;br&gt;&lt;br&gt;
+
+```
+##        Johnny Dan Liz Lucy Anna
+## Johnny      0   1   1    0    0
+## Dan         0   0   1    1    0
+## Liz         0   0   0    0    1
+## Lucy        0   0   0    0    0
+## Anna        0   0   0    0    0
+```
+&lt;br&gt;
+Is this matrix symmetric? Why?
+
+---
+# Examples 
+
+These examples present situations in which
+we might be interested to know or to represent how the
+different variables connect to each other.
+
+- **Telephone exchanges**: Nodes are the phone numbers. Edges would indicate a call was made betwen two numbers.
+- **Book or movie plots**: Nodes are the characters. Edges would indicate whether they appear together in a scene, or chapter. If they speak to each other, various ways we might measure the association.
+- **Social media**: nodes would be the people who post on facebook, including comments. Edges would measure who  comments on who's posts.
+
+
+---
+# Example: Madmen
+
+&lt;br&gt;
+Relationship between characters of a movie.
+
+&lt;br&gt;
+
+&lt;img src="images/Mad-men-title-card.jpg" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+Source: [wikicommons](https://en.wikipedia.org/wiki/Mad_Men#/media/File:Mad-men-title-card.jpg)
+
+---
+# Generate a network view
+&lt;br&gt;&lt;br&gt;
+- Create a layout (in 2D) which places nodes which are most related close,
+- Plot the nodes as points, connect the appropriate lines
+- Overlaying other aspects, e.g. gender
+
+---
+# Introducing `madmen` data
+
+```r
+library(geomnet)
+data(madmen)
+madmen_nodes &lt;- as_tibble(madmen$vertices) %&gt;% 
+* mutate_all(as.character) %&gt;%
+  rename(gender = Gender)
+madmen_edges &lt;- as_tibble(madmen$edges) %&gt;% mutate_all(as.character)
+```
+
+
+```r
+glimpse(madmen)
+## List of 2
+##  $ edges   :'data.frame':	39 obs. of  2 variables:
+##   ..$ Name1: Factor w/ 9 levels "Betty Draper",..: 1 1 2 2 2 2 2 2 2 2 ...
+##   ..$ Name2: Factor w/ 39 levels "Abe Drexler",..: 15 31 2 4 5 6 8 9 11 21 ...
+##  $ vertices:'data.frame':	45 obs. of  2 variables:
+##   ..$ label : Factor w/ 45 levels "Abe Drexler",..: 5 9 16 23 26 32 33 38 39 17 ...
+##   ..$ Gender: Factor w/ 2 levels "female","male": 1 2 2 1 2 1 2 2 2 2 ...
+```
+
+
+---
+# Example: Mad Men. (Nodes = characters from the series)
+
+
+```r
+madmen_nodes
+## # A tibble: 45 x 2
+##    label          gender
+##    &lt;chr&gt;          &lt;chr&gt; 
+##  1 Betty Draper   female
+##  2 Don Draper     male  
+##  3 Harry Crane    male  
+##  4 Joan Holloway  female
+##  5 Lane Pryce     male  
+##  6 Peggy Olson    female
+##  7 Pete Campbell  male  
+##  8 Roger Sterling male  
+##  9 Sal Romano     male  
+## 10 Henry Francis  male  
+## # … with 35 more rows
+```
+
+---
+# Example: Mad Men. (Edges = how they are associated)
+
+
+```r
+madmen_edges
+## # A tibble: 39 x 2
+##    Name1        Name2           
+##    &lt;chr&gt;        &lt;chr&gt;           
+##  1 Betty Draper Henry Francis   
+##  2 Betty Draper Random guy      
+##  3 Don Draper   Allison         
+##  4 Don Draper   Bethany Van Nuys
+##  5 Don Draper   Betty Draper    
+##  6 Don Draper   Bobbie Barrett  
+##  7 Don Draper   Candace         
+##  8 Don Draper   Doris           
+##  9 Don Draper   Faye Miller     
+## 10 Don Draper   Joy             
+## # … with 29 more rows
+```
+
+---
+# Let's get the madmen data into the right shape
+&lt;br&gt;&lt;br&gt;
+
+```r
+madmen_edges %&gt;%
+  rename(from_id = Name1, to_id = Name2) 
+## # A tibble: 39 x 2
+##    from_id      to_id           
+##    &lt;chr&gt;        &lt;chr&gt;           
+##  1 Betty Draper Henry Francis   
+##  2 Betty Draper Random guy      
+##  3 Don Draper   Allison         
+##  4 Don Draper   Bethany Van Nuys
+##  5 Don Draper   Betty Draper    
+##  6 Don Draper   Bobbie Barrett  
+##  7 Don Draper   Candace         
+##  8 Don Draper   Doris           
+##  9 Don Draper   Faye Miller     
+## 10 Don Draper   Joy             
+## # … with 29 more rows
+```
+&lt;br&gt;
+Is this data represented a directed or an undirected graph?
+
+---
+# Let's get the madmen data into the right shape
+
+
+```r
+madmen_net &lt;- madmen_edges %&gt;%
+  rename(from_id = Name1, to_id = Name2) %&gt;%
+* full_join(madmen_nodes,
+*           by = c("from_id" = "label"))
+
+madmen_net
+## # A tibble: 75 x 3
+##    from_id      to_id            gender
+##    &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt; 
+##  1 Betty Draper Henry Francis    female
+##  2 Betty Draper Random guy       female
+##  3 Don Draper   Allison          male  
+##  4 Don Draper   Bethany Van Nuys male  
+##  5 Don Draper   Betty Draper     male  
+##  6 Don Draper   Bobbie Barrett   male  
+##  7 Don Draper   Candace          male  
+##  8 Don Draper   Doris            male  
+##  9 Don Draper   Faye Miller      male  
+## 10 Don Draper   Joy              male  
+## # … with 65 more rows
+```
+
+---
+# Full join?
+
+&lt;img src="gifs/full-join.gif" width="40%" style="display: block; margin: auto;" /&gt;
+.small[Return all rows and all columns from both x and y. Where there
+are not matching values, returns NA for the one missing.]
+---
+# Plotting the data
+
+&lt;img src="Workshop1-Week9_files/figure-html/ggraph-madmen-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# How to plot? Step by Step
+&lt;br&gt;&lt;br&gt;
+.left-code[
+
+```r
+set.seed(5556677)
+ggplot(data = madmen_net, 
+       aes(from_id = from_id, 
+           to_id = to_id)) +
+  geom_net(aes(colour = gender)) 
+
+```
+]
+
+.right-plot[
+&lt;img src="Workshop1-Week9_files/figure-html/graph-step-1-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# How to plot: specify the layout algorithm
+&lt;br&gt;&lt;br&gt;
+.left-code[
+
+```r
+set.seed(5556677)
+ggplot(data = madmen_net, 
+       aes(from_id = from_id, 
+           to_id = to_id)) +
+  geom_net(aes(colour = gender), 
+           layout.alg = "kamadakawai") 
+```
+]
+
+.right-plot[
+&lt;img src="Workshop1-Week9_files/figure-html/graph-plot-2-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# How to plot: adding labels
+&lt;br&gt;&lt;br&gt;
+.left-code[
+
+```r
+set.seed(5556677)
+ggplot(data = madmen_net, 
+       aes(from_id = from_id, 
+           to_id = to_id)) +
+  geom_net(aes(colour = gender), 
+           layout.alg = "kamadakawai",
+           directed = FALSE,
+           labelon = TRUE,
+           fontsize = 3) 
+```
+]
+
+.right-plot[
+&lt;img src="Workshop1-Week9_files/figure-html/graph-plot-3-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# How to plot: adjustments
+&lt;br&gt;&lt;br&gt;
+.left-code[
+
+```r
+set.seed(5556677)
+ggplot(data = madmen_net, 
+       aes(from_id = from_id, 
+           to_id = to_id)) +
+  geom_net(aes(colour = gender), 
+           layout.alg = "kamadakawai",
+           directed = FALSE,
+           labelon = TRUE,
+           fontsize = 3,
+           size = 2,
+           vjust = -0.6,
+           ecolour = "grey60",
+           ealpha = 0.5)
+```
+]
+
+.right-plot[
+&lt;img src="Workshop1-Week9_files/figure-html/graph-plot-4-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# How to plot: adding theme
+.left-code[
+
+```r
+set.seed(5556677)
+ggplot(data = madmen_net, 
+       aes(from_id = from_id, 
+           to_id = to_id)) +
+  geom_net(aes(colour = gender), 
+           layout.alg = "kamadakawai",
+           directed = FALSE,
+           labelon = TRUE,
+           fontsize = 3,
+           size = 2,
+           vjust = -0.6,
+           ecolour = "grey60",
+           ealpha = 0.5) +
+    scale_colour_manual(
+      values = c("#F8B195",
+        "#6C5B7B")
+     ) +
+    lims(x = c(-0.05, 1.05)) + 
+    theme_net() +
+    theme(legend.position = "bottom")
+```
+]
+
+.right-plot[
+&lt;img src="Workshop1-Week9_files/figure-html/graph-plot-5-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Which character was most connected?
+&lt;br&gt;
+
+```r
+madmen_edges %&gt;% 
+  pivot_longer(cols = c(Name1, Name2),
+               names_to = "List",
+               values_to = "Name") %&gt;%
+  head()
+## # A tibble: 6 x 2
+##   List  Name         
+##   &lt;chr&gt; &lt;chr&gt;        
+## 1 Name1 Betty Draper 
+## 2 Name2 Henry Francis
+## 3 Name1 Betty Draper 
+## 4 Name2 Random guy   
+## 5 Name1 Don Draper   
+## 6 Name2 Allison
+```
+
+---
+# Which character was most connected?
+
+
+```r
+madmen_edges %&gt;% 
+  pivot_longer(cols = c(Name1, Name2),
+               names_to = "List",
+               values_to = "Name") %&gt;% 
+  count(Name, sort = TRUE) %&gt;%
+  head()
+## # A tibble: 6 x 2
+##   Name               n
+##   &lt;chr&gt;          &lt;int&gt;
+## 1 Don Draper        14
+## 2 Roger Sterling     6
+## 3 Peggy Olson        5
+## 4 Pete Campbell      4
+## 5 Betty Draper       3
+## 6 Joan Holloway      3
+```
+
+
+
+
+&lt;!-- --- --&gt;
+&lt;!-- # Example: Harry Potter characters --&gt;
+&lt;!-- &lt;br&gt; --&gt;
+&lt;!-- There is a connection between two students if one provides emotional support to the other at some point in the book.  --&gt;
+&lt;!-- - Code to pull the data together is provided by Sam Tyner [here](https://github.com/sctyner/geomnet/blob/master/README.Rmd#harry-potter-peer-support-network). --&gt;
+
+&lt;!-- ```{r read-hp, echo=FALSE} --&gt;
+&lt;!-- hp_chars &lt;- read_csv(here::here("slides/data/hp_chars.csv")) --&gt;
+&lt;!-- hp_edges &lt;- read_csv(here::here("slides/data/hp_edges.csv")) --&gt;
+
+&lt;!-- # for each book, expand the edges data and join it to characters --&gt;
+&lt;!-- hp_all &lt;- hp_edges %&gt;% --&gt;
+&lt;!--   group_by(book) %&gt;% --&gt;
+&lt;!--   group_map(~ full_join(.x, hp_chars, by = c("name1" = "name"))) %&gt;% --&gt;
+&lt;!--   bind_rows(.id = "book") %&gt;%  --&gt;
+&lt;!--   rename(from_id = name1,  --&gt;
+&lt;!--          to_id = name2) --&gt;
+&lt;!-- ``` --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Harry potter data as nodes and edges --&gt;
+&lt;!-- &lt;br&gt; --&gt;
+&lt;!-- ```{r print-hp} --&gt;
+&lt;!-- hp_all --&gt;
+&lt;!-- ``` --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Let's plot the characters --&gt;
+
+&lt;!-- ```{r plot-hp, echo=TRUE, eval = FALSE} --&gt;
+&lt;!-- ggplot(data = hp_all, --&gt;
+&lt;!--        aes(from_id = from_id, --&gt;
+&lt;!--            to_id = to_id)) + --&gt;
+&lt;!--   geom_net(aes(colour = house, group = house, shape = gender), --&gt;
+&lt;!--            fiteach=T, --&gt;
+&lt;!--            directed = T, --&gt;
+&lt;!--            size = 3, --&gt;
+&lt;!--            linewidth = .5, --&gt;
+&lt;!--            ealpha = .5, --&gt;
+&lt;!--            labelon = T, --&gt;
+&lt;!--            fontsize = 3)+ --&gt;
+&lt;!--            # repel = T, --&gt;
+&lt;!--            # labelcolour = "black", --&gt;
+&lt;!--            # arrowsize = .5, --&gt;
+&lt;!--            # singletons = FALSE) + --&gt;
+&lt;!--   scale_colour_manual(values = c("#941B08","#F1F31C", "#071A80", "#154C07")) + --&gt;
+&lt;!--   facet_wrap(~book, labeller = "label_both", ncol=3) + --&gt;
+&lt;!--   theme_net() + --&gt;
+&lt;!--   theme(panel.background = element_rect(colour = 'black'), --&gt;
+&lt;!--         legend.position="bottom") --&gt;
+&lt;!-- ``` --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Let's plot the characters --&gt;
+
+&lt;!-- ```{r ggraph-hp-out, ref.label='plot-hp', echo = FALSE, fig.width = 10, fig.height = 6} --&gt;
+&lt;!-- ``` --&gt;
+
+
+
+---
+# Summary 
+&lt;br&gt;&lt;br&gt;
+
+- For network representation you need: 
+
+&lt;br&gt;
+
+    - an adjacency matrix, that describes how nodes (vertices) are connected to each other via edges.
+    - a layout algorithm to place the nodes optimally so that the fewest edges cross, or that the nodes that are most closely associated are near to each other.
+
+
+
+
+
+---
+# Annoucements related to presentations in Week 12
+
+&lt;br&gt;&lt;br&gt;
+- All the presentations will be done within your tutorials. Attendance is required.
+- Each group will need to answer questions from the teaching team (~15min per group)
+- Each group will need to ask questions to the other groups
+- In-class final semester assessment:
+
+- **On Week 12 Monday during the lecture scheduled time there will be 
+an exercise to be done and submitted by the end of the lecture. **
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

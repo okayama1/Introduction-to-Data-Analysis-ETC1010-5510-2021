@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC1010 - 5510: Introduction to Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Patricia Menéndez" />
+    <script src="libs/header-attrs-2.10/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+    -->
+    <link rel="icon" href="images/favicon.ico"  type='image/x-icon'/>    
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-logo.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70 title-slide
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;
+
+# .monash-white.outline-text[ETC1010 - 5510: Introduction to Data Analysis]
+
+&lt;h2 class="monash-white outline-text" style="font-size: 30pt!important;"&gt;Week 1&lt;/h2&gt;
+
+&lt;br&gt;
+
+&lt;h2 style="font-weight:900!important;"&gt;Week of introduction&lt;/h2&gt;
+
+.bottom_abs.width100[
+
+Lecturer: *Patricia Menéndez*
+
+Department of Econometrics and Business Statistics
+
+
+Week 1
+
+&lt;br&gt;
+]
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+
+---
+# Welcome!
+
+&lt;img src="images/jamie-street-p2ifKHu3dXM-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Lecture Goals
+
+&lt;br&gt;
+&lt;br&gt;
+- Get to know the teaching team
+- Understand the aims and structure of the unit
+- Look at the learning objectives of the unit
+- Introduction to the tools that we will be using during the semester.
+
+
+---
+class: transition middle
+# Teaching team
+
+
+---
+# Patricia Menéndez
+&lt;br&gt;&lt;br&gt;
+.pull-left[
+* 🎓 My training is in mathematics and statistics.
+*  🎓 PhD Mathematical Statistics,  [ETH](https://ethz.ch/en.html), Zurich (Switzerland).
+* I have experience working in academia and also for the government and with industries.
+
+]
+
+.pull-right[
+&lt;img src="images/patricia.jpeg" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+* Research: applied statistics, machine learning, data analysis for social good.
+
+* Lecturer and Chief examiner
+
+]
+
+
+---
+# Samithree Rajapaksha
+&lt;br&gt;
+.pull-left[
+
+- 🎓  I graduated with an honour’s degree in Industrial Statistics from University of Colombo majoring Industrial Statistics and Financial Mathematics.
+-  I am  a statistician in the area of Public Transport Studies, pursuing my PhD study at Monash University Australia attached to Sustainable and Effective Public Transport research group. 
+]
+
+.pull-right[
+&lt;img src="images/Samithree.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+I have been using R extensively during my PhD studies.
+]
+
+---
+
+# Nitika Kandhari
+&lt;br&gt;
+.pull-left[
+
+* 🎓 Bachelor’s degree in Bioinformatics
+* 🎓 Master’s degree in Bioinformatics
+* Current: PhD Student in the Faculty of Medicine Nursing and Health Sciences
+* Data Officer with [Monash Data Fluency](https://monashdatafluency.github.io/)
+* Research: Bioinformatics analysis on Breast Cancer data
+
+
+]
+
+.pull-right[
+&lt;img src="images/Nitika_profile.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+
+I  use R extensively to perform data cleaning, modelling, PCA and statistical analysis on biological data. 
+]
+
+
+---
+# Samantha Dawson
+
+.pull-left[
+ 🎓 Bachelor of Computer Science, Masters of Human Nutrition, PhD Candidate (Deakin University). 
+
+- I like working with data - prior to starting academia, I was an enterprise-wide database administrator and programmer,
+- Now I’m a PhD Candidate researching how diet shapes the gut bugs of mums and babies. I use R to analyse my research
+data and to make amazing plots. 
+
+]
+
+.pull-right[
+&lt;img src="images/Samantha_Dawson.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+Last semester, I tutored Machine Learning, a third-year R-based subject at Monash University. 
+]
+
+
+
+
+---
+# Joan Tan
+&lt;br&gt;
+.pull-left[
+🎓 Joan is a certified Analytics Professional (CAP) and earned a PhD in Applied Econometrics from Monash University.
+- Joan has worked as data analyst/consultant in the banking and insurance industry. "I love playing around with data!"
+
+- She has been using R during her PhD and analytics career. 
+
+]
+
+.pull-right[
+&lt;img src="images/joantan.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+
+]
+
+
+---
+# Chin Quek
+&lt;br&gt;
+.pull-left[
+ - 🎓 Mechanical engineering, business and public health (clinical research) graduate. 
+ 
+ - Chin has many of years of tutoring experience in data analysis
+ and also spent a few years working in technology delivery consulting. 
+ 
+ - He enjoys food, travelling and meeting new people. 
+
+]
+
+.pull-right[
+&lt;img src="images/chinquek.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+]
+
+
+---
+# Akriti Varshney
+&lt;br&gt;
+.pull-left[
+ - 🎓 
+ Bachelor of Biomedical Science (Honours)
+- PhD candidate at Biomedicine Discovery Institute, Monash
+- Started working with R during her undergraduate research placement, now use it to analyze genetic data to answer how the human heart forms and what goes wrong genetically in heart disease
+
+]
+
+.pull-right[
+&lt;img src="images/akriti.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+- Love tutoring, looking forward to seeing you!
+]
+
+
+---
+# Tarun Bonu
+&lt;br&gt;
+.pull-left[
+ 🎓 Bachelors in Computer Science and Engineering
+ - Master of Data Science (Monash University)
+ - Close to 2 years of experience in the IT industry building machine learning systems as a Data Scientist
+ - I am also an Associate Instructor with Data Fluency delivering workshops involving data analysis in Python and R
+
+]
+
+.pull-right[
+&lt;img src="images/TarunBonu.jpeg" width="60%" style="display: block; margin: auto;" /&gt;
+- My master's degree involved a research pathway where I developed deep learning approaches to find biologically significant motifs on the DNA
+
+`
+]
+
+
+
+
+
+---
+# Yourselves!
+&lt;img src="images/chang-duong-Sj0iMtq_Z4w-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+
+Source: Chang Duong for Unsplash
+
+---
+
+# What is this course?
+
+&lt;br&gt; &lt;br&gt;
+.content-box-neutral[
+ - This is a course on Introduction to **Data Analysis** / **data science**. ]
+ - You will gain skills to visualize and understand data
+ - You will learn tools to analyze data
+ - You will learn about reproducible practices
+
+
+
+---
+# Unit Content
+
+.content-box-neutral[
+1. Introduction to data analysis
+2. R, Rstudio and reproducible data analysis
+3. Tidy data principles and data wrangling
+4. An intro to data visualization
+5. Advanced data wrangling and visualization
+6. Handling missing  values and scraping data
+7. Introduction to data modeling
+8. Building models for data analysis
+9. Analysis of text data
+10. Advance data science modelling
+11. Data analysis and computational methods
+12. Project presentations
+]
+
+---
+# Unit Organization
+&lt;br&gt;
+
+.content-box-neutral[
+- .green[**Lectures**]: Two hours on Mondays where I will introduce you the concepts and will show you different demos.
+This will be an interactive class so please be engaged and participate!
+]
+.content-box-neutral[
+-.green[**Tutorials**]: Two hours where you will get to practice all the things that you learned on Monday. 
+
+    - There will be a list of practical exercises to be completed
+    - You will be working in smaller groups with one of the teaching team members
+    - Information about the groups and the Zoom links  will be posted in the Moodle site
+    - Make sure you check your Monash email and the Moodle site for the course regularly
+]
+
+
+
+
+---
+class: informative
+# Unit materials --&gt;  Moodle Site
+- Zoom links
+- Lecture notes for each class
+- Readings + other online resources related to topics
+- Assignment and project instructions
+- .green[Plenty of consultation times] 
+- Weekly online quizzes
+- Conduct discussions
+- Ask questions about the course material and exercises, and turn in assignments and project. 
+- Suggestion box
+
+---
+
+# Textbook
+
+.pull-left[
+&lt;img src="https://raw.githubusercontent.com/hadley/r4ds/master/cover.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+* Free
+* Written by authors of [Tidyverse R packages](http://tidyverse.org/)
+]
+
+
+---
+# Assessment 
+&lt;br&gt;
+
+&lt;table class="table table-striped" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; ASSESSMENT &lt;/th&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; WEIGHT &lt;/th&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; DATE &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Quizzes &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 5% &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Due each week &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Assignment 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 10% &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Due week 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Mid-semester assessment &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 25% &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Due week 7 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Assignment 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 20% &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Due week 10 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Project &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 15% &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Due week 11 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Final semester assessment &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 25% &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Due week 12 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+---
+# Quizzes
+
+-  **You will need to complete a 5 question quiz**
+- .green[Open each week from Monday at 6pm to 10:30am on Wednesday.] 
+- **You must login with your Monash credentials**
+
+&lt;img src="images/flux.png" width="70%" style="display: block; margin: auto;" /&gt;
+[Flux ETC1010- 5510 quizzes website](https://flux.qa/#/presentations/6029b43e765b2a056ffb078f/6029b43d765b2a056ffb0781?tab=polls)
+
+
+
+
+---
+
+# Group Assignments
+&lt;br&gt;
+
+Expectations: 
+
+- The group work will need to be conducted according to the [Monash policies](https://www.monash.edu/__data/assets/pdf_file/0011/1098659/Team-Assessment-Guidelines.pdf). 
+&lt;br&gt; &lt;br&gt;
+
+.content-box[
+- Each member of the group completes the require tasks in the assignment producing an individual document.
+- Then, group members will combine all the individual assignments into **one document** for the final submission. 
+&lt;!-- - 25% of the assignment grade will come from peer evaluation.  --&gt;
+- To ensure that everyone contributes to this tasks there will be a peer evaluation.
+]
+
+
+
+---
+# Mid-semester assessment
+
+There will be .green[midsemester assessment]
+ in **Week 7** and .green[final semester assessment] in **Week 12**.
+
+&lt;Br&gt;
+The goal of this exercises:
+&lt;br&gt;&lt;br&gt;
+.content-box[
+- To demonstrate that you understand and have learned the material up until that week.
+- Get feedback on your progress
+]
+
+&lt;br&gt;&lt;br&gt;
+.green[**- You will have a limited time to complete these tasks and the work will be done individually**]
+
+
+---
+# Tips for asking questions
+&lt;br&gt;&lt;br&gt;
+ - Give your question context from course concept. Be precise in your description:
+ 
+ &lt;br&gt;
+
+
+   -  **Good description**: "I am getting the following error and I'm not sure how to resolve it" - .green[Error: could not find function ggplot]
+     
+   -  **Bad description**: "R giving errors, help me! Aaaarrrrrgh!" 
+     
+   -  .green[Whenever is possible please provide a reproducible example]
+
+&lt;br&gt;    
+    
+ Remember: In Moodle you can edit a question after posting it.
+
+
+---
+# What can you do at the end of semester?
+
+&lt;br&gt;&lt;br&gt;
+Some of our best final projects:
+
+* [instagram](https://ebsmonash.shinyapps.io/Instagram/)
+* [babynames](https://ebsmonash.shinyapps.io/BabyNames/)
+* [oztourism](https://ebsmonash.shinyapps.io/OzTourism/)
+* [salary gaps](https://dmac.dicook.org/project/project_python_r/project#introduction)
+* [FantasyAFL](https://ebsmonash.shinyapps.io/FantasyAFL/)
+
+
+---
+class: informative
+
+# How do you do well in this class
+&lt;br&gt;
+&lt;br&gt;
+- .green[Participate **actively** in the class. **Learning is a share responsibility**!]
+- Ask questions in the **Moodle** site.
+- Come to consultation if you have questions.
+- Practice the materials taught in each class by doing more exercises from the textbook.
+- Use the extra resources.
+- Be curious, be positive, be engaged!
+
+.orange[**Remember: The teaching team is here to help you!**]
+
+
+
+---
+
+# Today: Outline
+
+&lt;br&gt;&lt;br&gt;
+
+- R and R studio
+- Why we care about Reproducibility?
+- R + markdown = Rmarkdown 
+- Writing markdown code
+- Rstudio Cloud
+- Overview of Week1 - Tutorial on Friday
+
+---
+# An important lesson: 
+
+.blockquote[
+Data preparation accounts for about 80% of the work of data scientists 
+
+-- [Gil Press, Forbes 2016](https://www.forbes.com/sites/gilpress/2016/03/23/data-preparation-most-time-consuming-least-enjoyable-data-science-task-survey-says/##47cbbbf46f63)
+
+]
+
+## Data Preparation
+
+* One of the least taught parts of data science, and business analytics, and yet it is what data scientists spend most of their time on. 
+* By the end of this semester, you will have the tools to be more efficient and effective in this area, so that you have more time to spend on your mining and modeling.
+
+
+---
+class: motivator
+
+# The _language_ of data analysis
+
+.left-code[
+This course is brought to you today by the letter "R"!
+]
+
+.right-plot[
+&lt;img src="images/grover_R.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+Grover image sourced from https://en.wikipedia.org/wiki/Grover.
+]
+
+
+
+
+---
+
+# What is R? 
+
+&lt;br&gt; &lt;br&gt;
+
+.blockquote[
+- R is a language for data analysis. 
+- R allow us to do data wrangling
+- Data Analysis
+- Modelling
+- Also it provides easy ways to create reproducible reports
+]
+
+---
+# Why R?
+
+&lt;br&gt;&lt;br&gt;
+- It is __Free__
+- __Powerful__: Over 15000 contributed packages on the main repository (CRAN), as of March 2020, provided by top international researchers and programmers. 
+- __Flexible__: It is a language, and thus allows you to create your own solutions
+- __Community__: Large global community friendly and helpful, lots of resources
+
+---
+
+# Community
+&lt;br&gt;&lt;br&gt;
+.left-code[
+R Consortium conducted a survey of users 2017.
+
+These are the locations of respondents to an R Consortium survey conducted in 2017.
+
+**8% of R users are between 18-24 BUT 45% of R users are between 25-34!**
+]
+
+.right-plot[
+&lt;img src="images/R_community.png" width="70%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+#  Sample of Australian organisations/companies that sent employees to [useR! 2018](https://user2018.r-project.org)
+
+&lt;br&gt;&lt;br&gt;
+.blockquote[
+ABS, **CSIRO**, ATO, **Microsoft**, Energy Qld, Auto and General, Bank of Qld, BHP, AEMO, Google, Flight Centre, Youi, Amadeus Investment Partners,  Yahoo, Sydney Trains, Tennis Australia, Rio Tinto, Reserve Bank of Australia, PwC, Oracle, **Netflix**, NOAA Fisheries, NAB, Menulog, Macquarie Bank, Honeywell, Geoscience Australia, DFAT, DPI, CBA, Bank of Italy, Australian Red Cross Blood Service, **Amazon**, **Bunnings**.
+]
+
+---
+class: center middle
+
+# R and RStudio
+
+.pull-left[
+&lt;img src="images/Rlogo.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+.pull-right[
+&lt;img src="images/rstudio-logo.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
+---
+class: informative
+
+# What is R/RStudio?
+
+&lt;br&gt;&lt;br&gt;
+- R is a statistical programming language
+
+- RStudio is a convenient interface for R (an integrated development environment, IDE)
+
+
+
+
+---
+class: transition middle
+
+# Let's take a tour of R and RStudio
+
+---
+
+# Rstudio
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="images/Rstudio-01.png" alt="The Rstudio IDE" width="80%" /&gt;
+&lt;p class="caption"&gt;The Rstudio IDE&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+class: bg-main1
+background-image: url(images/rstudio-screenshot.png)
+background-size: contain
+background-position: 50% 50%
+class: center, bottom, white
+
+
+
+
+---
+# In detail: 
+&lt;br&gt;&lt;br&gt;
+- __Source code editor__: This is where you edit your script! Experiment with writing your data analysis pipeline, ... You can have multiple files open, there are useful shortcuts (eg "Run", "Knit"), code is highlighted usefully and there is tab-completion when you start typing. *Also, if you want to look at any of the data you have read or created, it can be viewed in a tab on this pane.*
+- __Console window__: This is where the code is executed. There is a prompt "&gt;" which says *R is waiting for your command*. You don't actually need to type anything in this pane, you can run code directly from the Editor pane. The functions will show up in this window, and the results will be here. (Although, if you use an R notebook the result will show up in that notebook.)
+
+---
+# In detail:
+&lt;br&gt;&lt;br&gt;
+- __Help__: *?function* will show the help pages for the function here.
+- __Plot__: Plots you ask R to make will show up here, and you can zoom to make them bigger in a separate window if you want.
+- __Environment__: Data that you have read into R, or data or functions that you create will be listed here. **When you quit R, you will be asked if you want to save the environment. I suggest that you always answer NO.** Because we are scripting everything it is always easy to re-create the objects in the environment. The only time it can be useful is if you have created something that took a while, but a better option is to save this object to a file, and read it in at the start of the next R session.
+
+
+
+---
+
+# Rstudio Cloud
+
+&lt;br&gt;
+.green[R/Rstudio but in the cloud!]
+
+&lt;br&gt;
+&lt;img src="images/rstudiocloud.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+- Ensure that we all work in the same environment.
+
+---
+# R essentials: A short list (for now)
+&lt;br&gt;&lt;br&gt;
+- Data is organized in .green[columns] and .green[rows].
+
+- Typically: .green[columns] --&gt; represent variables
+- and .green[rows] --&gt; represent observations.
+
+
+```r
+library(palmerpenguins)
+head(penguins)
+## # A tibble: 6 × 8
+##   species island bill_length_mm bill_depth_mm flipper_length_… body_mass_g sex  
+##   &lt;fct&gt;   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;       &lt;int&gt; &lt;fct&gt;
+## 1 Adelie  Torge…           39.1          18.7              181        3750 male 
+## 2 Adelie  Torge…           39.5          17.4              186        3800 fema…
+## 3 Adelie  Torge…           40.3          18                195        3250 fema…
+## 4 Adelie  Torge…           NA            NA                 NA          NA &lt;NA&gt; 
+## 5 Adelie  Torge…           36.7          19.3              193        3450 fema…
+## 6 Adelie  Torge…           39.3          20.6              190        3650 male 
+## # … with 1 more variable: year &lt;int&gt;
+```
+
+---
+# R essentials: A short list (for now)
+&lt;br&gt;&lt;br&gt;
+
+
+
+```r
+names(penguins)
+```
+
+
+```r
+str(penguins)
+## tibble [344 × 8] (S3: tbl_df/tbl/data.frame)
+##  $ species          : Factor w/ 3 levels "Adelie","Chinstrap",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ island           : Factor w/ 3 levels "Biscoe","Dream",..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ bill_length_mm   : num [1:344] 39.1 39.5 40.3 NA 36.7 39.3 38.9 39.2 34.1 42 ...
+##  $ bill_depth_mm    : num [1:344] 18.7 17.4 18 NA 19.3 20.6 17.8 19.6 18.1 20.2 ...
+##  $ flipper_length_mm: int [1:344] 181 186 195 NA 193 190 181 195 193 190 ...
+##  $ body_mass_g      : int [1:344] 3750 3800 3250 NA 3450 3650 3625 4675 3475 4250 ...
+##  $ sex              : Factor w/ 2 levels "female","male": 2 1 1 NA 1 2 1 2 NA NA ...
+##  $ year             : int [1:344] 2007 2007 2007 2007 2007 2007 2007 2007 2007 2007 ...
+```
+
+
+---
+# R essentials: A short list (for now)
+
+- Columns (variables) in data frames are accessed with `$`:
+
+```r
+penguins$species
+##   [1] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##   [8] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [15] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [22] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [29] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [36] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [43] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [50] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [57] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [64] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [71] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [78] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [85] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [92] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+##  [99] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+## [106] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+## [113] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+## [120] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+## [127] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+## [134] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+## [141] Adelie    Adelie    Adelie    Adelie    Adelie    Adelie    Adelie   
+## [148] Adelie    Adelie    Adelie    Adelie    Adelie    Gentoo    Gentoo   
+## [155] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [162] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [169] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [176] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [183] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [190] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [197] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [204] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [211] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [218] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [225] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [232] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [239] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [246] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [253] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [260] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [267] Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo    Gentoo   
+## [274] Gentoo    Gentoo    Gentoo    Chinstrap Chinstrap Chinstrap Chinstrap
+## [281] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [288] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [295] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [302] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [309] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [316] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [323] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [330] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [337] Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap Chinstrap
+## [344] Chinstrap
+## Levels: Adelie Chinstrap Gentoo
+```
+- Elements within the column can be accessed: 
+
+```r
+penguins$species[1:10]
+##  [1] Adelie Adelie Adelie Adelie Adelie Adelie Adelie Adelie Adelie Adelie
+## Levels: Adelie Chinstrap Gentoo
+```
+
+
+
+---
+# R essentials: A short list (for now)
+
+&lt;br&gt;&lt;br&gt;
+- .green[Functions] are (most often) verbs, followed by what they will be applied to in parentheses:
+
+
+```r
+do_this(to_this)
+do_that(to_this, to_that, with_those)
+```
+
+
+For example:
+
+
+
+```r
+mean(c(1,2,1,2))
+## [1] 1.5
+```
+
+
+---
+# R essentials: A short list (for now)
+&lt;br&gt;&lt;br&gt;
+
+- Packages are installed with the `install.packages` function and loaded with the `library` function, once per session:
+
+
+```r
+install.packages("package_name")
+library(package_name)
+```
+
+
+---
+
+# Sharing / Reusing code
+
+&lt;br&gt;&lt;br&gt;
+- Any recycled code not explicitly cited will be treated as plagiarism. 
+- This can be as simple as pasting the link in a references section.
+- Assignment groups may not directly share/re-use code from  another group. 
+- You are welcome to discuss the problems together and ask for advice, 
+but you may not make direct use of code from another team.
+
+
+
+---
+class: refresher
+# Lots of R/Rstudio resources in : Cheatsheets
+
+&lt;br&gt;&lt;br&gt;
+RStudio started a trend by writing really concise summaries, and others have added to the collection. You can find the RStudio collection in the "Help" menu on the IDE, and at https://www.rstudio.com/resources/cheatsheets/. 
+
+Start with the [RStudio IDE cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf). 
+
+
+
+
+
+
+---
+class: transition
+
+# We are in a tight spot with reproducibility
+
+.blockquote[
+Only 6 out of 53 landmark results could be reproduced
+
+-- [Amgen, 2014*](https://www.nature.com/articles/483531a)
+]
+
+
+.blockquote[
+An estimated 75% - 90% of preclinical results cannot be reproduced
+
+-- [Begley, 2015*](https://www.ncbi.nlm.nih.gov/pubmed/25552691)
+]
+
+
+.blockquote[
+Estimated **annual** cost of irreproducibility for biomedical industry = 28 Billion USD
+
+-- [Freedman, 2015*](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002165)
+]
+ 
+
+.footnote[`*` Heard via Garret Grolemund's [great talk](https://www.youtube.com/watch?v=HVlwNayog-k)]
+
+
+
+---
+
+background-image: url("images/open-science-berg.jpeg")
+background-size: contain
+background-position: 50% 50%
+class: center, bottom, white
+
+
+---
+
+# Literate programming is a partial solution
+
+
+&lt;br&gt;&lt;br&gt;
+- Literate programming shines some light on this dark area of science. 
+
+- An idea from [Donald Knuth](https://en.wikipedia.org/wiki/Donald_Knuth) where you combine your text with your code output to create a document. 
+
+- A _blend_ of your literature (**text**), and your programming (**code**), to create something you can read from top to bottom. 
+
+- .green[** Use R markdown to combine both, text, R code, figures and more!**]
+
+
+
+---
+# Markdown as a new player to legibility
+
+&lt;br&gt;&lt;br&gt;
+
+In 2004, [John Gruber](https://en.wikipedia.org/wiki/John_Gruber), of [daring fireball](https://daringfireball.net/) created [markdown](https://en.wikipedia.org/wiki/Markdown), a simple way to create text that rendered into a HTML webpage.
+
+
+
+
+---
+
+# Example: 
+&lt;br&gt; &lt;br&gt;
+
+Imagine a report:
+
+&lt;br&gt;
+
+Introduction, methods, results, discussion, and conclusion,
+and all the bits of code that make each section. 
+
+
+- With Rmarkdown, you can see all the pieces of your data analysis  together in the same file.
+
+- Each time you knit the analysis is ran from the beginning
+
+---
+class: transition middle
+
+# Demo
+
+
+
+---
+# How does Markdown language look like?
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+.pull-left[
+```
+- bullet list
+- bullet list
+- bullet list
+```
+]
+
+--
+
+.pull-right[
+
+- bullet list
+- bullet list
+- bullet list
+
+]
+
+---
+# Markdown lists
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+.pull-left[
+```
+1. numbered list
+2. numbered list
+3. numbered list
+
+__bold__, **bold**, 
+
+_italic_, *italic*
+
+&gt; quote of something profound
+
+```
+]
+
+--
+
+.pull-right[
+
+
+1. numbered list
+2. numbered list
+3. numbered list
+
+__bold__, **bold**, 
+
+_italic_, *italic*
+
+&gt; quote of something profound
+
+]
+
+---
+# Markdown 
+
+&lt;br&gt;&lt;br&gt;
+
+With very little marking up, we can create rich text, that **actually resembles** the text that we want to see.
+
+
+**Learn to use markdown** Spend five minutes working through [markdowntutorial.com](https://www.markdowntutorial.com/)
+
+
+---
+# Rmarkdown helps address the reproducibility problem
+
+&lt;br&gt;&lt;br&gt;
+
+* Q: How do we take `markdown` + `R code` = "literate programming environment"
+
+* A: `Rmarkdown` 
+
+---
+
+# Rmarkdown
+&lt;br&gt;&lt;br&gt;
+- Provides an environment where you can write your complete analysis, and marries your text, and code together into a rich document. 
+
+- You write your code as code chunks, put your text around that, and then hey presto, you have a document you can reproduce.
+
+
+
+---
+
+# The anatomy of an Rmarkdown document
+&lt;br&gt;&lt;br&gt;
+.green[**There are three parts to an rmarkdown document.**]
+
+- Metadata (YAML)
+- Text (markdown formatting)
+- Code (code formatting)
+
+
+
+---
+# Metadata: YAML  (YAML Ain't Markup Language) 
+&lt;br&gt;&lt;br&gt;
+- The metadata of the document tells you how it is formed - what the **title** is, what **date** to put, and other control information.  
+
+- If you're familiar with `\(\LaTeX\)`, this is similar to how you specify document type, styles, fonts, options, etc in the front matter / preamble.
+
+---
+# Metadata: YAML
+&lt;br&gt;&lt;br&gt;
+- Rmarkdown documents use YAML to provide the metadata. It looks like this:
+
+```YAML
+---
+title: "An example document"
+author: "Dr Who"
+output: html_document
+---
+```
+
+It starts an ends with three dashes `---`, and has fields like the following: `title`, `author`, and `output`.
+
+---
+# Text
+&lt;br&gt;&lt;br&gt;
+
+Markdown  provides a simple way to mark up text
+
+.pull-left[
+
+```
+1. bullet list
+2. bullet list
+3. bullet list
+```
+
+]
+
+.pull-right[
+
+1. bullet list
+1. bullet list
+1. bullet list
+
+]
+
+---
+# Code and code chunks
+&lt;br&gt;&lt;br&gt;
+.green[We refer to code in an rmarkdown document in two ways]:
+
+1. Code chunks, and 
+2. Inline code.
+
+`Code chunks` are marked by three backticks and curly braces with `r` inside them:
+
+````markdown
+```{r chunk-name}
+# a code chunk
+```
+````
+
+---
+# Code: backtick?
+&lt;br&gt;&lt;br&gt;
+
+**A backtick** is a special character you might not have seen before, it is typically located under the tilde key (`~`). On USA / Australia keyboards, is under the escape key:
+
+
+&lt;img src="images/ansi-keyboard.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.small[
+image from https://commons.wikimedia.org/wiki/File:ANSI_Keyboard_Layout_Diagram_with_Form_Factor.svg
+]
+
+---
+# Code: Inline code
+
+&lt;br&gt;&lt;br&gt;
+Sometimes you want to run the code inside a sentence. This is called running the code "inline".
+
+You might want to run the code inline to name the number of variables or rows in a dataset in a sentence like:
+
+&gt; There are XXX observations in the airquality dataset, and XXX variables.
+
+---
+
+# Code: Inline code
+&lt;br&gt;&lt;br&gt;
+.green[You can call code "inline"  like so:]
+
+
+````markdown
+
+There are `r nrow(airquality) ` observations in the airquality dataset, 
+and `r ncol(airquality) ` variables.
+
+````
+
+Which gives you the following sentence
+
+
+&gt; There are 153 observations in the airquality dataset, and 6 variables.
+
+---
+
+
+# Code: Inline code
+&lt;br&gt;&lt;br&gt;
+- If your data changes upstream
+
+- You don't need to work out where you mentioned your data
+
+- You just update the document. 🎉
+ 
+
+
+---
+# Code: Chunk names
+&lt;br&gt;&lt;br&gt;
+Straight after the ` ```{r ` you can use a text string to name the chunk:
+
+````markdown
+```{r read-crime-data}
+crime &lt;- read_csv("data/crime-data.csv")
+```
+````
+
+---
+# Code: Chunk names
+&lt;br&gt;&lt;br&gt;
+.green[Naming code chunks has three advantages:]
+
+1. Navigate to specific chunks using the drop-down code navigator in the bottom-left of the script editor.
+2. Graphics produced by chunks now have useful names.
+3. You can set up networks of cached chunks to avoid re-performing expensive computations on every run.
+
+---
+# Code: Chunk names
+&lt;br&gt;&lt;br&gt;
+.green[Every chunk should ideally have a name.]
+
+Naming things is hard, but follow these rules and you'll be fine:
+
+1. One word that describes the action (e.g., "read")
+2. One word that describes the thing inside the code (e.g, "gapminder")
+3. Separate words with "-" (e.g., `read-gapminder`)
+
+---
+# Code: Chunk options
+&lt;br&gt;&lt;br&gt;
+.green[You can control how the code is output by changing the code chunk options which follow the title.] 
+
+````markdown
+```{r read-gapminder, eval = FALSE, echo = TRUE}
+gap &lt;- read_csv("gapminder.csv")
+```
+````
+
+What do you think this does?
+
+
+---
+# Code: Chunk options
+&lt;br&gt;&lt;br&gt;
+.green[The code chunk options you need to know about right now are:]
+
+  * `cache`: TRUE / FALSE. Do you want to save the output of the chunk so it doesn't have to run next time?
+  * `eval`: TRUE / FALSE Do you want to evaluate the code?
+  * `echo`: TRUE / FALSE Do you want to print the code?
+  * `include`: TRUE / FALSE Do you want to include code output in the final output document? Setting to `FALSE` means nothing is put into the output document, but the code is still run.
+
+You can read more about the options at the official documentation: https://yihui.name/knitr/options/#code-evaluation
+
+
+---
+# Global options: Set and forget
+&lt;br&gt;&lt;br&gt;
+.green[You can set the default chunk behavior once at the top of the `.Rmd` file using a chunk like:]
+
+```r
+knitr::opts_chunk$set(
+  echo = FALSE,
+  cache = TRUE
+)
+```
+
+then you will only need to add chunk options when you have the occasional one that you'd like to behave differently.
+
+
+
+---
+# Week 1 tutorial
+&lt;br&gt;
+
+&lt;img src="images/Tutorial1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Week 1 tutorial
+
+&lt;br&gt;&lt;br&gt;
+
+
+- Please watch the **tutorial intro video** in Moodle 
+- The tutorial materials will be posted there after the class in Moodle
+- Please watch these videos [**before the tutorial**](https://rstudio.cloud/learn/primers/1.2)  
+- Get hands on data analysis experience
+- Should be fun and collaborative
+- Nitika, Samantha, Samithree, Akriti, Joan, Tarun and Chin will be working with you
+- .green[Keep an eye for the announcements in Moodle]
+- Remember the quiz!
+
+
+---
+
+# Learning more:
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+- [R Markdown cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf) and Markdown Quick Reference 
+
+- Help -&gt; Markdown Quick Reference, we'll refer to it often as the course progresses
+
+
+
+---
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;&lt;br&gt;
+
+
+
+.bottom_abs.width100[
+
+Lecturer: Patricia Menéndez
+
+Department of Econometrics and Business Statistics&lt;br&gt;
+
+
+Week 1
+
+
+]
+
+&lt;br /&gt;
+This work is licensed under a &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License&lt;/a&gt;.
+
+&lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;&lt;img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /&gt;&lt;/a&gt;
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;margin-left:3px;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

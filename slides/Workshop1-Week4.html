@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC1010 - 5510: Introduction to Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Patricia Menéndez" />
+    <script src="libs/header-attrs-2.10/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+    -->
+    <link rel="icon" href="images/favicon.ico"  type='image/x-icon'/>    
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-logo.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70 title-slide
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;
+
+# .monash-white.outline-text[ETC1010 - 5510: Introduction to Data Analysis]
+
+&lt;h2 class="monash-white outline-text" style="font-size: 30pt!important;"&gt;Week 4&lt;/h2&gt;
+
+&lt;br&gt;
+
+&lt;h2 style="font-weight:900!important;"&gt;Relational data and Data Visualization&lt;/h2&gt;
+
+.bottom_abs.width100[
+
+Lecturer: *Patricia Menéndez*
+
+Department of Econometrics and Business Statistics
+
+
+
+
+&lt;br&gt;
+]
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+
+---
+# Questions/Comments/Suggestions
+
+&lt;img src="images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+ Photo: Rhythm Goyal for  Unsplash.
+---
+# Recap: Week 3
+&lt;br&gt;&lt;br&gt;
+
+- Going from tidy data to a data plot, using the grammar of graphics
+- Mapping of variables from the data to graphical elements
+- Using different geoms
+- Working with dates
+- Constructing graphics with dates
+
+
+---
+
+# Week 4: Outline
+&lt;br&gt;&lt;br&gt;
+- What is relational data?
+- Combining different data sets for data analysis
+- Keys
+- Different sorts of joins
+- Color Palettes  and effective graphs
+- Maps
+- Debugging
+- Assignment 1 
+
+
+---
+class: refresher
+# Recap: Tidy data
+
+&lt;img src="images/original-dfs-tidy.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Relational data
+&lt;br&gt;&lt;br&gt;
+- Data analysis .green[**rarely involves**] only a single table of data. 
+- To answer questions you generally need to .green[combine many tables of data.]
+- Multiple tables of data are called .green[*relational data*.]
+- It is the .green[**relations**], not just the individual datasets, that are important.
+
+---
+# Example `nycflights13`
+&lt;br&gt;&lt;br&gt;
+- Data set of flights that departed NYC in 2013 from https://www.transtats.bts.gov - a public database of all USA commercial airline flights. It has .green[five tables]:
+&lt;br&gt;&lt;br&gt;
+    1. **flights**
+    1. **airlines**
+    1. **airports**
+    1. **planes**
+    1. **weather**
+
+---
+# Flights
+&lt;br&gt;
+
+```r
+library(nycflights13)
+names(flights)
+##  [1] "year"           "month"          "day"            "dep_time"      
+##  [5] "sched_dep_time" "dep_delay"      "arr_time"       "sched_arr_time"
+##  [9] "arr_delay"      "carrier"        "flight"         "tailnum"       
+## [13] "origin"         "dest"           "air_time"       "distance"      
+## [17] "hour"           "minute"         "time_hour"
+
+head(flights, 3)
+## # A tibble: 3 × 19
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+## 1  2013     1     1      517            515         2      830            819
+## 2  2013     1     1      533            529         4      850            830
+## 3  2013     1     1      542            540         2      923            850
+## # … with 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+## #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+
+---
+# Airlines
+&lt;br&gt;
+
+```r
+
+names(airlines)
+## [1] "carrier" "name"
+head(airlines, 3)
+## # A tibble: 3 × 2
+##   carrier name                  
+##   &lt;chr&gt;   &lt;chr&gt;                 
+## 1 9E      Endeavor Air Inc.     
+## 2 AA      American Airlines Inc.
+## 3 AS      Alaska Airlines Inc.
+```
+
+---
+# Airports
+&lt;br&gt;
+
+```r
+names(airports)
+## [1] "faa"   "name"  "lat"   "lon"   "alt"   "tz"    "dst"   "tzone"
+head(airports, 3)
+## # A tibble: 3 × 8
+##   faa   name                            lat   lon   alt    tz dst   tzone       
+##   &lt;chr&gt; &lt;chr&gt;                         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;       
+## 1 04G   Lansdowne Airport              41.1 -80.6  1044    -5 A     America/New…
+## 2 06A   Moton Field Municipal Airport  32.5 -85.7   264    -6 A     America/Chi…
+## 3 06C   Schaumburg Regional            42.0 -88.1   801    -6 A     America/Chi…
+```
+
+---
+# Planes
+
+&lt;br&gt;
+
+```r
+names(planes)
+## [1] "tailnum"      "year"         "type"         "manufacturer" "model"       
+## [6] "engines"      "seats"        "speed"        "engine"
+head(planes, 3)
+## # A tibble: 3 × 9
+##   tailnum  year type           manufacturer   model  engines seats speed engine 
+##   &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;  
+## 1 N10156   2004 Fixed wing mu… EMBRAER        EMB-1…       2    55    NA Turbo-…
+## 2 N102UW   1998 Fixed wing mu… AIRBUS INDUST… A320-…       2   182    NA Turbo-…
+## 3 N103US   1999 Fixed wing mu… AIRBUS INDUST… A320-…       2   182    NA Turbo-…
+```
+
+---
+# weather
+&lt;br&gt;
+
+```r
+names(weather)
+##  [1] "origin"     "year"       "month"      "day"        "hour"      
+##  [6] "temp"       "dewp"       "humid"      "wind_dir"   "wind_speed"
+## [11] "wind_gust"  "precip"     "pressure"   "visib"      "time_hour"
+head(weather, 3)
+## # A tibble: 3 × 15
+##   origin  year month   day  hour  temp  dewp humid wind_dir wind_speed wind_gust
+##   &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+## 1 EWR     2013     1     1     1  39.0  26.1  59.4      270      10.4         NA
+## 2 EWR     2013     1     1     2  39.0  27.0  61.6      250       8.06        NA
+## 3 EWR     2013     1     1     3  39.0  28.0  64.4      240      11.5         NA
+## # … with 4 more variables: precip &lt;dbl&gt;, pressure &lt;dbl&gt;, visib &lt;dbl&gt;,
+## #   time_hour &lt;dttm&gt;
+```
+
+---
+# Concept map of tables and joins from the text
+
+&lt;img src="images/relational-nycflights.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Keys 🔑
+&lt;br&gt;&lt;br&gt;
+- .green[Keys] = variables used to connect records in one table to another. 
+- In the `nycflights13` data, 
+.content-box-neutral[
+
+    - `flights` connects to `planes` by a single variable `tailnum`
+    - `flights` connects to `airlines` by a single variable `carrier`
+    - `flights` connects to `airports` by two variables, `origin` and `dest`
+    - `flights` connects to `weather` using multiple variables, `origin`, and `year`,     `month`, `day` and `hour`.
+]
+
+
+---
+# Joins: Combine variables 
+
+&lt;br&gt;&lt;br&gt;
+- Adding variables from one table to another. 
+- There is always a decision on what observations are copied to the new table as well. 
+- Let's discuss how joins work using some [lovely animations](https://github.com/gadenbuie/tidyexplain) provided by [Garrick Aden-Buie](https://www.garrickadenbuie.com/).
+
+---
+# Example data
+
+&lt;img src="images/original-dfs.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+#  Left Join (Generally the one you want to use)
+
+.left-code[
+&lt;br&gt;
+.green[**All**] observations from the .green[**left** table], but .green[only] the observations from the .green[**right** table] that match those in the left.
+
+]
+
+.right-plot[
+
+&lt;img src="gifs/left-join.gif" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Right Join
+
+.left-code[
+&lt;br&gt;&lt;br&gt;
+Same as left join, but in .green[**reverse**].
+]
+
+.right-plot[
+&lt;img src="gifs/right-join.gif" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Inner join
+
+.left-code[
+&lt;br&gt;
+.green[Intersection] between the two tables, .green[**only the observations that are in both**]
+]
+
+.right-plot[
+&lt;img src="gifs/inner-join.gif" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Outer (full) join
+
+.left-code[
+&lt;br&gt;
+.green[Union] of the two tables, .green[**all observations from both**], .green[and missing values might get added]
+]
+
+.right-plot[
+&lt;img src="gifs/full-join.gif" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Combine full airline name with flights data?
+
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+names(flights)
+##  [1] "year"           "month"          "day"            "dep_time"      
+##  [5] "sched_dep_time" "dep_delay"      "arr_time"       "sched_arr_time"
+##  [9] "arr_delay"      "carrier"        "flight"         "tailnum"       
+## [13] "origin"         "dest"           "air_time"       "distance"      
+## [17] "hour"           "minute"         "time_hour"
+head(flights, 3)
+## # A tibble: 3 × 19
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+## 1  2013     1     1      517            515         2      830            819
+## 2  2013     1     1      533            529         4      850            830
+## 3  2013     1     1      542            540         2      923            850
+## # … with 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+## #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+
+---
+# Combine full airline name with flights data?
+
+
+
+```r
+names(airlines)
+## [1] "carrier" "name"
+head(airlines, 3)
+## # A tibble: 3 × 2
+##   carrier name                  
+##   &lt;chr&gt;   &lt;chr&gt;                 
+## 1 9E      Endeavor Air Inc.     
+## 2 AA      American Airlines Inc.
+## 3 AS      Alaska Airlines Inc.
+```
+
+---
+# Combine `airlines` &amp; `flights` using `left_join()`
+
+.left-code[
+&lt;br&gt;
+
+```r
+flights %&gt;%
+  left_join(airlines, 
+            by = "carrier") %&gt;%
+  glimpse()
+
+```
+]
+
+.right-plot[
+
+```
+## Rows: 336,776
+## Columns: 20
+## $ year           &lt;int&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2…
+## $ month          &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ day            &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ dep_time       &lt;int&gt; 517, 533, 542, 544, 554, 554, 555, 557, 557, 558, 558, …
+## $ sched_dep_time &lt;int&gt; 515, 529, 540, 545, 600, 558, 600, 600, 600, 600, 600, …
+## $ dep_delay      &lt;dbl&gt; 2, 4, 2, -1, -6, -4, -5, -3, -3, -2, -2, -2, -2, -2, -1…
+## $ arr_time       &lt;int&gt; 830, 850, 923, 1004, 812, 740, 913, 709, 838, 753, 849,…
+## $ sched_arr_time &lt;int&gt; 819, 830, 850, 1022, 837, 728, 854, 723, 846, 745, 851,…
+## $ arr_delay      &lt;dbl&gt; 11, 20, 33, -18, -25, 12, 19, -14, -8, 8, -2, -3, 7, -1…
+## $ carrier        &lt;chr&gt; "UA", "UA", "AA", "B6", "DL", "UA", "B6", "EV", "B6", "…
+## $ flight         &lt;int&gt; 1545, 1714, 1141, 725, 461, 1696, 507, 5708, 79, 301, 4…
+## $ tailnum        &lt;chr&gt; "N14228", "N24211", "N619AA", "N804JB", "N668DN", "N394…
+## $ origin         &lt;chr&gt; "EWR", "LGA", "JFK", "JFK", "LGA", "EWR", "EWR", "LGA",…
+## $ dest           &lt;chr&gt; "IAH", "IAH", "MIA", "BQN", "ATL", "ORD", "FLL", "IAD",…
+## $ air_time       &lt;dbl&gt; 227, 227, 160, 183, 116, 150, 158, 53, 140, 138, 149, 1…
+## $ distance       &lt;dbl&gt; 1400, 1416, 1089, 1576, 762, 719, 1065, 229, 944, 733, …
+## $ hour           &lt;dbl&gt; 5, 5, 5, 5, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6…
+## $ minute         &lt;dbl&gt; 15, 29, 40, 45, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0…
+## $ time_hour      &lt;dttm&gt; 2013-01-01 05:00:00, 2013-01-01 05:00:00, 2013-01-01 0…
+## $ name           &lt;chr&gt; "United Air Lines Inc.", "United Air Lines Inc.", "Amer…
+```
+]
+
+---
+# Example: flights joining to airports
+
+.left-code[
+&lt;br&gt;
+
+```r
+flights %&gt;%
+  left_join(
+    airports, 
+    by = c("origin" = "faa")
+    ) %&gt;%
+  glimpse()
+```
+]
+
+.right-plot[
+
+```
+## Rows: 336,776
+## Columns: 26
+## $ year           &lt;int&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2…
+## $ month          &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ day            &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ dep_time       &lt;int&gt; 517, 533, 542, 544, 554, 554, 555, 557, 557, 558, 558, …
+## $ sched_dep_time &lt;int&gt; 515, 529, 540, 545, 600, 558, 600, 600, 600, 600, 600, …
+## $ dep_delay      &lt;dbl&gt; 2, 4, 2, -1, -6, -4, -5, -3, -3, -2, -2, -2, -2, -2, -1…
+## $ arr_time       &lt;int&gt; 830, 850, 923, 1004, 812, 740, 913, 709, 838, 753, 849,…
+## $ sched_arr_time &lt;int&gt; 819, 830, 850, 1022, 837, 728, 854, 723, 846, 745, 851,…
+## $ arr_delay      &lt;dbl&gt; 11, 20, 33, -18, -25, 12, 19, -14, -8, 8, -2, -3, 7, -1…
+## $ carrier        &lt;chr&gt; "UA", "UA", "AA", "B6", "DL", "UA", "B6", "EV", "B6", "…
+## $ flight         &lt;int&gt; 1545, 1714, 1141, 725, 461, 1696, 507, 5708, 79, 301, 4…
+## $ tailnum        &lt;chr&gt; "N14228", "N24211", "N619AA", "N804JB", "N668DN", "N394…
+## $ origin         &lt;chr&gt; "EWR", "LGA", "JFK", "JFK", "LGA", "EWR", "EWR", "LGA",…
+## $ dest           &lt;chr&gt; "IAH", "IAH", "MIA", "BQN", "ATL", "ORD", "FLL", "IAD",…
+## $ air_time       &lt;dbl&gt; 227, 227, 160, 183, 116, 150, 158, 53, 140, 138, 149, 1…
+## $ distance       &lt;dbl&gt; 1400, 1416, 1089, 1576, 762, 719, 1065, 229, 944, 733, …
+## $ hour           &lt;dbl&gt; 5, 5, 5, 5, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6…
+## $ minute         &lt;dbl&gt; 15, 29, 40, 45, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0…
+## $ time_hour      &lt;dttm&gt; 2013-01-01 05:00:00, 2013-01-01 05:00:00, 2013-01-01 0…
+## $ name           &lt;chr&gt; "Newark Liberty Intl", "La Guardia", "John F Kennedy In…
+## $ lat            &lt;dbl&gt; 40.69250, 40.77725, 40.63975, 40.63975, 40.77725, 40.69…
+## $ lon            &lt;dbl&gt; -74.16867, -73.87261, -73.77893, -73.77893, -73.87261, …
+## $ alt            &lt;dbl&gt; 18, 22, 13, 13, 22, 18, 18, 22, 13, 22, 13, 13, 13, 18,…
+## $ tz             &lt;dbl&gt; -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5,…
+## $ dst            &lt;chr&gt; "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", …
+## $ tzone          &lt;chr&gt; "America/New_York", "America/New_York", "America/New_Yo…
+```
+]
+
+---
+# Airline travel, ontime data
+&lt;br&gt;&lt;br&gt;
+
+```r
+
+plane_N4YRAA &lt;- read_csv("data/plane_N4YRAA.csv")
+
+glimpse(plane_N4YRAA)
+## Rows: 145
+## Columns: 8
+## $ FL_DATE  &lt;date&gt; 2017-05-26, 2017-05-02, 2017-05-05, 2017-05-11, 2017-05-03, …
+## $ CARRIER  &lt;chr&gt; "AA", "AA", "AA", "AA", "AA", "AA", "AA", "AA", "AA", "AA", "…
+## $ FL_NUM   &lt;dbl&gt; 2246, 2276, 2278, 2287, 2288, 2291, 2297, 2297, 2297, 2297, 2…
+## $ ORIGIN   &lt;chr&gt; "CVG", "DFW", "DFW", "STL", "IND", "CHS", "DFW", "DFW", "MKE"…
+## $ DEST     &lt;chr&gt; "DFW", "IND", "OKC", "ORD", "DFW", "DFW", "MKE", "MKE", "DFW"…
+## $ DEP_TIME &lt;chr&gt; "0748", "2020", "0848", "0454", "0601", "0807", "0700", "0659…
+## $ ARR_TIME &lt;chr&gt; "0917", "2323", "0941", "0600", "0719", "0947", "0905", "0909…
+## $ DISTANCE &lt;dbl&gt; 812, 761, 175, 258, 761, 987, 853, 853, 853, 853, 447, 447, 7…
+```
+
+---
+
+
+# Airline travel, airport location
+&lt;br&gt;&lt;br&gt;
+
+```r
+airport_raw &lt;- read_csv("data/airports.csv")
+
+airport_raw %&gt;%
+  select(AIRPORT, 
+         LATITUDE, 
+         LONGITUDE, 
+         AIRPORT_STATE_NAME) %&gt;%
+  glimpse()
+## Rows: 13,094
+## Columns: 4
+## $ AIRPORT            &lt;chr&gt; "01A", "03A", "04A", "05A", "06A", "07A", "08A", "0…
+## $ LATITUDE           &lt;dbl&gt; 58.10944, 65.54806, 68.08333, 67.57000, 57.74528, 5…
+## $ LONGITUDE          &lt;dbl&gt; -152.90667, -161.07167, -163.16667, -148.18389, -15…
+## $ AIRPORT_STATE_NAME &lt;chr&gt; "Alaska", "Alaska", "Alaska", "Alaska", "Alaska", "…
+```
+
+---
+# How can we combine these two data sets?
+&lt;br&gt;&lt;br&gt;
+
+```r
+ plane_N4YRAA %&gt;%
+  left_join(
+    airport_raw, 
+    by = c("ORIGIN" = "AIRPORT")
+    ) %&gt;%
+  head()
+## # A tibble: 6 × 36
+##   FL_DATE    CARRIER FL_NUM ORIGIN DEST  DEP_TIME ARR_TIME DISTANCE
+##   &lt;date&gt;     &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;
+## 1 2017-05-26 AA        2246 CVG    DFW   0748     0917          812
+## 2 2017-05-26 AA        2246 CVG    DFW   0748     0917          812
+## 3 2017-05-02 AA        2276 DFW    IND   2020     2323          761
+## 4 2017-05-02 AA        2276 DFW    IND   2020     2323          761
+## 5 2017-05-02 AA        2276 DFW    IND   2020     2323          761
+## 6 2017-05-02 AA        2276 DFW    IND   2020     2323          761
+## # … with 28 more variables: AIRPORT_SEQ_ID &lt;dbl&gt;, AIRPORT_ID &lt;dbl&gt;,
+## #   DISPLAY_AIRPORT_NAME &lt;chr&gt;, DISPLAY_AIRPORT_CITY_NAME_FULL &lt;chr&gt;,
+## #   AIRPORT_WAC &lt;dbl&gt;, AIRPORT_COUNTRY_NAME &lt;chr&gt;,
+## #   AIRPORT_COUNTRY_CODE_ISO &lt;chr&gt;, AIRPORT_STATE_NAME &lt;chr&gt;,
+## #   AIRPORT_STATE_CODE &lt;chr&gt;, AIRPORT_STATE_FIPS &lt;chr&gt;, CITY_MARKET_ID &lt;dbl&gt;,
+## #   DISPLAY_CITY_MARKET_NAME_FULL &lt;chr&gt;, CITY_MARKET_WAC &lt;dbl&gt;,
+## #   LAT_DEGREES &lt;dbl&gt;, LAT_HEMISPHERE &lt;chr&gt;, LAT_MINUTES &lt;dbl&gt;, …
+```
+
+
+---
+class: transition
+
+# Data Visualization
+
+
+
+---
+# Making effective data plots
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+1. Principles / science of data visualisation
+2. Features of graphics
+
+---
+# Principles / science of data visualization
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+  - .green[Palettes] and .green[colour blindness]
+  - change blindness
+  - using proximity
+  - hierarchy of mappings
+]
+
+
+---
+# Features of graphics 
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- Layering statistical summaries
+- Themes
+- Adding interactivity
+]
+
+---
+# Palettes and colour blindness
+&lt;br&gt;&lt;br&gt;
+There are .green[three main types of colour palettes]:
+&lt;br&gt;
+.content-box-neutral[
+- .green[Qualitative]: categorical variables
+- .green[Sequential]: low to high numeric values
+- .green[Diverging]: negative to positive values
+]
+
+---
+# Qualitative: categorical variables
+
+&lt;img src="Workshop1-Week4_files/figure-html/print-qual-pal-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Sequential: low to high numeric values
+
+&lt;img src="Workshop1-Week4_files/figure-html/print-seq-pal-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Diverging: negative to positive values
+
+&lt;img src="Workshop1-Week4_files/figure-html/print-div-pal-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Example: TB data
+&lt;br&gt;&lt;br&gt;
+
+```
+## # A tibble: 157,820 × 5
+##    country      year count gender age  
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;
+##  1 Afghanistan  1980    NA m      04   
+##  2 Afghanistan  1981    NA m      04   
+##  3 Afghanistan  1982    NA m      04   
+##  4 Afghanistan  1983    NA m      04   
+##  5 Afghanistan  1984    NA m      04   
+##  6 Afghanistan  1985    NA m      04   
+##  7 Afghanistan  1986    NA m      04   
+##  8 Afghanistan  1987    NA m      04   
+##  9 Afghanistan  1988    NA m      04   
+## 10 Afghanistan  1989    NA m      04   
+## # … with 157,810 more rows
+```
+
+---
+# Example: TB data: adding relative change
+&lt;br&gt;&lt;br&gt;
+
+```
+## # A tibble: 219 × 4
+##    country             `2002` `2012`  reldif
+##    &lt;chr&gt;                &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+##  1 Afghanistan           6509  13907  1.14  
+##  2 Albania                225    185 -0.178 
+##  3 Algeria               8246   7510 -0.0893
+##  4 American Samoa           1      0 -1     
+##  5 Andorra                  2      2  0     
+##  6 Angola               17988  22106  0.229 
+##  7 Anguilla                 0      0  0     
+##  8 Antigua and Barbuda      4      1 -0.75  
+##  9 Argentina             5383   4787 -0.111 
+## 10 Armenia                511    316 -0.382 
+## # … with 209 more rows
+```
+
+
+
+
+
+
+---
+# Example: Sequential colour with default palette
+
+
+```r
+ggplot(tb_map) + 
+  geom_polygon(aes(x = long, y = lat, group = group, fill = reldif)) +
+  theme_map()
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/map-default-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Example: (improved) sequential colour with default palette
+
+
+```r
+library(viridis)
+ggplot(tb_map) +
+  geom_polygon(aes(x = long, y = lat, 
+                   group = group,
+                   fill = reldif)) +
+  theme_map() + 
+  scale_fill_viridis(na.value = "white")
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/viridis-plot-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Example:  Diverging colour with better palette
+
+
+```r
+ggplot(tb_map) +
+  geom_polygon(aes(x = long, y = lat,
+                   group = group,
+                   fill = reldif)) +
+  theme_map() +
+  scale_fill_distiller(palette = "PRGn", na.value = "white", limits = c(-7, 7))
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/map-distiller-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Summary on colour palettes
+&lt;br&gt;&lt;br&gt;
+
+- .green[Different ways] to map colour to values:
+
+&lt;br&gt;
+.content-box-neutral[
+  - Qualitative: categorical variables
+  - Sequential: low to high numeric values
+  - Diverging: negative to positive values
+]
+
+---
+# Colour blindness
+&lt;br&gt;&lt;br&gt;
+- About 8% of men (about 1 in 12), and 0.5% women (about 1 in 200) population have difficulty distinguishing between red and green. 
+- Several colour blind tested palettes: .green[RColorbrewer] has an associated web site [colorbrewer.org](http://colorbrewer2.org) where the palettes are labelled. See also `viridis`, and `scico`.
+
+---
+# Plot of two coloured points: Normal Mode
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/colour-blind-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Plot of two coloured points: dicromat mode
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/colour-blind-2-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Impact of colourblind-safe palette
+&lt;br&gt;&lt;br&gt;
+
+```r
+p2 &lt;- p + scale_colour_brewer(palette = "Dark2")
+p2
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/colourblindr-brewer-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Impact of colourblind-safe palette
+&lt;br&gt;&lt;br&gt;
+
+```r
+p3 &lt;- p + scale_colour_viridis_d()
+p3
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/colourblindr-viridis-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Summary colour blindness
+&lt;br&gt;&lt;br&gt;
+- .green[**Apply colourblind-friendly colourscales**]
+&lt;br&gt;
+.content-box-neutral[
+  - `+ scale_colour_viridis()`
+  - `+ scale_colour_brewer(palette = "Dark2")`
+  - `scico` R package
+]
+
+
+---
+# Pre-attentiveness: Find the odd one out?
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/pre-attentiveness-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Pre-attentiveness: Find the odd one out?
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/pre-attentive-easier-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: idea
+# Using proximity in your plots
+&lt;br&gt;&lt;br&gt;
+
+.green[Basic rule]: place the groups that you want to compare .green[close to each other!]
+
+
+
+&lt;img src="Workshop1-Week4_files/figure-html/read-tb-again-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Which plot answers which question?
+&lt;br&gt;&lt;br&gt;
+.green[**Message:**]
+
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- "Is the incidence similar for males and females in 2012 across age groups?"
+- "Is the incidence similar for age groups in 2012, across gender?" 
+]
+
+
+---
+# Incidence similar for: (M and F) or (age, across gender) ?" 
+
+&lt;br&gt;&lt;br&gt;
+
+&lt;img src="Workshop1-Week4_files/figure-html/print-many-tb-1.png" style="display: block; margin: auto;" /&gt;&lt;img src="Workshop1-Week4_files/figure-html/print-many-tb-2.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Two different arrangements
+&lt;br&gt;
+- To answer the question .green["Is the incidence similar for males and females in 2012 across age groups?"] the first arrangement is better. 
+- It puts males and females right beside each other, so the relative heights of the bars can be seen quickly. The answer to the question would be "No, the numbers were similar in youth, but males are more affected with increasing age."
+
+- The second arrangement puts the .green[focus on age groups], and is better to answer the question "Is the incidence similar for age groups in 2012, across gender?"
+- To which the answer would be "No, among females, the incidence is higher at early ages. For males, the incidence is much more uniform across age groups."
+
+
+---
+# "Incidence similar for M &amp; F in 2012 across age?"
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/gg-fill-gender-print-1.png" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+- Males &amp; females next to each other: .green[relative heights of bars is seen quickly]. 
+- .green[**Question answer:**] "No, the numbers were similar in youth, but males are more affected with increasing age."
+
+---
+# "Incidence similar for age in 2012, across gender?"
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/gg-fill-age-print-1.png" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+- Puts the .green[focus on age groups] 
+- .green[**Answer to the question:**] "No, among females, the incidence
+is higher at early ages. For males, the incidence is much more uniform across age groups."
+
+---
+# Proximity wrap up
+&lt;br&gt;&lt;br&gt;
+- .green[Facetting of plots and proximity]  --&gt; are related to change blindness, an area of study in cognitive psychology. 
+- There are a series of fabulous videos illustrating the effects of making a visual break,
+on how the mind processes it by Daniel Simons lab. 
+- Here's one example:  
+[The door study](https://www.youtube.com/watch?v=FWSxSQsspiQ)
+
+---
+# Layering
+&lt;br&gt;&lt;br&gt;
+- .green[*Statistical summaries:*] It is common to layer plots, particularly
+by adding statistical summaries, like a model fit, or means and standard
+deviations. The purpose is to show the **trend** in relation to the **variation**. 
+- .green[*Maps:*] Commonly maps provide the framework for data collected spatially. 
+One layer for the map, and another for the data.
+
+
+
+---
+# `geom_point()`
+&lt;br&gt;&lt;br&gt;
+
+```r
+ggplot(df, aes(x = x, y = y1)) +
+  geom_point() +
+  theme_bw()
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/point-1-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# `geom_smooth(method = "lm", se = FALSE)`
+&lt;br&gt;&lt;br&gt;
+
+```r
+ggplot(df, aes(x = x, y = y1)) + geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw()
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/point-2-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# `geom_smooth(method = "lm")`
+
+&lt;br&gt;&lt;br&gt;
+
+```r
+p1 = ggplot(df, aes(x = x, y = y1)) + geom_point() +
+  geom_smooth(method = "lm")
+ p1
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/point-3-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Interactivity with  plotly
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+library(plotly)
+
+ggplotly(p1)
+
+```
+
+
+DEMO
+
+
+
+
+---
+# Themes: Add some style to your plot
+
+
+
+```r
+p &lt;- ggplot(mtcars) +
+  geom_point(aes(x = wt, 
+                 y = mpg, 
+                 colour = factor(gear))) +
+  facet_wrap(~am)
+p
+
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/mtcars-out-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Theme: theme_minimal
+
+.left-code[
+&lt;br&gt;
+
+```r
+p + 
+  theme_minimal()
+```
+]
+
+.right-plot[
+&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/mtcars-minimal-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+---
+# Theme: ggthemes `theme_few()`
+
+.left-code[
+&lt;br&gt;
+
+```r
+p + 
+  theme_few() + 
+  scale_colour_few()
+```
+]
+
+.right-plot[
+&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/mtcars-theme-few-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Theme: ggthemes `theme_excel()` 🤮
+
+.left-code[
+&lt;br&gt;&lt;br&gt;
+
+```r
+p + 
+  theme_excel() + 
+  scale_colour_excel()
+```
+]
+
+.right-plot[
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/mtcars-theme-excel-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+---
+# Theme: for fun
+
+.pull-left[
+&lt;br&gt;&lt;br&gt;
+
+```r
+library(wesanderson)
+p + 
+  scale_colour_manual(
+    values = wes_palette("Royal1")
+    )
+
+```
+]
+
+.pull-right[
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week4_files/figure-html/theme-wes-out-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Themes
+
+
+```r
+ p +
+  theme_bw() +
+   theme(
+  panel.grid.major.y = element_blank(),
+  panel.grid.minor.y = element_blank(),
+  axis.text.x = element_text(angle = 90),
+  axis.ticks = element_blank(),
+  text = element_text(size=20)
+  
+)
+```
+
+&lt;img src="Workshop1-Week4_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Summary: themes
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- The `ggthemes` package has many different styles for the plots. 
+- Other packages such as `xkcd`, `skittles`, `wesanderson`, `beyonce`, `ochre`, ....
+]
+
+
+
+---
+
+# More on data vizsuzalization
+&lt;br&gt;&lt;br&gt;
+
+**Hierarchy of mappings more resources:**
+
+- [Di's crowd-sourcing expt](http://visiphilia.org/2016/08/03/CM-hierarchy)
+- Nice explanation by [Peter Aldous](http://paldhous.github.io/ucb/2016/dataviz/week2.html)
+- [General plotting advice and a book from Naomi Robbins](https://www.forbes.com/sites/naomirobbins/#2b1e20082a6a)
+
+**Data visualization references**
+
+- Kieran Healy [Data Visualization](http://socviz.co/index.html)
+- Winston Chang (2012) [Cookbook for R](graphics cookbook)
+- Antony Unwin (2014) [Graphical Data Analysis](http://www.gradaanwr.net)
+- Naomi Robbins (2013) [Creating More Effective Charts](http://www.nbr-graphs.com)
+
+---
+class: transition
+# Debugging code
+
+---
+# Assignment
+
+&lt;br&gt;&lt;br&gt;
+
+- **Late submissions will not be accepted**
+- Friday 5pm, March 26.
+- Please make sure you upload the three files
+
+
+---
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;&lt;br&gt;
+
+
+
+.bottom_abs.width100[
+
+Lecturer: Patricia Menéndez
+
+Department of Econometrics and Business Statistics&lt;br&gt;
+
+
+
+
+
+]
+
+&lt;br /&gt;
+This work is licensed under a &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License&lt;/a&gt;.
+
+&lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;&lt;img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /&gt;&lt;/a&gt;
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;margin-left:3px;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

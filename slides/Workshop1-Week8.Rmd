@@ -1,0 +1,1014 @@
+---
+title: "ETC10 - 5510: Introduction to Data Analysis"
+week: "Week 8"
+subtitle: "Text Analysis"
+author: "Patricia Menéndez"
+pdflink: ""
+bgimg: "images/daniel-olah-pCcGpVsOHoo-unsplash.jpg"
+output:
+  xaringan::moon_reader:
+    css:
+      - ninjutsu 
+      - "assets/animate.css"
+      - "assets/monash-logo.css"
+      - "assets/monash-brand.css"
+      - "assets/monash-fonts.css"
+      - "assets/styles.css" # small improvements
+      - "assets/custom.css" # add your own CSS here!
+    self_contained: false 
+    seal: false 
+    chakra: 'libs/remark-latest.min.js'
+    lib_dir: libs
+    includes:
+      in_header: "assets/custom.html"
+    mathjax: "assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    nature:
+      highlightStyle: github 
+      highlightLanguage: r 
+      highlightLines: true
+      highlightSpans: false 
+      countIncrementalSlides: false
+      slideNumberFormat: '%current%/%total%'
+      navigation:
+        scroll: false 
+        touch: true
+        click: false
+      ratio: '16:9'
+---
+
+```{r titleslide, child="components/titleslide.Rmd"}
+```
+
+
+```{r setup1, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(textdata)
+library(tm)
+
+opts_chunk$set(echo = TRUE,   
+               out.width = "100%",
+               message = FALSE,
+               warning = FALSE,
+               collapse = TRUE,
+               fig.height = 4,
+               fig.width = 8,
+               fig.align = "center",
+               dpi = 300,
+               cache = FALSE)
+
+as_table <- function(...) knitr::kable(..., format='html', digits = 3)
+```
+
+  
+---
+# Questions/Comments/Suggestions
+
+```{r out.width = '80%', echo = FALSE}
+include_graphics("images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg")
+```
+ Photo: Rhythm Goyal for  Unsplash.
+---
+# Recap: Week 7
+
+<br><br>
+- Modelling
+- Linear Models
+- Correlation
+- Linear Models and Correlation
+- Model Selection
+- Model Goodness of Fit
+
+
+---
+
+# Week 8: Outline
+<br><br>
+
+- The analysis of text data, why?
+- Analysis of text data steps
+- R packages for text analysis
+- Tidy text
+- Extracting common words, stop words etc
+- Sentiment of the text
+
+
+---
+# Announcements
+<br><br>
+- We will talk about assignment 2 next week (due at the end of Week 10)
+- Group project upcoming milestones
+- Any issues with the group project please let us know
+- Project rubric and dates available in Moodle
+
+---
+# Why text analysis?
+
+<br>
+Example: 
+<br>
+
+.content-box-neutral[
+- Predict Melbourne house prices from realtor descriptions
+- Determine the extent of public discontent with train stoppages in Melbourne
+- The differences between Darwin's first edition of the Origin of the Species and the 6th edition
+- What is the text sentiment?
+]
+
+---
+# Typical Process
+
+<br><br>
+
+.content-box[
+1. Read in text
+2. Pre-processing: remove punctuation signs, remove numbers, stop words, stem words
+3. Tokenise: words, sentences, ngrams, chapters
+4. Summarise
+5. Model
+]
+
+---
+# Packages
+
+<br><br>
+In addition to `tidyverse` we will be using three other packages today
+
+```{r list-pkgs}
+library(tidytext)
+library(gutenbergr)
+```
+
+---
+# Tidytext
+
+<br><br>
+.content-box-neutral[
+Using tidy data principles can make many text mining tasks easier, more effective, 
+and consistent with tools already in wide use.
+]
+<br> 
+- Learn more at https://www.tidytextmining.com/, by Julia Silge and David Robinson.
+
+---
+# What is tidy text?
+<br>
+
+Dialogue from Game of Thrones:
+<br>
+
+```{r show-text}
+
+text <- c("What is it that you want, exactly?",
+          "Peace. Prosperity",
+          "A land where the powerful do not prey on the powerless",
+          "Where the castles are made of gingerbread",
+          "and the moats are filled with blackberry wine",
+          "The powerful have always preyed on the powerless",
+          "that’s how they became powerful in the first place",
+         "Perhaps ",
+          "And perhaps we’ve grown so used to horror",
+         "we assume there’s no other way")
+
+```
+
+
+---
+# What is tidy text?
+<br>
+
+```{r}
+text
+```
+
+
+
+
+
+
+---
+# What is tidy text?
+
+```{r tidy-text-tile}
+text_df <- tibble(line = seq_along(text), text = text)
+
+text_df
+```
+Data frame --> tibble where each observation is one of the senteces in the text.
+---
+# What is tidy text?
+
+```{r unnest-tokens}
+text_df %>%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "words" # default option
+  ) %>%
+  head()
+```
+.purple[unnest_tokens] --> split a column into **tokens** using tokenizers package.
+---
+# What is unnesting?
+
+```{r unnest-tokens-chars}
+text_df %>%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "characters"
+  ) %>%
+  head()
+```
+Here the **token** --> refers to the characters
+---
+# What is unnesting - ngrams length 2
+
+```{r unnest-tokens-ngram-2}
+text_df %>%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "ngrams",
+    n = 2
+  ) %>%
+  head()
+```
+.purple[ngrams] --> groups of words define by n
+---
+# What is unnesting - ngrams length 3
+
+```{r unnest-tokens-ngram-3}
+text_df %>%
+  unnest_tokens(
+    output = word,
+    input = text,
+    token = "ngrams",
+    n = 3
+  )
+```
+
+---
+class: transition
+
+# Analyzing user reviews for Animal Crossing: New Horizons
+
+---
+# About the data
+<br><br>
+
+.content-box-neutral[
+ User and critic reviews for the game [Animal Crossing](https://www.nintendo.com/games/detail/animal-crossing-new-horizons-switch/) scraped from Metacritc
+]
+
+<br>
+
+- This data comes from a [#TidyTuesday challenge](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-05-05/readme.md). 
+
+
+
+---
+# What do the user reviews look like?
+<br><br>
+```{r, echo = TRUE}
+acnh_user_reviews <- read_tsv(here::here("slides/data/acnh_user_reviews.tsv"))
+glimpse(acnh_user_reviews)
+```
+
+
+---
+# Let's look at the grade distribution
+<br><br>
+
+```{r review-grades, echo = FALSE, out.width = "90%"}
+acnh_user_reviews %>% 
+  count(grade) %>% 
+  ggplot(aes(x = grade, y = n )) +
+  geom_col()
+```
+
+
+---
+# Read a few of the positive reviews
+<br><br>
+
+.left_code[
+```{r pos-reviews, echo = TRUE, eval = FALSE}
+set.seed(1999)
+acnh_user_reviews %>% 
+  filter(grade > 8) %>% 
+  sample_n(3) %>% 
+  pull(text)
+```
+]
+
+.pull_right[
+```{r ref.label="pos-reviews", eval = TRUE, echo = FALSE}
+```
+]
+
+<br>
+- .purple[sample_n()] --> allows you to select rows
+- .purple[pull()] --> is similar to $. It's mostly useful because it looks a little nicer in pipes, it also works with remote data frames, and it can optionally name the output.
+---
+# And some negative reviews
+<br><br>
+.left_code[
+```{r neg-reviews, echo = TRUE, eval = FALSE }
+set.seed(2099)
+acnh_user_reviews %>% 
+  filter(grade == 0) %>% 
+  sample_n(3) %>% 
+  pull(text)
+```
+]
+
+.pull_right[
+```{r ref.label="neg-reviews", eval = TRUE, echo = FALSE}
+```
+]
+
+---
+# Looks like the scraping is messed up a bit
+<br><br>
+
+Long reviews are compressed from the scraping procedure...
+<br>
+```{r,}
+acnh_user_reviews_parsed <- acnh_user_reviews %>% 
+  mutate(text = str_remove(text, "Expand$"))
+```
+<br>
+We will remove these characters from the text..
+
+---
+# Tidy up the reviews!
+
+```{r unnest-tokens-acnh}
+user_reviews_words <- acnh_user_reviews_parsed %>%
+  unnest_tokens(output = word, input = text)
+
+user_reviews_words
+```
+
+---
+# Distribution of words per review?
+
+```{r word-histogram, out.width="90%"}
+user_reviews_words %>% 
+  count(user_name) %>% 
+  ggplot(aes(x = n)) +
+  geom_histogram()
+```
+
+---
+# What are the most common words?
+<br>
+```{r common-words}
+user_reviews_words %>%
+  count(word, sort = TRUE)
+```
+
+---
+# Stop words
+<br><br>
+.content-box-neutral[
+- In computing, .green[stop words] are words which are filtered out before or after processing of natural language data (text).
+- They usually refer to the .green[most common words in a language], but there is not a single list of stop words used by all natural language processing tools.
+]
+---
+# English stop words
+<br>
+```{r eng-stopwords}
+get_stopwords()
+```
+
+---
+# Spanish stop words
+<br>
+```{r spanish-stopwords}
+get_stopwords(language = "es")
+```
+
+---
+# Various lexicons
+
+See `?get_stopwords` for more info.
+
+```{r other-lexicons}
+get_stopwords(source = "smart")
+```
+
+---
+# What are the most common words?
+
+```{r repeat}
+user_reviews_words %>%
+  count(word, sort = TRUE)
+```
+
+---
+# What are the most common words?
+
+```{r stopwords-anti-join}
+stopwords_smart <- get_stopwords(source = "smart")
+
+user_reviews_words %>%
+  anti_join(stopwords_smart) 
+```
+
+---
+# Aside: the anti-join 
+
+<br><br>
+
+.content-box-neutral[
+- A type of filtering join, will return all rows on the left when there
+are .bold[no] matches on the right
+- Only keeps columns on the left 
+]
+
+---
+# As a picture
+
+```{r animate-anti-join, echo = FALSE, out.width = "50%"}
+include_graphics("gifs/anti-join.gif")
+```
+
+---
+# What are the most common words?
+<br>
+```{r stopwords-anti-join-complete}
+user_reviews_words %>%
+  anti_join(stopwords_smart) %>%
+  count(word, sort = TRUE) 
+```
+
+---
+# What are the most common words?
+<br><br>
+```{r gg-common-words, eval=FALSE}
+user_reviews_words %>%
+  anti_join(stopwords_smart) %>%
+  count(word) %>%
+  arrange(-n) %>%
+  top_n(20) %>%
+  ggplot(aes(fct_reorder(word, n), n)) +
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Frequency of words in user reviews",
+       subtitle = "",
+       y = "",
+       x = "")
+```
+
+---
+<br>
+```{r gg-common-words-out, ref.label = 'gg-common-words', echo = FALSE, out.width = "100%"}
+```
+
+---
+# Sentiment analysis
+<br><br>
+.content-box-neutral[
+- One way to analyze the .bold[sentiment of a text] is to consider the text as a combination of its individual words 
+
+- and the .bold[sentiment content of the whole text as the sum of the sentiment content of the individual words]
+]
+
+---
+# Sentiment lexicons
+<br>
+.pull-left[
+```{r show-sentiment-afinn}
+get_sentiments("afinn")
+```
+]
+
+
+.pull-right[
+```{r show-sentiment-bing}
+get_sentiments("bing")
+```
+]
+
+---
+# Sentiment lexicons
+<br>
+.pull-left[
+```{r show-sentiment-bing2}
+get_sentiments(lexicon = "bing")
+```
+]
+
+.pull-right[
+```{r show-sentiment-loughran}
+get_sentiments(lexicon = "loughran")
+```
+]
+
+---
+# Sentiments in the reviews
+
+```{r sentiment-reviews}
+sentiments_bing <- get_sentiments("bing")
+
+user_reviews_words %>%
+  inner_join(sentiments_bing) %>%
+  count(sentiment, word, sort = TRUE) %>%
+  head(4)
+```
+<br>
+.small[.purple[inner_join()
+return all rows from x where there are matching values in y, and all columns from x and y. If there are multiple matches between x and y, all combination of the matches are returned.]]
+
+---
+# Visualising sentiments
+<br>
+
+```{r gg-sentiment, echo=FALSE, message=FALSE}
+user_reviews_words %>%
+  inner_join(sentiments_bing) %>%
+  count(sentiment, word, sort = TRUE) %>%
+  group_by(sentiment) %>%
+  top_n(10) %>%
+  ungroup() %>%
+  ggplot(aes(fct_reorder(word, n), n, fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~sentiment, scales = "free") +
+  theme_minimal() +
+  labs(
+    title = "Sentiments in user reviews",
+    x = ""
+  )
+```
+
+---
+# Visualising sentiments
+<br>
+```{r gg-sentiment2, eval = FALSE}
+user_reviews_words %>%
+  inner_join(sentiments_bing) %>%
+  count(sentiment, word, sort = TRUE) %>%
+  arrange(desc(n)) %>%
+  group_by(sentiment) %>%
+  top_n(10) %>%
+  ungroup() %>%
+  ggplot(aes(fct_reorder(word, n), n, fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~sentiment, scales = "free") +
+  theme_minimal() +
+  labs(
+    title = "Sentiments in user reviews",
+    x = ""
+  )
+```
+
+
+---
+
+# Common words over grades 
+<br>
+```{r common-user-words-stop}
+user_reviews_words %>%
+  anti_join(stopwords_smart) %>%
+  count(grade, word, sort = TRUE) 
+```
+
+---
+# Common review words by grade - With stop words:
+<br>
+```{r common-user-words}
+user_reviews_words %>%
+  count(grade, word, sort = TRUE)
+```
+
+---
+
+# What is a document about?
+<br><br>
+.content-box[
+How do we measure the importance of a word to a document in a collection of documents?
+]
+<br>
+For example a novel in a collection of novels or a review in a set of reviews...
+
+<br>
+We combine the following statistics:
+<br>
+.content-box-neutral[
+- .green[Term frequency]
+- .green[Inverse document frequency]
+]
+
+---
+
+# Term frequency
+<br><br>
+The **raw frequency** of a .green[word] $w$ in a .green[document] $d$. It is a function of the word and the document. 
+
+<br>
+.content-box-neutral[
+$$tf(w, d) = \frac{\text{count of w in d}}{\text{total count in d}} $$
+]
+<br>
+The term .green[frequency for each word] is the number of times that word occurs
+divided by the total number of words in the document.
+---
+# Term frequency
+<br>
+For our reviews .green[a document is a single user's review.]
+
+<br>
+```{r doc-example}
+document <- user_reviews_words %>% 
+    anti_join(stopwords_smart) %>% 
+    filter(user_name == "Discoduckasaur")
+document %>%
+  head()
+```
+
+
+---
+# Term frequency
+<br>
+The term .green[frequency for each word] is the number of times that word occurs
+divided by the total number of words in the document.
+<br>
+
+```{r tf}
+tbl_tf <- document %>% 
+  count(word, sort = TRUE) %>% 
+  mutate(tf = n / sum(n))
+tbl_tf %>% 
+  arrange(desc(tf)) %>%
+  head()
+```
+[More about that here](https://en.wikipedia.org/wiki/Tf%E2%80%93idf)
+---
+
+# Inverse-document frequency
+<br>
+The .green[inverse document frequency] tells how common or rare a word is **across a collection of documents**. It is a function of a .green[word] $w$, and the collection of .green[documents] $\mathcal{D}$.
+<br><br>
+.content-box-neutral[
+$$idf(w, \mathcal{D}) = \log{\left(\frac{\text{size of } \mathcal{D}}{\text{number of documents that contain } w}\right)}$$]
+<br>
+
+If size of  $\mathcal{D} = \text{number of documents that contain w}$ then -->  $log(1) = 0$ 
+
+[More about that here](https://en.wikipedia.org/wiki/Tf%E2%80%93idf)
+
+---
+
+# Inverse document frequency
+
+For the reviews data set, our collection is all the reviews. You could
+compute this in a somewhat roundabout as follows:
+
+```{r idf}
+tbl_idf <- user_reviews_words %>% 
+    anti_join(stopwords_smart) %>%
+    mutate(collection_size = n_distinct(user_name)) %>% 
+    group_by(collection_size, word) %>% 
+    summarise(times_word_used = n_distinct(user_name)) %>% 
+    mutate(freq = collection_size / times_word_used,
+           idf = log(freq)) 
+arrange(tbl_idf, idf)
+```
+
+---
+# All together term frequency, inverse document frequency
+<br>
+Multiply .green[tf] and .green[idf] together. This is a function of a word $w$, a document $d$,
+and the collection of documents $\mathcal{D}$:
+<br>
+
+.content-box-neutral[
+$$ tf\_idf(w, d, \mathcal{D}) = tf(w,d) \times idf(w, \mathcal{D})$$]
+
+<br>
+- High value of $tf\_idf$ --> that word has a high frequency within a document
+but is quite rare over all documents.
+- Likewise if a word occurs in a lot
+of documents idf will be close to zero, so $tf\_idf$ will be small.
+
+---
+# Putting it together, tf-idf 
+<br>
+We illustrate the example for a single user review:
+<br>
+```{r tf-idf}
+tbl_tf %>% 
+    left_join(tbl_idf) %>% 
+    select(word, tf, idf) %>% 
+    mutate(tf_idf = tf * idf) %>% 
+    arrange(desc(tf_idf)) %>%
+  head()
+```
+---
+# Calculating tf-idf: Perhaps not that exciting...
+<br>
+Instead of rolling our own, we can use `tidytext`
+<br>
+```{r calc-tf-idf}
+user_reviews_counts <- user_reviews_words %>%
+      anti_join(stopwords_smart) %>% 
+      count(user_name, word, sort = TRUE) %>% 
+      bind_tf_idf(term = word, document = user_name, n = n)
+
+head(user_reviews_counts,4)
+```
+
+---
+
+# What words were important to (a sample of) users that had positive reviews?
+<br>
+```{r gg-tf-idf, echo=FALSE,message=FALSE, out.width="100%"}
+pos_reviews <- acnh_user_reviews_parsed %>% 
+    select(user_name, grade) %>% 
+    filter(grade > 8) %>% 
+    slice_sample(n = 3)
+
+user_reviews_counts_pos <- user_reviews_counts %>%
+  inner_join(pos_reviews, by = "user_name") 
+
+user_reviews_counts_pos %>% 
+  group_by(user_name) %>%
+  top_n(10, wt = tf_idf) %>%
+  ungroup() %>%
+  ggplot(aes(fct_reorder(word, tf_idf), tf_idf, fill = user_name)) +
+  geom_col(show.legend = FALSE) + 
+  coord_flip() +
+  facet_wrap(~user_name, ncol = 1, scales = "free") +
+  scale_y_continuous() +
+  theme_minimal() +
+  labs(x = NULL, y = "tf-idf")
+```
+
+
+
+---
+# Practice in your own time
+
+<br>
+Text Mining with R has an example comparing historical physics textbooks: 
+<br>
+.content-box-neutral[
+*Discourse on Floating Bodies* by Galileo Galilei, *Treatise on Light* by Christiaan Huygens, *Experiments with Alternate Currents of High Potential and High Frequency* by Nikola Tesla, and *Relativity: The Special and General Theory* by Albert Einstein. All are available on the Gutenberg project. 
+]
+
+<br>
+Work your way through the [comparison of physics books](https://www.tidytextmining.com/tfidf.html#a-corpus-of-physics-texts). It is section 3.4.
+
+---
+# Resources: Thanks
+<br><br>
+- [Dr. Mine Çetinkaya-Rundel](https://rstudio-education.github.io/datascience-box/course-materials/slides/u5-d01-text-analysis/u5-d01-text-analysis.html#1)
+- Dr. Julia Silge: https://github.com/juliasilge/tidytext-tutorial and
+https://juliasilge.com/blog/animal-crossing/ 
+- Dr. Julia Silge and Dr. David Robinson: https://www.tidytextmining.com/
+
+
+
+```{r setup, include=FALSE}
+# library(tidyverse)
+# library(knitr)
+# library(tidytext)
+# opts_chunk$set(echo = TRUE,   
+#                message = FALSE,
+#                warning = FALSE,
+#                collapse = TRUE,
+#                fig.height = 4,
+#                fig.width = 8,
+#                fig.align = "center",
+#                fig.retina = 2,
+#                cache = FALSE)
+# 
+# theme_set(theme_bw())
+# as_table <- function(...) knitr::kable(..., format='html', digits = 3)
+```
+
+
+---
+class: transition
+# Sentiment analysis
+
+<br><br>
+Sentiment analysis tags words or phrases with an emotion, and summarises these, often as the positive or negative state, over a body of text. 
+
+---
+# Sentiment analysis: examples
+<br><br>
+
+.content-box-neutral[
+- Examining effect of emotional state in twitter posts
+- Determining public reactions to government policy, or new product releases
+- Trying to make money in the stock market by modeling social media posts on listed companies
+- Evaluating product reviews on Amazon, restaurants on zomato, or travel options on TripAdvisor
+]
+
+---
+# Lexicons
+<br><br>
+The `tidytext` package has a lexicon of sentiments, based on four major sources:
+
+<br>
+- [AFINN](http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6010), 
+
+- [bing](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html),
+
+- [Loughran](https://sraf.nd.edu/textual-analysis/resources/#LM%20Sentiment%20Word%20Lists),
+
+- [nrc](http://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)
+
+---
+# Emotion
+<br><br>
+What emotion do these words elicit in you?
+
+<br>
+- summer
+- hot chips
+- hug
+- lose
+- stolen
+- smile
+
+---
+# Different sources of sentiment
+<br>
+.content-box-neutral[
+- The `nrc` lexicon categorizes words in a binary fashion ("yes"/"no") into categories of positive, negative, anger, anticipation, disgust, fear, joy, sadness, surprise, and trust. 
+]
+.content-box-neutral[
+- The `bing` lexicon categorizes words in a binary fashion into positive and negative categories. 
+]
+
+.content-box-neutral[
+- The `AFINN` lexicon assigns words with a score that runs between -5 and 5, with negative scores indicating negative sentiment and positive scores indicating positive sentiment.]
+
+---
+
+# Different sources of sentiment
+<br><br>
+```{r get-sentiment-afinn}
+get_sentiments("afinn")
+```
+
+---
+# Sentiment analysis
+<br><br>
+
+.content-box-neutral[
+- Once you have a bag of words, you need to join the sentiments dictionary to the words data. 
+- Particularly the lexicon `nrc` has multiple tags per word, so you may need to use an "inner_join". 
+- `inner_join()` returns all rows from x where there are matching values in y, and all columns from x and y. 
+- If there are multiple matches between x and y, all combination of the matches are returned.
+]
+
+---
+# Exploring sentiment in Jane Austen
+<br><br>
+
+`janeaustenr` package contains the full texts, ready for analysis for for Jane Austen's 6 completed novels: 
+
+<br>
+1. "Sense and Sensibility"
+2. "Pride and Prejudice"
+3. "Mansfield Park"
+4. "Emma"
+5. "Northanger Abbey"
+6. "Persuasion"
+
+
+---
+# Exploring sentiment in Jane Austen
+<br><br>
+```{r show-jane-austen}
+library(janeaustenr)
+library(stringr)
+
+tidy_books <- austen_books() %>%
+  group_by(book) %>%
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, 
+                                     regex("^chapter [\\divxlc]", 
+                                           ignore_case = TRUE)))) %>%
+  ungroup() %>%
+  unnest_tokens(word, text)
+```
+
+---
+
+# Exploring sentiment in Jane Austen
+<br><br>
+```{r print-tidy-ooks}
+tidy_books
+```
+
+---
+# Count joyful words in "Emma"
+<br>
+```{r count-joy}
+nrc_joy <- get_sentiments("nrc") %>% 
+  filter(sentiment == "joy")
+
+tidy_books %>%
+  filter(book == "Emma") %>%
+  inner_join(nrc_joy) %>%
+  count(word, sort = TRUE) %>%
+  head()
+```
+
+---
+# Count joyful words in "Emma"
+<br><br>
+
+.content-box-neutral[
+.green["Good"] is the most common joyful word, followed by .green["young"], .green["friend"], .green["hope"]... 
+]
+---
+# Comparing lexicons
+<br>
+.pull-left[
+- All of the lexicons have a measure of positive or negative. 
+- We can tag the words in Emma by each lexicon, and see if they agree. 
+]
+
+.pull-right[
+```{r compare-sentiments}
+nrc_pn <- get_sentiments("nrc") %>% 
+  filter(sentiment %in% c("positive", 
+                          "negative"))
+
+emma_nrc <- tidy_books %>%
+  filter(book == "Emma") %>%
+  inner_join(nrc_pn)
+
+emma_bing <- tidy_books %>%
+  filter(book == "Emma") %>%
+  inner_join(get_sentiments("bing")) 
+
+emma_afinn <- tidy_books %>%
+  filter(book == "Emma") %>%
+  inner_join(get_sentiments("afinn"))
+```
+]
+
+---
+# Comparing lexicons
+<br>
+```{r show-lexi} 
+emma_nrc
+```
+
+---
+# Comparing lexicons
+<br>
+```{r show-lexi-afinn} 
+emma_afinn
+```
+
+
+---
+# Comparing lexicons
+<br>
+
+```{r compare-sentiments-show}
+emma_nrc %>% count(sentiment) %>% mutate(n / sum(n))
+
+emma_bing %>% count(sentiment) %>% mutate(n / sum(n))
+```
+
+---
+# Comparing lexicons
+<br><br>
+```{r compare-sentiments-more}
+emma_afinn %>% 
+  mutate(sentiment = ifelse(value > 0, 
+                            "positive", 
+                            "negative")) %>% 
+  count(sentiment) %>% 
+  mutate(n / sum(n))
+
+```
+
+
+
+---
+# Tutorials this week -->  The Simpsons
+<br><br>
+Data from the popular animated TV series, The Simpsons, has been made available on [kaggle](https://www.kaggle.com/wcukierski/the-simpsons-by-the-data/data). 
+
+- `simpsons_script_lines.csv`: Contains the text spoken during each episode (including details about which character said it and where)
+- `simpsons_characters.csv`: Contains character names and a character id
+
+---
+
+```{r endslide, child="components/endslide.Rmd"}
+```

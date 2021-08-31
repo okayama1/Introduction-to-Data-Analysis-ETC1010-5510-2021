@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC1010 - 5510: Introduction to Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Patricia Menéndez" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/ninjutsu.css" rel="stylesheet" />
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+    -->
+    <link rel="icon" href="images/favicon.ico"  type='image/x-icon'/>    
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-logo.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70 title-slide
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;
+
+# .monash-white.outline-text[ETC1010 - 5510: Introduction to Data Analysis]
+
+&lt;h2 class="monash-white outline-text" style="font-size: 30pt!important;"&gt;Week 7&lt;/h2&gt;
+
+&lt;br&gt;
+
+&lt;h2 style="font-weight:900!important;"&gt;Modelling: Linear Models&lt;/h2&gt;
+
+.bottom_abs.width100[
+
+Lecturer: *Patricia Menéndez*
+
+Department of Econometrics and Business Statistics
+
+
+
+
+&lt;br&gt;
+]
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+
+
+
+---
+# Questions/Comments/Suggestions
+
+&lt;img src="images/rhythm-goyal-_-Ofoh09q_o-unsplash.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+ Photo: Rhythm Goyal for  Unsplash.
+---
+# Recap: Week 6
+&lt;br&gt;&lt;br&gt;
+
+&lt;br&gt;&lt;br&gt;
+- Web scraping
+- Intro to using functions
+- Organizing your own folders
+- File paths and Rstudio projects
+
+
+
+---
+
+# Week 7: Outline
+&lt;br&gt;&lt;br&gt;
+
+- Modeling
+- Linear Models
+- Linear Models and Correlation
+- Model Selection
+- Model Goodness of Fit
+- Correlation
+
+
+
+
+
+
+---
+--- 
+# Mid-semester quiz
+
+&lt;br&gt;&lt;br&gt;
+
+**Great work everyone!!**
+&lt;br&gt;&lt;br&gt;
+- Grades are available in **Moodle on Wednesday Week 7** (this week)
+- Any questions please come to the consultation hours and we will be 
+more than happy to answer any question.
+
+
+&lt;br&gt;
+
+- .green[Please remember to contact your group members -- Group project milestone due in Week 8:  April 30, 5pm]. As usual **late submissions will not be considered.**
+
+
+---
+# Modeling
+&lt;br&gt;
+.green[**The ultimate goal: Understanding the relationship between different variables.**]
+.content-box-neutral[
+- We observe the data but we don't know anything about the underlying process --&gt; we use the data to 
+make inferences about the underlying process.
+- We use models to explain the relationship between variables --&gt; explaining the underlying process.
+- Once we know the relationship between variables then we can use the models to  make predictions.
+- There are lots of different models! Linear and non-linear, parametric and non-parametric...
+- For now we focus on **linear** models.
+]
+
+
+
+---
+class: transition
+
+# Packages
+
+.left-code[
+&lt;img src="images/tidyverse.png", width="50%"&gt;
+
+&lt;img src="images/broom.png", width ="50%"&gt;
+]
+
+.right-plot[
+- You're familiar with the tidyverse:
+
+- The broom package takes the messy output of built-in functions in R, such as `lm`, and turns them into tidy data frames.
+
+]
+
+---
+class: transition
+
+# Data: Paris Paintings
+
+---
+# Paris Paintings
+
+
+```r
+pp &lt;- read_csv(here::here("slides/data/paris-paintings.csv"), 
+               na = c("n/a", "", "NA"))
+head(pp)
+## # A tibble: 6 × 61
+##   name     sale  lot   position dealer  year origin_author origin_cat school_pntg
+##   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;      
+## 1 L1764-2  L1764 2       0.0328 L       1764 F             O          F          
+## 2 L1764-3  L1764 3       0.0492 L       1764 I             O          I          
+## 3 L1764-4  L1764 4       0.0656 L       1764 X             O          D/FL       
+## 4 L1764-5a L1764 5       0.0820 L       1764 F             O          F          
+## 5 L1764-5b L1764 5       0.0820 L       1764 F             O          F          
+## 6 L1764-6  L1764 6       0.0984 L       1764 X             O          I          
+## # … with 52 more variables: diff_origin &lt;dbl&gt;, logprice &lt;dbl&gt;, price &lt;dbl&gt;,
+## #   count &lt;dbl&gt;, subject &lt;chr&gt;, authorstandard &lt;chr&gt;, artistliving &lt;dbl&gt;,
+## #   authorstyle &lt;chr&gt;, author &lt;chr&gt;, winningbidder &lt;chr&gt;,
+## #   winningbiddertype &lt;chr&gt;, endbuyer &lt;chr&gt;, Interm &lt;dbl&gt;, type_intermed &lt;chr&gt;,
+## #   Height_in &lt;dbl&gt;, Width_in &lt;dbl&gt;, Surface_Rect &lt;dbl&gt;, Diam_in &lt;dbl&gt;,
+## #   Surface_Rnd &lt;dbl&gt;, Shape &lt;chr&gt;, Surface &lt;dbl&gt;, material &lt;chr&gt;, mat &lt;chr&gt;,
+## #   materialCat &lt;chr&gt;, quantity &lt;dbl&gt;, nfigures &lt;dbl&gt;, engraved &lt;dbl&gt;, …
+```
+
+---
+# Meet the data curators
+
+.left-code[
+![](images/sandra-van-ginhoven.png) 
+
+![](images/hilary-coe-cronheim.png)
+]
+
+.right-plot[
+
+Sandra van Ginhoven
+
+Hilary Coe Cronheim
+
+PhD students in the Duke Art, Law, and Markets Initiative in 2013
+
+- Source: Printed catalogues of 28 auction sales in Paris, 1764- 1780
+- 3,393 paintings, their prices, and descriptive details from sales catalogues over 60 variables
+]
+
+---
+# Auctions today
+
+&lt;iframe width="1013" height="570" src="https://www.youtube.com/embed/apaE1Q7r4so" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+---
+# Auctions back in the day
+&lt;br&gt;
+&lt;img src="images/old-auction.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+Pierre-Antoine de Machy, Public Sale at the Hôtel Bullion, Musée Carnavalet, Paris (18th century)
+
+---
+# Paris auction market
+
+&lt;img src="images/auction-trend-paris.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+class: transition
+
+# Understanding the data
+&lt;br&gt;&lt;br&gt;
+## Data distribution: histogram --&gt; graphical representation of the data
+
+&lt;br&gt;&lt;br&gt;
+[Links to some interesting books about stats here](https://chance.amstat.org/2014/11/book-reviews-27-4/)
+
+---
+#  Describe the distribution of prices of paintings.
+
+
+```r
+ggplot(data = pp, aes(x = price)) +
+  geom_histogram(binwidth = 100)
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/gg-price-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+The histogram of the prices!
+
+---
+class: transition
+
+# Modelling the relationship between variables
+
+
+---
+# Models as functions
+&lt;br&gt;&lt;br&gt;
+.content-box[
+- Models can be understand as .green[functions]
+- We can represent relationships between variables using **functions**
+- A function is a mathematical concept --&gt; Represents the relationship between
+and input/s and an output. 
+- Remember the box that I drew last week?
+] 
+&lt;br&gt;
+.green[**Important:** Mathematical functions and functions in 
+coding are concepts that are related!]
+
+---
+# Models as functions: Example
+&lt;br&gt;
+Do you remember when you learn to write the equation of a line?
+.content-box-neutral[
+- The formula `\(y = 3x + 7\)` 
+represents the equation of a line. 
+- We can also write it like this:  `\(y = f(x) = 3x + 7\)` 
+- This is a function with input `\(x\)` and output `\(y\)` or `\(f(x)\)`.
+]
+&lt;br&gt;
+For example when `\(x\)` is `\(5\)` --&gt; the output `\(y\)` is `\(22\)`
+
+`y = 3 * 5 + 7 = 22`
+
+---
+# Models as functions: Example
+&lt;br&gt;&lt;br&gt;
+In R:
+
+
+```r
+f &lt;- function(x){
+  
+  y = 3*x + 7
+  y
+}
+f(5)
+## [1] 22
+```
+
+
+---
+# Height as a function of width
+&lt;br&gt;
+Example: Understand/Describe the relationship betweenthe  height and width of the paintings.
+&lt;br&gt;
+&lt;img src="Workshop1-Week7_files/figure-html/gg-price-point-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing the linear model
+&lt;br&gt;
+
+```r
+ggplot(data = pp, aes(x = Width_in, y = Height_in)) +
+  geom_point() +
+  geom_smooth(method = "lm") # lm for linear model
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/gg-point-smooth-lm-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing the linear model 
+.green[With a measure of uncertainty around the line]
+
+
+```r
+ggplot(data = pp, aes(x = Width_in, y = Height_in)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE, level = 0.95) # lm for linear model
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/gg-point-lm-no-se-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing the linear model (style the line)
+
+
+```r
+ggplot(data = pp, aes(x = Width_in, y = Height_in)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, 
+              col = "pink", # color
+              lty = 2,      # line type
+              lwd = 3)      # line weight
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/gg-smooth-change-line-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Vocabulary
+&lt;br&gt;&lt;br&gt;
+- **Response variable:** Variable whose behavior or variation you are trying to understand, on the y-axis (dependent variable) --&gt; .green[**y**]
+
+
+- **Explanatory variables:** Other variables that you want to use to explain the response, on the x-axis (independent variables) --&gt; .green[**x**]
+
+.content-box-neutral[
+`\(y = f(x) = b + ax + \epsilon\)` 
+]
+
+- `\(\epsilon\)`  --&gt; error term with certain properties and this is the stochastic part of the model that allow us to make inferences about
+the model and model parameters!
+
+---
+# Vocabulary
+
+&lt;br&gt;
+.green[**Once the model is fitted (i.e once we know the values of a and b )**]
+
+- **Fitted values:** `\(\hat{y} = \hat{f}(x) =  \hat{a} + \hat{b}x\)`
+    
+- **Residuals:** `\(\hat{\epsilon}\)` --&gt;Show how far each case is from its model value
+    - Residual = Observed value `\(y\)` - Fitted value `\(\hat{y}\)`
+    - Tells how far are the points from the line (model function) 
+    
+- **Predicted values**: `\(\hat{y} = \hat{f}(3) =  \hat{a} + \hat{b} \times 3\)` 
+Once we the model is .green[fitted], that is we know the values of `\(\hat{a}\)` and `\(\hat{b}\)`,
+then we can find out what is the `\(\hat{y}\)` value  .green[for any given `\(x\)` that is 
+**within the range of the `\(x\)` values that I have used to estimate my model**].
+
+---
+# Residuals
+&lt;br&gt;
+- What does a negative residual mean? 
+- Which paintings on the plot have have negative 
+residuals, those below or above the line?
+
+&lt;br&gt;
+&lt;img src="Workshop1-Week7_files/figure-html/gg-price-height-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+&lt;img src="Workshop1-Week7_files/figure-html/gg-alpha-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+--
+
+- What feature is apparent in this plot that was not (as) apparent in the previous plots? 
+
+- What might be the reason for this feature?
+
+???
+
+The plot below displays the relationship between height and width of paintings. It  uses a lower alpha level for the points than the previous plots we looked at. 
+---
+# Landscape vs portrait paintings
+
+.pull-left[
+- Landscape painting is the depiction in art of landscapes – natural scenery such as mountains, valleys, trees, rivers, and forests, especially where the main subject is a wide view – with its elements arranged into a coherent composition.&lt;sup&gt;1&lt;/sup&gt;
+
+- Landscape paintings tend to be wider than longer.
+]
+
+.pull-right[
+
+- Portrait painting is a genre in painting, where the intent is to depict a human subject.&lt;sup&gt;2&lt;/sup&gt;
+
+- Portrait paintings tend to be longer than wider.
+]
+.footnote[
+[1] Source: Wikipedia, [Landscape painting](https://en.wikipedia.org/wiki/Landscape_painting)
+
+[2] Source: Wikipedia, [Portait painting](https://en.wikipedia.org/wiki/Portrait_painting)
+]
+
+
+---
+# Multiple explanatory variables
+
+How, if at all, the relationship between width and height of paintings vary by whether
+or not they have any landscape elements?
+
+
+```r
+ggplot(data = pp, aes(x = Width_in, y = Height_in, 
+                      color = factor(landsALL))) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(color = "landscape") +
+  scale_colour_viridis_d()
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/gg-landscape-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Models - important considerations
+&lt;br&gt;
+.content-box-neutral[
+- First, we need an exhaustive exploratory analysis of the data
+before investigating any model --&gt; you can use your data wrangling tool box!
+- That will allow us to better understand which model/s might be adequate for a given data set.
+- Models can sometimes reveal patterns that are not evident in the
+data. 
+- However, there is a real risk,  that a model is imposing structure that is
+not really there. 
+- That is why inspecting the model assumptions and residuals is essential!
+]
+
+---
+# Model Inspection
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+- Scatterplot suggests there might be other factors that account for large parts 
+of painting-to-painting variability.
+- In many cases, we will find out that the process that we are trying to model might be affected
+by other factors that we did not account for at first.
+]
+
+---
+# Model Inference
+&lt;br&gt;&lt;br&gt;
+Model goodness of fit and model uncertainty --&gt; It is just as important as the model!
+&lt;br&gt;
+.content-box-neutral[
+- We use statistical inference to the explain the uncertainty in the model, model parameters
+and residuals.
+- Also we use statistical inference to draw conclusions from our model.
+]
+
+---
+# Linear Models
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+1.Characterize the relationship between `\(y\)` and `\(x\)` assuming there is a linear relationship between the variables.
+2. Once the model is fitted --&gt; we have estimated all the parameters in the model then:
+3. We can make prediction: Plug in `\(x\)`, get the predicted `\(\hat{y}\)`
+4. ** Predictions are only valid for new values `\(x\)` that are within the min and max of the original `\(x\)` use to fit the model.**
+]
+
+
+
+---
+class: transition
+# Characterizing relationships with models
+
+---
+# Height &amp; width
+&lt;br&gt;&lt;br&gt;
+
+```r
+m_ht_wt &lt;- lm(Height_in ~ Width_in, data = pp)
+m_ht_wt
+## 
+## Call:
+## lm(formula = Height_in ~ Width_in, data = pp)
+## 
+## Coefficients:
+## (Intercept)     Width_in  
+##      3.6214       0.7808
+```
+
+
+---
+# Model of height and width
+&lt;br&gt;&lt;br&gt;
+`$$\widehat{Height_{in}} = 3.62 + 0.78~Width_{in}$$`
+ 
+
+- **Intercept:** Paintings that are 0 inches wide are expected to be 3.62 inches high, on average.
+- **Slope:** For each additional inch the painting is wider, the height is expected
+to be higher, on average, by 0.78 inches.
+
+
+
+---
+# The linear model with a single predictor
+&lt;br&gt;&lt;br&gt;
+
+Typically a linear regression model with a single predictor is denoted as follows:
+
+$$ y = \beta_0 + \beta_1~x + \epsilon $$
+
+with `\(\epsilon_i\)` independent and identically distributed --&gt;  `\(\epsilon_i \sim N(0,\sigma^2)\)`
+
+Using the data we are interested in making inferences about  `\(\beta_0\)` (population parameter for the intercept)
+and the `\(\beta_1\)` (population parameter for the slope).
+
+
+
+---
+# Least squares regression
+&lt;br&gt;&lt;br&gt;
+The regression line minimizes the sum of squared residuals:
+
+`\(e_i = y - \hat{y}\)`,
+
+the regression line minimizes `\(\sum_{i = 1}^n e_i^2\)`.
+
+&lt;img src="images/ls.jpg" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing residuals
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week7_files/figure-html/vis-resid2-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing residuals (cont.)
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week7_files/figure-html/vis-resid-line2-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing residuals (cont.)
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week7_files/figure-html/vis-redis-segment-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Visualizing the residuals for model diagnostic
+&lt;br&gt;
+
+
+```r
+resid_panel(m_ht_wt, plots = "all")
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/unnamed-chunk-2-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+# Properties of the least squares regression line
+&lt;br&gt;&lt;br&gt;
+
+`$$y = \beta_0 + \beta_1 x + \epsilon  ~ \rightarrow ~ \beta_0 = y - \beta_1 x$$`
+`$$\epsilon \sim N(0,\sigma^2)$$`
+
+- The errors has expected value 0
+- The errors are independent and have common variance
+- The sign of the slope is the same as the sign of the correlation between the variables
+
+&lt;!-- - The slope has the same sign as the correlation coefficient: --&gt;
+
+&lt;!-- `$$\beta_1 = r \frac{s_y}{s_x}$$` --&gt;
+
+---
+
+# Assumptions of least squares regression line
+&lt;br&gt;&lt;br&gt;
+
+- The sum of the residuals is zero: 
+`$$\sum_{i = 1}^n e_i = 0$$`
+
+- The residuals have constant variance (homoskedastic errors)
+
+- The residuals and `\(x\)` values are uncorrelated.
+
+---
+# Height and landscape features
+&lt;br&gt;&lt;br&gt;
+
+```r
+m_ht_lands &lt;- lm(Height_in ~ factor(landsALL), data = pp)
+m_ht_lands
+## 
+## Call:
+## lm(formula = Height_in ~ factor(landsALL), data = pp)
+## 
+## Coefficients:
+##       (Intercept)  factor(landsALL)1  
+##            22.680             -5.645
+```
+
+--
+
+&lt;br&gt;
+
+`$$\widehat{Height_{in}} = 22.68 - 5.65~landsALL$$`
+
+---
+# Height &amp; landscape features Model Summary
+&lt;br&gt;
+
+
+```r
+summary(m_ht_lands)
+## 
+## Call:
+## lm(formula = Height_in ~ factor(landsALL), data = pp)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -21.350  -9.680  -3.680   4.965  97.320 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        22.6799     0.3280   69.14   &lt;2e-16 ***
+## factor(landsALL)1  -5.6451     0.5325  -10.60   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 14.48 on 3139 degrees of freedom
+##   (252 observations deleted due to missingness)
+## Multiple R-squared:  0.03457,	Adjusted R-squared:  0.03426 
+## F-statistic: 112.4 on 1 and 3139 DF,  p-value: &lt; 2.2e-16
+```
+
+
+---
+# Height &amp; landscape features (cont.)
+&lt;br&gt;&lt;br&gt;
+
+- **Intercept:** Paintings that don't have landscape features are expected, on 
+average, to be 22.68 inches tall.
+- **Slope:** Paintings with landscape features are expected, on average,
+to be 5.65 inches shorter than paintings that without landscape features.
+    - Compares baseline level (`landsALL = 0`) to other level
+    (`landsALL = 1`).
+
+
+
+---
+# Categorical predictor with 2 levels
+&lt;br&gt;&lt;br&gt;
+
+```
+## # A tibble: 8 × 3
+##   name     price landsALL
+##   &lt;chr&gt;    &lt;dbl&gt; &lt;fct&gt;   
+## 1 L1764-2    360 0       
+## 2 L1764-3      6 0       
+## 3 L1764-4     12 1       
+## 4 L1764-5a     6 1       
+## 5 L1764-5b     6 1       
+## 6 L1764-6      9 0       
+## 7 L1764-7a    12 0       
+## 8 L1764-7b    12 0
+```
+
+
+```r
+levels(dat$landsALL)
+## [1] "0" "1"
+```
+
+
+---
+# Relationship between height and school
+
+
+```r
+m_ht_sch &lt;- lm(Height_in ~ school_pntg, data = pp)
+summary(m_ht_sch)
+## 
+## Call:
+## lm(formula = Height_in ~ school_pntg, data = pp)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.197  -9.197  -3.329   4.803  95.803 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)       14.000     10.020   1.397  0.16245   
+## school_pntgD/FL    2.329     10.027   0.232  0.81636   
+## school_pntgF      10.197     10.028   1.017  0.30932   
+## school_pntgG       1.650     11.856   0.139  0.88932   
+## school_pntgI      10.287     10.045   1.024  0.30590   
+## school_pntgS      30.429     11.362   2.678  0.00744 **
+## school_pntgX       2.869     10.268   0.279  0.77996   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 14.17 on 3134 degrees of freedom
+##   (252 observations deleted due to missingness)
+## Multiple R-squared:  0.07707,	Adjusted R-squared:  0.07531 
+## F-statistic: 43.62 on 6 and 3134 DF,  p-value: &lt; 2.2e-16
+```
+ 
+---
+# Model parametrization
+ &lt;br&gt;&lt;br&gt;
+- Categorical explanatory variables are typically encoded to
+**dummy variables**, one for each of the levels.
+- Each coefficient describes the expected difference between heights in that 
+particular school compared to the baseline level.
+- We can inspect the model matrix using .purple[model.matrix] in R
+
+
+
+
+
+---
+# Categorical predictor with &gt;2 levels
+&lt;br&gt;&lt;br&gt;
+
+```
+## # A tibble: 7 × 7
+## # Groups:   school_pntg [7]
+##   school_pntg  D_FL     F     G     I     S     X
+##   &lt;chr&gt;       &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1 A               0     0     0     0     0     0
+## 2 D/FL            1     0     0     0     0     0
+## 3 F               0     1     0     0     0     0
+## 4 G               0     0     1     0     0     0
+## 5 I               0     0     0     1     0     0
+## 6 S               0     0     0     0     1     0
+## 7 X               0     0     0     0     0     1
+```
+
+---
+# The linear model with multiple predictors
+&lt;br&gt;&lt;br&gt;
+.green[Multiple linear regression model]
+
+$$ y = \beta_0 + \beta_1~x_1 + \beta_2~x_2 + \cdots + \beta_k~x_k  + \epsilon$$
+We can also write it using matrix form:
+
+`$$Y = X~\beta + \epsilon$$`
+with `\(\epsilon_i\)` independent and identically distributed such that `\(\epsilon_i~ N(0,\sigma^2)\)` 
+&lt;!-- --- --&gt;
+&lt;!-- # Correlation does not imply causation! --&gt;
+&lt;!-- &lt;br&gt;&lt;br&gt; --&gt;
+&lt;!-- - Remember this when interpreting model coefficients --&gt;
+
+---
+class: transition
+# Prediction with models
+
+---
+# Predict height from width
+&lt;br&gt;&lt;br&gt;
+On average, how tall are paintings that are 60 inches wide?
+`$$\widehat{Height_{in}} = 3.62 + 0.78~Width_{in}$$`
+
+
+```r
+3.62 + 0.78 * 60
+## [1] 50.42
+```
+
+"On average, we expect paintings that are 60 inches wide to be 50.42 inches high."
+
+**Warning:** We "expect" this to happen, but there will be some variability. (We'll
+learn about measuring the variability around the prediction later.)
+
+---
+# Prediction vs. extrapolation
+&lt;br&gt;&lt;br&gt;
+On average, how tall are paintings that are 400 inches wide?
+`$$\widehat{Height_{in}} = 3.62 + 0.78~Width_{in}$$`
+
+&lt;img src="Workshop1-Week7_files/figure-html/extrapolate-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: transition
+
+# Measuring model fit
+
+---
+# What is `\(R^2\)`?
+&lt;br&gt;&lt;br&gt;
+
+It is also known as .green[coefficient of determination]
+
+&lt;br&gt;
+- It measures the ratio between (model variance)/(total variance), the proportion variance in the response variable explained by the model. 
+- `\(R^2\)` always ranges between 0 and 1, with 1 indicating a perfect fit. 
+- Adding more variables to the model will always increase `\(R^2\)`, so what is important is how big an increase is gained. 
+- However, adding more variables into a model increases --&gt; model complexity and sometimes that is not good!
+- Adjusted `\(R^2\)` takes into account model complexity and accounts for that.
+
+
+---
+# Measuring the strength of the fit
+&lt;br&gt;&lt;br&gt;
+`$$R^2 = 1- \big(\sum_i (y_i -\hat{y}_i)^2/ \sum_i (y_i -\bar{y})^2\big)$$` residual sum of squares/ Total sum of squares `\(\in [0,1]\)`
+
+.content-box-neutral[
+- `\(R^2\)` is a common measurement of strength of linear model fit.
+- `\(R^2\)` tells us % variability in response explained by 
+model.
+- Remaining variation is explained by variables not in the model.
+- `\(R^2\)` is sometimes called the coefficient of determination.
+]
+---
+# Obtaining `\(R^2\)` in R
+&lt;br&gt;&lt;br&gt;
+- Height vs. width
+
+
+```r
+broom::glance(m_ht_wt)
+## # A tibble: 1 × 12
+##   r.squared adj.r.squared sigma statistic p.value    df  logLik    AIC    BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1     0.683         0.683  8.30     6749.       0     1 -11083. 22173. 22191.
+## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;
+broom::glance(m_ht_wt)$r.squared # extract R-squared
+## [1] 0.6829468
+```
+
+Roughly 68% of the variability in heights of paintings can be explained by their widths.
+
+---
+# Obtaining `\(R^2\)` in R
+&lt;br&gt;&lt;br&gt;
+- Height vs. landscape features
+
+
+```r
+glance(m_ht_lands)$r.squared
+## [1] 0.03456724
+```
+
+---
+# Model residuals
+&lt;br&gt;
+Using the broom package we can explore model residuals:
+&lt;br&gt;
+
+```r
+library(broom)
+y &lt;-rnorm(100)
+x &lt;-1:100
+mod &lt;- lm(y ~ x)
+df &lt;- augment(mod)
+ggplot(df, aes(x = .fitted, y = .resid)) + geom_point()
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/unnamed-chunk-5-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Model residuals
+
+
+```r
+
+y &lt;-rnorm(100)
+x &lt;-1:100
+mod &lt;- lm(y ~ x)
+modf &lt;- fortify(mod)
+ggplot(modf, aes(x = .fitted, y = .resid)) + geom_point() +
+  ggtitle("Anscome plot")
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/unnamed-chunk-6-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Furthermore on residuals check
+
+R package: ggResidpanel 
+
+[Great post here](https://cran.r-project.org/web/packages/ggResidpanel/vignettes/introduction.html)
+
+
+```r
+resid_panel(mod, plots = "all")
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+# What is correlation?
+&lt;br&gt;&lt;br&gt;
+.content-box-neutral[
+- It is the linear association between two variables 
+- Ranges from -1 to +1
+- It is computed between two variables.
+- In correlation both variables are interchangeable.
+- In regression we single out one variable as the response and we use the 
+explanatory variable to explain or predict the behavior of the response variable!
+]
+---
+# Strong Positive correlation
+
+As one variable increases, so does another
+
+&lt;img src="Workshop1-Week7_files/figure-html/plot-strong-pos-corr-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# Strong Positive correlation
+
+As one variable increases, so does another variable
+
+&lt;img src="Workshop1-Week7_files/figure-html/plot-pos-corr-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# Zero correlation: neither variables are related
+
+&lt;img src="Workshop1-Week7_files/figure-html/plot-meh-corr-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# Strong negative correlation
+
+As one variable increases, another decreases
+
+&lt;img src="Workshop1-Week7_files/figure-html/plot-neg-corr-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# STRONG negative correlation
+
+As one variable increases, another decreases
+
+&lt;img src="Workshop1-Week7_files/figure-html/plot-strong-neg-corr-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Correlation formal definition
+&lt;br&gt;&lt;br&gt;
+For two variables `\(X, Y\)`, correlation is:
+&lt;br&gt;&lt;br&gt;
+
+.content-box-neutral[
+`$$r=\frac{\sum_{i=1}^{n} (x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i-\bar{y})^2}} = \frac{cov(X,Y)}{s_xs_y}$$` ]
+
+
+---
+class: transition
+
+# Remember! Correlation does not equal causation
+
+[Have a look at some examples here!](https://www.tylervigen.com/spurious-correlations)
+
+
+---
+# Unpacking lm and model objects
+&lt;br&gt;
+
+```r
+pp &lt;- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
+head(pp)
+## # A tibble: 6 × 61
+##   name     sale  lot   position dealer  year origin_author origin_cat school_pntg diff_origin
+##   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;             &lt;dbl&gt;
+## 1 L1764-2  L1764 2       0.0328 L       1764 F             O          F                     1
+## 2 L1764-3  L1764 3       0.0492 L       1764 I             O          I                     1
+## 3 L1764-4  L1764 4       0.0656 L       1764 X             O          D/FL                  1
+## 4 L1764-5a L1764 5       0.0820 L       1764 F             O          F                     1
+## 5 L1764-5b L1764 5       0.0820 L       1764 F             O          F                     1
+## 6 L1764-6  L1764 6       0.0984 L       1764 X             O          I                     1
+## # … with 51 more variables: logprice &lt;dbl&gt;, price &lt;dbl&gt;, count &lt;dbl&gt;, subject &lt;chr&gt;,
+## #   authorstandard &lt;chr&gt;, artistliving &lt;dbl&gt;, authorstyle &lt;chr&gt;, author &lt;chr&gt;,
+## #   winningbidder &lt;chr&gt;, winningbiddertype &lt;chr&gt;, endbuyer &lt;chr&gt;, Interm &lt;dbl&gt;,
+## #   type_intermed &lt;chr&gt;, Height_in &lt;dbl&gt;, Width_in &lt;dbl&gt;, Surface_Rect &lt;dbl&gt;,
+## #   Diam_in &lt;dbl&gt;, Surface_Rnd &lt;dbl&gt;, Shape &lt;chr&gt;, Surface &lt;dbl&gt;, material &lt;chr&gt;,
+## #   mat &lt;chr&gt;, materialCat &lt;chr&gt;, quantity &lt;dbl&gt;, nfigures &lt;dbl&gt;, engraved &lt;dbl&gt;,
+## #   original &lt;dbl&gt;, prevcoll &lt;dbl&gt;, othartist &lt;dbl&gt;, paired &lt;dbl&gt;, figures &lt;dbl&gt;, …
+```
+
+---
+# Unpacking linear models
+
+
+```r
+ggplot(data = pp, aes(x = Width_in, y = Height_in)) +
+  geom_point() +
+  geom_smooth(method = "lm") # lm for linear model
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/gg-paris-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: transition
+
+# Linear Model R specification
+
+.large[
+`lm(&lt;FORMULA&gt;, &lt;DATA&gt;)`
+
+Example: 
+
+`mod &lt;- lm( y ~ x, data = mydata`)
+]
+
+---
+# Fitting a linear model
+&lt;br&gt;&lt;br&gt;
+
+```r
+m_ht_wt &lt;- lm(Height_in ~ Width_in, data = pp)
+
+m_ht_wt
+## 
+## Call:
+## lm(formula = Height_in ~ Width_in, data = pp)
+## 
+## Coefficients:
+## (Intercept)     Width_in  
+##      3.6214       0.7808
+```
+
+---
+class: transition
+# Using tidy, augment, glance
+
+---
+# tidy: return a tidy table of model information
+
+
+`tidy(&lt;MODEL OBJECT&gt;)` from the broom package
+
+
+```r
+tidy(m_ht_wt)
+## # A tibble: 2 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    3.62    0.254        14.3 8.82e-45
+## 2 Width_in       0.781   0.00950      82.1 0
+```
+&lt;br&gt;
+Great for reporting!
+---
+# summary
+`summary(&lt;Model Object&gt;)`
+returns model summary:
+
+
+```r
+summary(m_ht_wt)
+## 
+## Call:
+## lm(formula = Height_in ~ Width_in, data = pp)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -86.714  -4.384  -2.422   3.169  85.084 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 3.621406   0.253860   14.27   &lt;2e-16 ***
+## Width_in    0.780796   0.009505   82.15   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.304 on 3133 degrees of freedom
+##   (258 observations deleted due to missingness)
+## Multiple R-squared:  0.6829,	Adjusted R-squared:  0.6828 
+## F-statistic:  6749 on 1 and 3133 DF,  p-value: &lt; 2.2e-16
+```
+---
+# Visualizing residuals
+
+&lt;img src="Workshop1-Week7_files/figure-html/vis-resid-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing residuals (cont.)
+
+&lt;img src="Workshop1-Week7_files/figure-html/vis-resid-line-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# Visualizing residuals (cont.)
+
+&lt;img src="Workshop1-Week7_files/figure-html/vis-redis-segment2-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# glance: get a one-row summary out
+
+.large[
+`glance(&lt;MODEL OBJECT&gt;)`
+]
+
+
+```r
+glance(m_ht_wt)
+## # A tibble: 1 × 12
+##   r.squared adj.r.squared sigma statistic p.value    df  logLik    AIC    BIC deviance
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1     0.683         0.683  8.30     6749.       0     1 -11083. 22173. 22191.  216055.
+## # … with 2 more variables: df.residual &lt;int&gt;, nobs &lt;int&gt;
+```
+&lt;br&gt;&lt;br&gt;
+
+Model goodness-of-fit!
+---
+# Goodness of fit measures
+
+&lt;br&gt;&lt;br&gt;
+
+- **AIC**, **BIC**, and **Deviance** are goodness of fit measure to compare models.
+- .green[AIC] = Akaike Information Criterion (can be used to compare models. The smaller the value the better the model.)
+- Similarly .green[BIC] = Bayes Information Criterion indicates how well the model fits, best used to compare two models. Lower is better.
+- .green[Deviance] is the residual variation, how much variation in response that IS NOT explained by the model. The close to 0 the better, but it is not on a standard scale. In comparing two models if one has substantially lower deviance, then it is a better model.
+&lt;br&gt;
+[For those who want to learn more about linear models. See second edition of Linear Models with R](https://people.bath.ac.uk/jjf23/LMR/index.html)
+---
+# augment: get the data
+
+.large[
+`augment&lt;MODEL&gt;`
+
+or
+
+`augment(&lt;MODEL&gt;, &lt;DATA&gt;)`
+]
+
+---
+# augment
+
+
+```r
+augment(m_ht_wt)
+## # A tibble: 3,135 × 9
+##    .rownames Height_in Width_in .fitted  .resid     .hat .sigma      .cooksd .std.resid
+##    &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+##  1 1                37     29.5   26.7  10.3    0.000399   8.30 0.000310         1.25  
+##  2 2                18     14     14.6   3.45   0.000396   8.31 0.0000342        0.415 
+##  3 3                13     16     16.1  -3.11   0.000361   8.31 0.0000254       -0.375 
+##  4 4                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
+##  5 5                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
+##  6 6                 7     10     11.4  -4.43   0.000498   8.31 0.0000709       -0.534 
+##  7 7                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
+##  8 8                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
+##  9 9                15     15     15.3  -0.333  0.000377   8.31 0.000000304     -0.0401
+## 10 10                9      7      9.09 -0.0870 0.000601   8.31 0.0000000330    -0.0105
+## # … with 3,125 more rows
+```
+
+
+---
+# Understanding residuals for model selection
+
+- Variation explained by the model
+- Residual variation:  what's left over after fitting the model
+
+
+```r
+resid_panel(mod, plots = "all")
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Going beyond a single model
+
+&lt;img src="images/blind-men-and-the-elephant.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+Image source: https://balajiviswanathan.quora.com/Lessons-from-the-Blind-men-and-the-elephant
+
+---
+class: transition
+# Going beyond a single model
+
+- Beyond a single model
+- Fitting many models 
+
+
+---
+# Gapminder
+&lt;br&gt;&lt;br&gt;
+- Hans Rosling was a Swedish doctor, academic and statistician, Professor of International Health at Karolinska Institute. Sadly he passed away in 2017. 
+- He developed a keen interest in health and wealth across the globe, and the relationship with other factors like agriculture, education, energy. 
+- You can play with the gapminder data using animations at https://www.gapminder.org/tools/. 
+
+---
+&lt;iframe width="1008" height="567" src="https://www.youtube.com/embed/jbkSRLYSojo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+
+---
+# R package: `gapminder`
+&lt;br&gt;
+Contains subset of the data on five year intervals from 1952 to 2007.
+
+
+```r
+library(gapminder)
+glimpse(gapminder)
+## Rows: 1,704
+## Columns: 6
+## $ country   &lt;fct&gt; "Afghanistan", "Afghanistan", "Afghanistan", "Afghanistan", "Afghanist…
+## $ continent &lt;fct&gt; Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia…
+## $ year      &lt;int&gt; 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992, 1997, 2002, 2007…
+## $ lifeExp   &lt;dbl&gt; 28.801, 30.332, 31.997, 34.020, 36.088, 38.438, 39.854, 40.822, 41.674…
+## $ pop       &lt;int&gt; 8425333, 9240934, 10267083, 11537966, 13079460, 14880372, 12881816, 13…
+## $ gdpPercap &lt;dbl&gt; 779.4453, 820.8530, 853.1007, 836.1971, 739.9811, 786.1134, 978.0114, …
+```
+
+---
+# "Change in life expectancy in countries over time?"
+&lt;br&gt;&lt;br&gt;
+&lt;img src="Workshop1-Week7_files/figure-html/gg-gapminder-line-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# "Change in life expectancy in countries over time?"
+&lt;br&gt;&lt;br&gt;
+- There generally appears to be an increase in life expectancy
+- A number of countries have big dips from the 70s through 90s
+- A cluster of countries starts off with low life expectancy but ends up close to the highest by the end of the period.
+
+---
+# Gapminder: Australia
+&lt;br&gt;
+Australia was already had one of the top life expectancies in the 1950s.
+
+
+```r
+oz &lt;- gapminder %&gt;% filter(country == "Australia")
+
+head(oz)
+## # A tibble: 6 × 6
+##   country   continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Australia Oceania    1952    69.1  8691212    10040.
+## 2 Australia Oceania    1957    70.3  9712569    10950.
+## 3 Australia Oceania    1962    70.9 10794968    12217.
+## 4 Australia Oceania    1967    71.1 11872264    14526.
+## 5 Australia Oceania    1972    71.9 13177000    16789.
+## 6 Australia Oceania    1977    73.5 14074100    18334.
+```
+
+---
+# Gapminder: Australia
+&lt;br&gt;
+
+```r
+ggplot(data = oz, 
+       aes(x = year, 
+           y = lifeExp)) + 
+  geom_line() 
+```
+
+&lt;img src="Workshop1-Week7_files/figure-html/plot-gapminder-oz-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# Gapminder: Australia
+&lt;br&gt;
+
+```r
+oz_lm &lt;- lm(lifeExp ~ year, data = oz)
+
+oz_lm
+## 
+## Call:
+## lm(formula = lifeExp ~ year, data = oz)
+## 
+## Coefficients:
+## (Intercept)         year  
+##   -376.1163       0.2277
+```
+
+---
+# Tidy Gapminder Australia
+&lt;br&gt;
+
+```r
+tidy(oz_lm)
+## # A tibble: 2 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept) -376.      20.5        -18.3 5.09e- 9
+## 2 year           0.228    0.0104      21.9 8.67e-10
+```
+
+.large[
+`$$\widehat{lifeExp} = -376.1163 - 0.2277~year$$`
+]
+
+---
+# Center year
+&lt;br&gt;
+- Let us treat 1950 is the first year
+- So for model fitting we are going to shift year to begin in 1950
+- This improved interpretability.
+
+
+```r
+gap &lt;- gapminder %&gt;% 
+  mutate(year1950 = year - 1950)
+oz &lt;- gap %&gt;%  filter(country == "Australia")
+```
+
+
+---
+# Model for centred year
+&lt;br&gt;
+
+```r
+oz_lm &lt;- lm(lifeExp ~ year1950, data = oz)
+
+oz_lm
+## 
+## Call:
+## lm(formula = lifeExp ~ year1950, data = oz)
+## 
+## Coefficients:
+## (Intercept)     year1950  
+##     67.9451       0.2277
+```
+
+
+---
+# Tidy the model
+&lt;br&gt;&lt;br&gt;
+
+```r
+tidy(oz_lm)
+## # A tibble: 2 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   67.9      0.355      192.  3.70e-19
+## 2 year1950       0.228    0.0104      21.9 8.67e-10
+```
+
+
+`$$\widehat{lifeExp} = 67.9 +  0.2277~year$$`
+
+---
+#nest() country level data (one row = one country)
+
+
+```r
+by_country &lt;- gap %&gt;%
+select(country,
+       year1950,
+       lifeExp,
+       continent) %&gt;% 
+group_by(country, continent) %&gt;%
+nest()
+by_country
+## # A tibble: 142 × 3
+## # Groups:   country, continent [142]
+##    country     continent data             
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;list&gt;           
+##  1 Afghanistan Asia      &lt;tibble [12 × 2]&gt;
+##  2 Albania     Europe    &lt;tibble [12 × 2]&gt;
+##  3 Algeria     Africa    &lt;tibble [12 × 2]&gt;
+##  4 Angola      Africa    &lt;tibble [12 × 2]&gt;
+##  5 Argentina   Americas  &lt;tibble [12 × 2]&gt;
+##  6 Australia   Oceania   &lt;tibble [12 × 2]&gt;
+##  7 Austria     Europe    &lt;tibble [12 × 2]&gt;
+##  8 Bahrain     Asia      &lt;tibble [12 × 2]&gt;
+##  9 Bangladesh  Asia      &lt;tibble [12 × 2]&gt;
+## 10 Belgium     Europe    &lt;tibble [12 × 2]&gt;
+## # … with 132 more rows
+```
+
+
+---
+# Using map function 
+
+
+```r
+ country_model &lt;- by_country %&gt;% 
+  mutate(model = map(.x = data,
+                     .f = function(x){
+                           lm(lifeExp ~ year1950, 
+                              data = x) 
+                     }))
+
+country_model
+## # A tibble: 142 × 4
+## # Groups:   country, continent [142]
+##    country     continent data              model 
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;list&gt;            &lt;list&gt;
+##  1 Afghanistan Asia      &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  2 Albania     Europe    &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  3 Algeria     Africa    &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  4 Angola      Africa    &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  5 Argentina   Americas  &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  6 Australia   Oceania   &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  7 Austria     Europe    &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  8 Bahrain     Asia      &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+##  9 Bangladesh  Asia      &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+## 10 Belgium     Europe    &lt;tibble [12 × 2]&gt; &lt;lm&gt;  
+## # … with 132 more rows
+```
+
+---
+# List with model outputs
+
+&lt;br&gt;&lt;br&gt;
+
+
+```r
+country_model$model[[1]]
+## 
+## Call:
+## lm(formula = lifeExp ~ year1950, data = x)
+## 
+## Coefficients:
+## (Intercept)     year1950  
+##     29.3566       0.2753
+```
+
+---
+
+
+
+
+background-image: url(images/daniel-olah-pCcGpVsOHoo-unsplash.jpg)
+background-size: cover
+class: hide-slide-number split-70
+count: false
+
+.column.shade_black[.content[
+
+&lt;br&gt;&lt;br&gt;
+
+
+
+.bottom_abs.width100[
+
+Lecturer: Patricia Menéndez
+
+Department of Econometrics and Business Statistics&lt;br&gt;
+
+
+
+
+
+]
+
+&lt;br /&gt;
+This work is licensed under a &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License&lt;/a&gt;.
+
+&lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;&lt;img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /&gt;&lt;/a&gt;
+
+
+]]
+
+
+
+&lt;div class="column transition monash-m-new delay-1s" style="clip-path:url(#swipe__clip-path);"&gt;
+&lt;div class="background-image" style="background-image:url('images/large.png');background-position: center;background-size:cover;margin-left:3px;"&gt;
+&lt;svg class="clip-svg absolute"&gt;
+&lt;defs&gt;
+&lt;clipPath id="swipe__clip-path" clipPathUnits="objectBoundingBox"&gt;
+&lt;polygon points="0.5745 0, 0.5 0.33, 0.42 0, 0 0, 0 1, 0.27 1, 0.27 0.59, 0.37 1, 0.634 1, 0.736 0.59, 0.736 1, 1 1, 1 0, 0.5745 0" /&gt;
+&lt;/clipPath&gt;
+&lt;/defs&gt;	
+&lt;/svg&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
